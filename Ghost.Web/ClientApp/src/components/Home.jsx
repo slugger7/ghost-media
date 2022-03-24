@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import { Video } from './Video.jsx'
 
-const fetchVideos = async () => (await axios.get("https://localhost:7110/api/media")).data
+const fetchVideos = async () => (await axios.get("media")).data
 
 export const Home = () => {
   const videosPage = useAsync(fetchVideos, [])
