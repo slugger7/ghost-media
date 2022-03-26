@@ -4,10 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ghost.Api.Controllers
 {
-  public class Thing {
-    public string? Name {get;set;}
-  }
-
   [ApiController]
   [Route("api/[controller]")]
   public class LibraryController : Controller
@@ -20,16 +16,28 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpPost]
-    public ActionResult<LibraryDto> CreateLibrary([FromBody] Thing thing)
+    public ActionResult<LibraryDto> CreateLibrary([FromBody] CreateLibraryDto library)
     {
-      if (thing == null) return BadRequest();
-      return libraryService.CreateLibrary(thing.Name ?? "");
+      if (library == null) return BadRequest();
+      return libraryService.CreateLibrary(library.Name ?? "");
     }
 
     [HttpGet]
-    public ActionResult<PageResultDto<LibraryDto>> GetLibraries()
+    public ActionResult<PageResultDto<LibraryDto>> GetLibraries(int page = 0, int limit = 10)
     {
-      return libraryService.GetLibraries();
+      return libraryService.GetLibraries(page, limit);
+    }
+
+    [HttpPut("{id}/add-folder")]
+    public ActionResult<LibraryDto> AddFolderToLibrary(string id, [FromBody] AddFolderToLibraryDto folderLibraryDto)
+    {
+      try {
+        return libraryService.AddDirectoryToLibrary(id, folderLibraryDto);
+      } 
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
     }
   }
 }

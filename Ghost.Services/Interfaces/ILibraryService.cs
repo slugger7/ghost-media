@@ -5,7 +5,7 @@ namespace Ghost.Services.Interfaces
   public interface ILibraryService
   {
     LibraryDto CreateLibrary(string libraryName);
-    void AddDirectoryToLibrary(string _id, string directory);
-    PageResultDto<LibraryDto> GetLibraries();
+    LibraryDto AddDirectoryToLibrary(string id, AddFolderToLibraryDto folderLibraryDto);
+    PageResultDto<LibraryDto> GetLibraries(int page, int limit);
   }
 }

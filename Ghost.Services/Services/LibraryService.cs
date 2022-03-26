@@ -10,7 +10,7 @@ namespace Ghost.Services
     private string connectionString = @"..\Ghost.Data\Ghost.db";
     private string collectionName = "libraries";
 
-    public ILiteCollection<Library> GetCollection(LiteDatabase db)
+    private ILiteCollection<Library> GetCollection(LiteDatabase db)
     {
       var col = db.GetCollection<Library>(collectionName);
       col.EnsureIndex(x => x.Name);
@@ -18,9 +18,32 @@ namespace Ghost.Services
       return col;
     }
 
-    public void AddDirectoryToLibrary(string _id, string directory)
+    public LibraryDto AddDirectoryToLibrary(string id, AddFolderToLibraryDto folderToLibraryDto)
     {
-      throw new NotImplementedException();
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var library = col.FindById(new ObjectId(id));
+
+        var folderCollection = db.GetCollection<LibraryFolder>("folders");
+
+        var folder = new LibraryFolder
+        {
+          Path = folderToLibraryDto.Path
+        };
+
+        folderCollection.Insert(folder);
+
+        if (library == null) throw new NullReferenceException("No library found");
+
+        library.Folders = new List<LibraryFolder>();
+        library.Folders.Add(folder);
+
+        col.Update(library);
+
+        return new LibraryDto(library);
+      }
     }
 
     public LibraryDto CreateLibrary(string libraryName)
@@ -39,18 +62,23 @@ namespace Ghost.Services
       }
     }
 
-    public PageResultDto<LibraryDto> GetLibraries()
+    public PageResultDto<LibraryDto> GetLibraries(int page, int limit)
     {
       using (var db = new LiteDatabase(connectionString))
       {
         var col = GetCollection(db);
 
-        var libraries = col.Query()
+        var libraries = col.Include(l => l.Folders)
+          .Query()
+          .Limit(limit)
+          .Skip(limit * page)
           .ToEnumerable()
           .Select(l => new LibraryDto(l))
           .ToList();
         return new PageResultDto<LibraryDto>
         {
+          Total = col.Count(),
+          Page = page,
           Content = libraries
         };
       }
