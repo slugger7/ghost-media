@@ -18,6 +18,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IVideoService, VideoService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
