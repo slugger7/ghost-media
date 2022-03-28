@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Modal, Box, Button, FormGroup, TextField } from '@mui/material'
 
-export const AddFolderModal = ({ open, onClose, addFolder }) => {
+export const AddPathModal = ({ open, onClose, addPath }) => {
   const [path, setPath] = useState('');
 
   const handlePathChange = (event) => setPath(event.target.value)
 
   const handleSubmit = () => {
-    addFolder(path)
+    addPath(path)
     setPath('')
   }
 
@@ -25,7 +25,7 @@ export const AddFolderModal = ({ open, onClose, addFolder }) => {
       }}>
         <FormGroup>
           <TextField label="Path" variant='outlined' value={path} onChange={handlePathChange}/>
-          <Button onClick={handleSubmit} variant='contained'>Add Folder</Button>
+          <Button onClick={handleSubmit} variant='contained'>Add Path</Button>
         </FormGroup>
       </Box>
     </Modal>)

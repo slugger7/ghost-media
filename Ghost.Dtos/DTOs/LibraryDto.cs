@@ -6,7 +6,7 @@ namespace Ghost.Dtos
   {
     public string? _id {get;set;}
     public string? Name {get;set;}
-    public List<LibraryFolderDto> Folders {get;set;} = new List<LibraryFolderDto>();
+    public List<LibraryPathDto> Paths {get;set;} = new List<LibraryPathDto>();
 
     public LibraryDto(Library library)
     {
@@ -14,8 +14,8 @@ namespace Ghost.Dtos
       {
         this._id = library._id?.ToString();
         this.Name = library.Name;
-        this.Folders = library.Folders
-          .Select(f => new LibraryFolderDto(f))
+        this.Paths = library.Paths
+          .Select(f => new LibraryPathDto(f))
           .ToList();
       }
     }

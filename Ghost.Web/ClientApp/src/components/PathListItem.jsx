@@ -3,7 +3,7 @@ import { Avatar, IconButton, ListItem, ListItemAvatar, ListItemText } from "@mui
 import FolderIcon from "@mui/icons-material/Folder"
 import DeleteIcon from "@mui/icons-material/Delete"
 
-export const FolderListItem = ({ path, onRemove }) => (<ListItem 
+export const PathListItem = ({ path, onRemove }) => (<ListItem 
   secondaryAction={<IconButton edge="end" aria-label="delete" onClick={onRemove}>
     <DeleteIcon />
   </IconButton>}>

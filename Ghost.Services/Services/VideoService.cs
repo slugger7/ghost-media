@@ -74,7 +74,7 @@ namespace Ghost.Services
 
     public List<string> RefreshVideos()
     {
-      var dir = @"C:\dev\GhostMedia\assets";
+      var dir = @"/home/slugger/dev/ghost-media/assets";
       var ext = "mp4";
       IEnumerable<string> directories = FileFns.ListDirectories(dir);
       IEnumerable<string> files = FileFns.ListFilesByExtension(dir, ext);

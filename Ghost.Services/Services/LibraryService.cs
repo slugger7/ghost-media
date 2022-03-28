@@ -18,27 +18,28 @@ namespace Ghost.Services
       return col;
     }
 
-    public LibraryDto AddDirectoryToLibrary(string id, AddFolderToLibraryDto folderToLibraryDto)
+    public LibraryDto AddDirectoryToLibrary(string id, AddPathsToLibraryDto pathsToLibraryDto)
     {
+      if (pathsToLibraryDto.Paths == null) throw new NullReferenceException("Paths were null");
       using (var db = new LiteDatabase(connectionString))
       {
         var col = GetCollection(db);
 
         var library = col.FindById(new ObjectId(id));
-
-        var folderCollection = db.GetCollection<LibraryFolder>("folders");
-
-        var folder = new LibraryFolder
-        {
-          Path = folderToLibraryDto.Path
-        };
-
-        folderCollection.Insert(folder);
-
         if (library == null) throw new NullReferenceException("No library found");
 
-        library.Folders = new List<LibraryFolder>();
-        library.Folders.Add(folder);
+        var folderCollection = db.GetCollection<LibraryPath>("paths");
+
+        foreach (var path in pathsToLibraryDto.Paths)
+        {
+          var folder = new LibraryPath
+          {
+            Path = path
+          };
+
+          folderCollection.Insert(folder);
+          library.Paths.Add(folder);
+        }
 
         col.Update(library);
 
@@ -68,7 +69,7 @@ namespace Ghost.Services
       {
         var col = GetCollection(db);
 
-        var libraries = col.Include(l => l.Folders)
+        var libraries = col.Include(l => l.Paths)
           .Query()
           .Limit(limit)
           .Skip(limit * page)

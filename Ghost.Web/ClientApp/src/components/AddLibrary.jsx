@@ -4,40 +4,62 @@ import {
   TextField, 
   Typography, 
   List,
-  IconButton
+  IconButton,
+  Button,
+  ListItem
 } from '@mui/material'
 import AddIcon from "@mui/icons-material/Add"
 import { remove, append } from 'ramda'
+import axios from 'axios'
 
-import { FolderListItem } from './FolderListItem.jsx'
-import { AddFolderModal } from './AddFolderModal.jsx'
+import { PathListItem } from './PathListItem.jsx'
+import { AddPathModal } from './AddPathModal.jsx'
+
+const createLibrary = async (name) => (await axios.post('library', { name })).data
+const createPaths = async ({ _id, paths}) => (await axios.put(`library/${_id}/add-paths`, { paths }))
 
 export const AddLibrary = () => {
-  const [chosenFolders, setChosenFolders] = useState(["here"]);
-  const [addingFolder, setAddingFolder] = useState(false);
+  const [libraryName, setLibraryName] = useState('');
+  const [chosenPaths, setChosenPaths] = useState(["here"]);
+  const [addingPath, setAddingPath] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const addFolder = (path) => {
-    setChosenFolders(append(path))
-    setAddingFolder(false)
+  const addPath = (path) => {
+    setChosenPaths(append(path))
+    setAddingPath(false)
   }
 
-  const removeFolderAtIndex = (index) => () => setChosenFolders(remove(index, 1))
+  const removePathAtIndex = (index) => () => setChosenPaths(remove(index, 1))
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true)
+    try {
+      const newLibrary = await createLibrary(libraryName)
+      await createPaths({ _id: newLibrary._id, paths: chosenPaths })
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (<Box
     component="form"
+    onSubmit={handleSubmit}
     >
-      <AddFolderModal open={addingFolder} addFolder={addFolder} onClose={() => setAddingFolder(false)}/>
+      <AddPathModal open={addingPath} addPath={addPath} onClose={() => setAddingPath(false)}/>
       <Typography variant='h3' gutterBottom component='h3'>Add library</Typography>
-      <TextField label="Name" variant="outlined" />
-      <Typography variant='h4' component='h4'>Folders <IconButton
-          onClick={() => setAddingFolder(true)}>
+      <TextField label="Name" variant="outlined" value={libraryName} onChange={e => setLibraryName(e.target.value)}/>
+      <Typography variant='h4' component='h4'>Paths <IconButton
+          onClick={() => setAddingPath(true)}>
           <AddIcon />
         </IconButton>
       </Typography>
       <List dense>
-        {chosenFolders?.map((chosenFolder, index) => <FolderListItem 
-          key={index} path={chosenFolder} onRemove={removeFolderAtIndex(index)}
+        {chosenPaths?.length === 0 && <ListItem>No folders</ListItem>}
+        {chosenPaths?.map((chosenFolder, index) => <PathListItem 
+          key={index} path={chosenFolder} onRemove={removePathAtIndex(index)}
         />)}
       </List>
+      <Button variant='contained' type='submit'>Create Library</Button>
   </Box>)
 }

@@ -28,11 +28,11 @@ namespace Ghost.Api.Controllers
       return libraryService.GetLibraries(page, limit);
     }
 
-    [HttpPut("{id}/add-folder")]
-    public ActionResult<LibraryDto> AddFolderToLibrary(string id, [FromBody] AddFolderToLibraryDto folderLibraryDto)
+    [HttpPut("{id}/add-paths")]
+    public ActionResult<LibraryDto> AddFolderToLibrary(string id, [FromBody] AddPathsToLibraryDto pathsLibraryDto)
     {
       try {
-        return libraryService.AddDirectoryToLibrary(id, folderLibraryDto);
+        return libraryService.AddDirectoryToLibrary(id, pathsLibraryDto);
       } 
       catch (NullReferenceException)
       {
