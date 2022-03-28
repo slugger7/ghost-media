@@ -11,14 +11,14 @@ export const Home = () => {
   const [currentVideo, setCurrentVideo] = useState()
 
   return (<>
-    {currentVideo && <Video 
-      source={`/api/media/${currentVideo._id}`} 
-      type={currentVideo.type} 
+    {currentVideo && <Video
+      source={`/api/media/${currentVideo._id}`}
+      type={currentVideo.type}
     />}
     {videosPage.loading && <span>loading ...</span>}
     {!videosPage.loading && videosPage.result?.content?.map(video =>
-      <button key={video._id} 
+      <button key={video._id}
         onClick={() => setCurrentVideo(video)}
-        >{video.title}</button>)}
+      >{video.title}</button>)}
   </>)
 }
