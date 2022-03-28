@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
 
@@ -9,10 +9,6 @@ const fetchVideos = async () => (await axios.get("media")).data
 export const Home = () => {
   const videosPage = useAsync(fetchVideos, [])
   const [currentVideo, setCurrentVideo] = useState()
-
-  useEffect(() => {
-    console.log({ videosPage});
-  }, [videosPage]);
 
   return (<>
     {currentVideo && <Video 
