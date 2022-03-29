@@ -6,6 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
+import axios from 'axios';
 
 export const LibraryCard = ({ library }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -16,6 +17,11 @@ export const LibraryCard = ({ library }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null)
+  }
+
+  const syncLibrary = async () => {
+    await axios.get(`/library/${library._id}/sync`)
+    handleMenuClose()
   }
 
   return <>
@@ -48,7 +54,7 @@ export const LibraryCard = ({ library }) => {
       MenuListProps={{
         'aria-labelledby': `${library._id}-menu-button`
       }}>
-      <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={syncLibrary}>
         <ListItemIcon><SyncIcon fontSize="small" /></ListItemIcon>
         <ListItemText>Sync</ListItemText>
       </MenuItem>
@@ -70,7 +76,7 @@ LibraryCard.propTypes = {
     name: PropTypes.string.isRequired,
     paths: PropTypes.arrayOf(PropTypes.shape({
       _id: PropTypes.string.isRequired,
-      _path: PropTypes.string.isRequired
+      path: PropTypes.string.isRequired
     }))
   }).isRequired
 }

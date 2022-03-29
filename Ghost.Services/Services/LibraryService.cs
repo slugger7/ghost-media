@@ -84,5 +84,34 @@ namespace Ghost.Services
         };
       }
     }
+
+    public void SyncLibrary(string id)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var library = col.FindById(new ObjectId(id));
+
+        if (library == null) throw new NullReferenceException("Libray not found");
+
+        Console.WriteLine("syncing library");
+      }
+    }
+
+    public LibraryDto GetLibrary(string id)
+    {
+      Console.WriteLine("Getting library");
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var library = col.FindById(new ObjectId(id));
+
+        if (library == null) throw new NullReferenceException("Library not found");
+
+        return new LibraryDto(library);
+      }
+    }
   }
 }

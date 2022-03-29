@@ -28,12 +28,40 @@ namespace Ghost.Api.Controllers
       return libraryService.GetLibraries(page, limit);
     }
 
+    [HttpGet("{id}")]
+    public ActionResult<LibraryDto> GetLibrary(string id)
+    {
+      try
+      {
+        return libraryService.GetLibrary(id);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
+
     [HttpPut("{id}/add-paths")]
     public ActionResult<LibraryDto> AddFolderToLibrary(string id, [FromBody] AddPathsToLibraryDto pathsLibraryDto)
     {
-      try {
+      try
+      {
         return libraryService.AddDirectoryToLibrary(id, pathsLibraryDto);
-      } 
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
+
+    [HttpGet("{id}/sync")]
+    public ActionResult SyncLibrary(string id)
+    {
+      try
+      {
+        libraryService.SyncLibrary(id);
+        return Ok();
+      }
       catch (NullReferenceException)
       {
         return NotFound();
