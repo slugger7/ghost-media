@@ -15,11 +15,13 @@ import axios from 'axios'
 
 import { PathListItem } from './PathListItem.jsx'
 import { AddPathModal } from './AddPathModal.jsx'
+import { useNavigate } from 'react-router-dom'
 
 const createLibrary = async (name) => (await axios.post('library', { name })).data
 const createPaths = async ({ _id, paths }) => (await axios.put(`library/${_id}/add-paths`, { paths }))
 
 export const AddLibrary = () => {
+  const navigate = useNavigate()
   const [libraryName, setLibraryName] = useState('');
   const [chosenPaths, setChosenPaths] = useState(["here"]);
   const [addingPath, setAddingPath] = useState(false);
@@ -38,6 +40,7 @@ export const AddLibrary = () => {
     try {
       const newLibrary = await createLibrary(libraryName)
       await createPaths({ _id: newLibrary._id, paths: chosenPaths })
+      navigate('/libraries')
     } finally {
       setSubmitting(false)
     }
