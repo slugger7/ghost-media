@@ -9,5 +9,10 @@ namespace Ghost.Services
     {
       return FileFns.ListDirectories(directory);
     }
+
+    public List<string> GetFilesOfTypeInDirectory(string directory, string type)
+    {
+      return FileFns.ListFilesByExtension(directory, type);
+    }
   }
 }

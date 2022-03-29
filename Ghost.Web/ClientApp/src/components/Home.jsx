@@ -12,7 +12,7 @@ export const Home = () => {
 
   return (<>
     {currentVideo && <Video
-      source={`/api/media/${currentVideo._id}`}
+      source={`${axios.defaults.baseURL}/media/${currentVideo._id}`}
       type={currentVideo.type}
     />}
     {videosPage.loading && <span>loading ...</span>}

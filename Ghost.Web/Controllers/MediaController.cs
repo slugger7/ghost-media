@@ -22,22 +22,19 @@ namespace Ghost.Api.Controllers
       if (page >= 0 && limit > 0)
       {
         return videoService.GetVideos(page, limit);
-      } else {
+      }
+      else
+      {
         return BadRequest();
       }
-    }
-
-    [HttpGet("refresh-media")]
-    public List<string> RefreshMedia()
-    {
-      return videoService.RefreshVideos();
     }
 
     [HttpGet("{id}")]
     public ActionResult GetVideo(string id)
     {
       var video = videoService.GetVideoById(id);
-      if (video != null) {
+      if (video != null)
+      {
         return PhysicalFile(video.Path ?? "", "video/mp4", true);
       }
       return NotFound();

@@ -7,7 +7,7 @@ namespace Ghost.Services.Interfaces
     LibraryDto CreateLibrary(string libraryName);
     LibraryDto AddDirectoryToLibrary(string id, AddPathsToLibraryDto pathsLibraryDto);
     PageResultDto<LibraryDto> GetLibraries(int page, int limit);
-    LibraryDto GetLibrary(string id);
+    LibraryDto GetLibraryDto(string id);
     void SyncLibrary(string id);
   }
 }

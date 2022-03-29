@@ -1,12 +1,13 @@
 using Ghost.Data.Entities;
+using LiteDB;
 
 namespace Ghost.Dtos
 {
   public class LibraryDto
   {
-    public string? _id {get;set;}
-    public string? Name {get;set;}
-    public List<LibraryPathDto> Paths {get;set;} = new List<LibraryPathDto>();
+    public string? _id { get; set; }
+    public string? Name { get; set; }
+    public List<LibraryPathDto> Paths { get; set; } = new List<LibraryPathDto>();
 
     public LibraryDto(Library library)
     {
@@ -19,5 +20,11 @@ namespace Ghost.Dtos
           .ToList();
       }
     }
+
+    public Library ToEntity() => new Library
+    {
+      _id = new ObjectId(this._id),
+      Name = this.Name
+    };
   }
 }

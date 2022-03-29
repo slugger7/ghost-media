@@ -33,7 +33,7 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        return libraryService.GetLibrary(id);
+        return libraryService.GetLibraryDto(id);
       }
       catch (NullReferenceException)
       {

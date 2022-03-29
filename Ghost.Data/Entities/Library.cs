@@ -7,6 +7,8 @@ namespace Ghost.Data.Entities
     public ObjectId? _id { get; set; }
     public string? Name { get; set; }
     [BsonRef("paths")]
-    public List<LibraryPath> Paths {get;set;} = new List<LibraryPath>();
+    public List<LibraryPath> Paths { get; set; } = new List<LibraryPath>();
+    [BsonRef("videos")]
+    public List<Video> Videos { get; set; } = new List<Video>();
   }
 }

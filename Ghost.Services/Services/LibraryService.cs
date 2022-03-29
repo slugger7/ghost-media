@@ -7,10 +7,21 @@ namespace Ghost.Services
 {
   public class LibraryService : ILibraryService
   {
+    private readonly IDirectoryService directoryService;
+    private readonly IVideoService videoService;
     private string connectionString = @"..\Ghost.Data\Ghost.db";
-    private string collectionName = "libraries";
+    private static string collectionName = "libraries";
 
-    private ILiteCollection<Library> GetCollection(LiteDatabase db)
+    public LibraryService(
+      IDirectoryService directoryService,
+      IVideoService videoService
+    )
+    {
+      this.directoryService = directoryService;
+      this.videoService = videoService;
+    }
+
+    internal static ILiteCollection<Library> GetCollection(LiteDatabase db)
     {
       var col = db.GetCollection<Library>(collectionName);
       col.EnsureIndex(x => x.Name);
@@ -87,31 +98,58 @@ namespace Ghost.Services
 
     public void SyncLibrary(string id)
     {
-      using (var db = new LiteDatabase(connectionString))
+      var library = this.GetLibrary(id);
+
+      foreach (var path in library.Paths)
       {
-        var col = GetCollection(db);
+        if (path.Path == null) continue;
 
-        var library = col.FindById(new ObjectId(id));
+        var videos = directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4");
 
-        if (library == null) throw new NullReferenceException("Libray not found");
+        var videoEntities = videos.Select(v =>
+        {
+          var videoSplit = v.Split(Path.DirectorySeparatorChar);
+          var fileName = videoSplit[videoSplit.Length - 1];
+          var initialTitle = fileName.Substring(0, fileName.LastIndexOf('.'));
+          return new Video
+          {
+            Path = v,
+            FileName = fileName,
+            Title = initialTitle
+          };
+        })
+        .ToList();
 
-        Console.WriteLine("syncing library");
+        using (var db = new LiteDatabase(connectionString))
+        {
+          var col = GetCollection(db);
+          var videoCollection = VideoService.GetCollection(db);
+
+          videoCollection.InsertBulk(videoEntities);
+
+          library.Videos = videoEntities;
+
+          col.Update(library);
+        }
       }
     }
 
-    public LibraryDto GetLibrary(string id)
+    internal Library GetLibrary(string id)
     {
-      Console.WriteLine("Getting library");
       using (var db = new LiteDatabase(connectionString))
       {
         var col = GetCollection(db);
 
-        var library = col.FindById(new ObjectId(id));
+        var library = col
+          .Include(l => l.Paths)
+          .FindById(new ObjectId(id));
 
         if (library == null) throw new NullReferenceException("Library not found");
 
-        return new LibraryDto(library);
+        return library;
       }
     }
+
+    public LibraryDto GetLibraryDto(string id) => new LibraryDto(this.GetLibrary(id));
   }
 }
