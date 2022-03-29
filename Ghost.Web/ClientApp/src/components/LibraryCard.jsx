@@ -5,6 +5,7 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SyncIcon from '@mui/icons-material/Sync';
 
 export const LibraryCard = ({ library }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -36,6 +37,7 @@ export const LibraryCard = ({ library }) => {
           </IconButton>
         }
         title={library.name}
+        subheader={`${library.paths.length} path${library.paths.length === 1 ? '' : 's'}`}
       />
     </Card>
     <Menu
@@ -46,6 +48,10 @@ export const LibraryCard = ({ library }) => {
       MenuListProps={{
         'aria-labelledby': `${library._id}-menu-button`
       }}>
+      <MenuItem onClick={handleMenuClose}>
+        <ListItemIcon><SyncIcon fontSize="small" /></ListItemIcon>
+        <ListItemText>Sync</ListItemText>
+      </MenuItem>
       <MenuItem onClick={handleMenuClose}>
         <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
         <ListItemText>Edit</ListItemText>
@@ -61,6 +67,10 @@ export const LibraryCard = ({ library }) => {
 LibraryCard.propTypes = {
   library: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    paths: PropTypes.arrayOf(PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      _path: PropTypes.string.isRequired
+    }))
   }).isRequired
 }
