@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Avatar, Card, CardHeader, IconButton, Menu, MenuItem } from '@mui/material'
+import PropTypes from 'prop-types'
+import { Avatar, Card, CardHeader, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import PropTypes from 'prop-types'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const LibraryCard = ({ library }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -16,12 +18,6 @@ export const LibraryCard = ({ library }) => {
   }
 
   return <>
-    <Menu
-      id={`${library._id}-menu`}
-      anchorEl={anchorEl}
-      open={!!anchorEl}>
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-    </Menu>
     <Card>
       <CardHeader
         avatar={
@@ -32,13 +28,33 @@ export const LibraryCard = ({ library }) => {
         action={
           <IconButton
             id={`${library._id}-menu-button`}
-            onClick={handleMenuClick}>
+            onClick={handleMenuClick}
+            aria-controls={!!anchorEl ? 'library-menu' : undefined}
+            aria-haspopup={true}
+            aria-expanded={!!anchorEl}>
             <MoreVertIcon />
           </IconButton>
         }
         title={library.name}
       />
     </Card>
+    <Menu
+      id={`${library._id}-menu`}
+      anchorEl={anchorEl}
+      open={!!anchorEl}
+      onClose={handleMenuClose}
+      MenuListProps={{
+        'aria-labelledby': `${library._id}-menu-button`
+      }}>
+      <MenuItem onClick={handleMenuClose}>
+        <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
+        <ListItemText>Edit</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
+        <ListItemText>Delete</ListItemText>
+      </MenuItem>
+    </Menu>
   </>
 }
 

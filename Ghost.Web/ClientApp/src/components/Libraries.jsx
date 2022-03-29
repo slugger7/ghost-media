@@ -13,6 +13,6 @@ export const Libraries = () => {
   return (<>
     {librariesPage.loading && <span>loading ...</span>}
     {!librariesPage.loading && librariesPage.result?.content?.map(library => (<LibraryCard key={library._id} library={library} />))}
-    <ButtonLink to="/libraries/add">Add Library</ButtonLink>
+    <ButtonLink to="/libraries/add" variant="contained">Add Library</ButtonLink>
   </>)
 } 
