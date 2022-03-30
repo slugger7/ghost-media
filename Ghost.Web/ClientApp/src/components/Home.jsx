@@ -13,5 +13,6 @@ export const Home = () => {
     {!videosPage.loading && videosPage.result?.content?.map(video =>
       <ButtonLink key={video._id} variant="contained" to={`/media/${video._id}`}
       >{video.title}</ButtonLink>)}
+    {!videosPage.loading && videosPage.result.content.map(video => <img key={video._id} src={`${axios.defaults.baseURL}/media/${video._id}/thumbnail`} alt={`${video.title}`} />)}
   </>)
 }
