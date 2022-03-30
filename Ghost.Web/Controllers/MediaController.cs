@@ -47,5 +47,12 @@ namespace Ghost.Api.Controllers
       }
       return NotFound();
     }
+
+    [HttpGet("{id}/thumbnail")]
+    public IActionResult GetThumbnail(string id)
+    {
+      var image = videoService.GenerateThumbnail(id);
+      return PhysicalFile(videoService.GenerateThumbnail(id), "image/png", true);
+    }
   }
 }
