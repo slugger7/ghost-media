@@ -104,21 +104,18 @@ namespace Ghost.Services
       {
         if (path.Path == null) continue;
 
-        var directories = new Queue<string>();
-        directories.Enqueue(path.Path);
-        var videos = new List<string>();
+        var directories = directoryService.GetDirectories(path.Path);
+        var files = directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4");
 
-        while (directories.Count > 0)
+        var dirIndex = 0;
+
+        while (directories.Count() > dirIndex)
         {
-          var currentDirectory = directories.Dequeue();
-
-          directoryService.GetDirectories(currentDirectory)
-            .ForEach(d => directories.Enqueue(d));
-
-          videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4")).ToList();
+          var currentDirectory = directories.ElementAt(dirIndex++);
+          files = files.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "mp4")).ToList();
         }
 
-        var videoEntities = videos.Select(v =>
+        var videoEntities = files.Select(v =>
         {
           var videoSplit = v.Split(Path.DirectorySeparatorChar);
           var fileName = videoSplit[videoSplit.Length - 1];
