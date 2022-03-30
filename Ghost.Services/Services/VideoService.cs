@@ -69,5 +69,25 @@ namespace Ghost.Services
         }
       }
     }
+
+    public string GenerateThumbnail(string id)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var video = col.FindById(new ObjectId(id));
+
+        if (video == null) throw new NullReferenceException("Video not found");
+        if (video.Path == null) throw new NullReferenceException("Path was null");
+
+        var basePath = video.Path
+          .Substring(0, video.Path.LastIndexOf(Path.DirectorySeparatorChar)) + Path.DirectorySeparatorChar + video.Title + ".png";
+
+        ImageFns.GenerateImage(video.Path, basePath);
+
+        return basePath;
+      }
+    }
   }
 }
