@@ -19,13 +19,13 @@ namespace Ghost.Api.Controllers
     public ActionResult<LibraryDto> CreateLibrary([FromBody] CreateLibraryDto library)
     {
       if (library == null) return BadRequest();
-      return libraryService.CreateLibrary(library.Name ?? "");
+      return libraryService.Create(library.Name ?? "");
     }
 
     [HttpGet]
     public ActionResult<PageResultDto<LibraryDto>> GetLibraries(int page = 0, int limit = 10)
     {
-      return libraryService.GetLibraries(page, limit);
+      return libraryService.GetMany(page, limit);
     }
 
     [HttpGet("{id}")]
@@ -33,7 +33,7 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        return libraryService.GetLibraryDto(id);
+        return libraryService.GetDto(id);
       }
       catch (NullReferenceException)
       {
@@ -46,7 +46,7 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        return libraryService.AddDirectoryToLibrary(id, pathsLibraryDto);
+        return libraryService.AddDirectory(id, pathsLibraryDto);
       }
       catch (NullReferenceException)
       {
@@ -59,13 +59,30 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        libraryService.SyncLibrary(id);
+        libraryService.Sync(id);
         return Ok();
       }
       catch (NullReferenceException)
       {
         return NotFound();
       }
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult DeleteLibrary(string id)
+    {
+      try
+      {
+        libraryService.Delete(id);
+
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+
+
+      return Ok();
     }
   }
 }

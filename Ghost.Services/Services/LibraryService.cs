@@ -29,7 +29,7 @@ namespace Ghost.Services
       return col;
     }
 
-    public LibraryDto AddDirectoryToLibrary(string id, AddPathsToLibraryDto pathsToLibraryDto)
+    public LibraryDto AddDirectory(string id, AddPathsToLibraryDto pathsToLibraryDto)
     {
       if (pathsToLibraryDto.Paths == null) throw new NullReferenceException("Paths were null");
       using (var db = new LiteDatabase(connectionString))
@@ -39,7 +39,7 @@ namespace Ghost.Services
         var library = col.FindById(new ObjectId(id));
         if (library == null) throw new NullReferenceException("No library found");
 
-        var folderCollection = db.GetCollection<LibraryPath>("paths");
+        var folderCollection = DirectoryService.GetCollection(db);
 
         foreach (var path in pathsToLibraryDto.Paths)
         {
@@ -58,7 +58,7 @@ namespace Ghost.Services
       }
     }
 
-    public LibraryDto CreateLibrary(string libraryName)
+    public LibraryDto Create(string libraryName)
     {
       using (var db = new LiteDatabase(connectionString))
       {
@@ -74,7 +74,7 @@ namespace Ghost.Services
       }
     }
 
-    public PageResultDto<LibraryDto> GetLibraries(int page, int limit)
+    public PageResultDto<LibraryDto> GetMany(int page, int limit)
     {
       using (var db = new LiteDatabase(connectionString))
       {
@@ -96,15 +96,27 @@ namespace Ghost.Services
       }
     }
 
-    public void SyncLibrary(string id)
+    public void Sync(string id)
     {
-      var library = this.GetLibrary(id);
+      var library = this.Get(id);
 
       foreach (var path in library.Paths)
       {
         if (path.Path == null) continue;
 
-        var videos = directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4");
+        var directories = new Queue<string>();
+        directories.Enqueue(path.Path);
+        var videos = new List<string>();
+
+        while (directories.Count > 0)
+        {
+          var currentDirectory = directories.Dequeue();
+
+          directoryService.GetDirectories(currentDirectory)
+            .ForEach(d => directories.Enqueue(d));
+
+          videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4")).ToList();
+        }
 
         var videoEntities = videos.Select(v =>
         {
@@ -120,6 +132,7 @@ namespace Ghost.Services
         })
         .ToList();
 
+
         using (var db = new LiteDatabase(connectionString))
         {
           var col = GetCollection(db);
@@ -134,7 +147,7 @@ namespace Ghost.Services
       }
     }
 
-    internal Library GetLibrary(string id)
+    internal Library Get(string id)
     {
       using (var db = new LiteDatabase(connectionString))
       {
@@ -150,6 +163,27 @@ namespace Ghost.Services
       }
     }
 
-    public LibraryDto GetLibraryDto(string id) => new LibraryDto(this.GetLibrary(id));
+    public LibraryDto GetDto(string id) => new LibraryDto(this.Get(id));
+
+    public void Delete(string id)
+    {
+      Library library;
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        library = col
+          .Include(l => l.Videos)
+          .Include(l => l.Paths)
+          .FindById(new ObjectId(id));
+
+        if (library == null) throw new NullReferenceException("Library not found");
+
+        col.Delete(library._id);
+      }
+
+      DirectoryService.DeleteRange(library.Paths.Select(p => p._id));
+      VideoService.DeleteRange(library.Videos.Select(v => v._id));
+    }
   }
 }

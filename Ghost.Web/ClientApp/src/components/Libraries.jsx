@@ -12,7 +12,7 @@ export const Libraries = () => {
 
   return (<>
     {librariesPage.loading && <span>loading ...</span>}
-    {!librariesPage.loading && librariesPage.result?.content?.map(library => (<LibraryCard key={library._id} library={library} />))}
+    {!librariesPage.loading && librariesPage.result?.content?.map(library => (<LibraryCard key={library._id} library={library} refresh={librariesPage.execute} />))}
     <ButtonLink to="/libraries/add" variant="contained">Add Library</ButtonLink>
   </>)
 } 

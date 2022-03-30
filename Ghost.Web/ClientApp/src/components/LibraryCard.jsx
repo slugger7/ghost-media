@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
 import axios from 'axios';
 
-export const LibraryCard = ({ library }) => {
+export const LibraryCard = ({ library, refresh }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuClick = (event) => {
@@ -19,9 +19,15 @@ export const LibraryCard = ({ library }) => {
     setAnchorEl(null)
   }
 
-  const syncLibrary = async () => {
+  const sync = async () => {
     await axios.get(`/library/${library._id}/sync`)
     handleMenuClose()
+  }
+
+  const deleteLibrary = async () => {
+    await axios.delete(`/library/${library._id}`)
+    refresh()
+    handleMenuClose();
   }
 
   return <>
@@ -54,7 +60,7 @@ export const LibraryCard = ({ library }) => {
       MenuListProps={{
         'aria-labelledby': `${library._id}-menu-button`
       }}>
-      <MenuItem onClick={syncLibrary}>
+      <MenuItem onClick={sync}>
         <ListItemIcon><SyncIcon fontSize="small" /></ListItemIcon>
         <ListItemText>Sync</ListItemText>
       </MenuItem>
@@ -62,7 +68,7 @@ export const LibraryCard = ({ library }) => {
         <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
         <ListItemText>Edit</ListItemText>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={deleteLibrary}>
         <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
         <ListItemText>Delete</ListItemText>
       </MenuItem>
@@ -78,5 +84,6 @@ LibraryCard.propTypes = {
       _id: PropTypes.string.isRequired,
       path: PropTypes.string.isRequired
     }))
-  }).isRequired
+  }).isRequired,
+  refresh: PropTypes.func.isRequired
 }

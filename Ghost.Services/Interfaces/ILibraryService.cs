@@ -4,10 +4,11 @@ namespace Ghost.Services.Interfaces
 {
   public interface ILibraryService
   {
-    LibraryDto CreateLibrary(string libraryName);
-    LibraryDto AddDirectoryToLibrary(string id, AddPathsToLibraryDto pathsLibraryDto);
-    PageResultDto<LibraryDto> GetLibraries(int page, int limit);
-    LibraryDto GetLibraryDto(string id);
-    void SyncLibrary(string id);
+    LibraryDto Create(string libraryName);
+    LibraryDto AddDirectory(string id, AddPathsToLibraryDto pathsLibraryDto);
+    PageResultDto<LibraryDto> GetMany(int page, int limit);
+    LibraryDto GetDto(string id);
+    void Sync(string id);
+    void Delete(string id);
   }
 }

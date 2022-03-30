@@ -22,8 +22,8 @@ const createPaths = async ({ _id, paths }) => (await axios.put(`library/${_id}/a
 
 export const AddLibrary = () => {
   const navigate = useNavigate()
-  const [libraryName, setLibraryName] = useState('');
-  const [chosenPaths, setChosenPaths] = useState(["here"]);
+  const [libraryName, setLibraryName] = useState('test lib name');
+  const [chosenPaths, setChosenPaths] = useState(["/home/slugger/dev/ghost-media/assets"]);
   const [addingPath, setAddingPath] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 

@@ -8,7 +8,7 @@ namespace Ghost.Services
 {
   public class VideoService : IVideoService
   {
-    private string connectionString = @"..\Ghost.Data\Ghost.db";
+    private static string connectionString = @"..\Ghost.Data\Ghost.db";
     private static string collectionName = "videos";
 
     internal static ILiteCollection<Video> GetCollection(LiteDatabase db)
@@ -54,6 +54,19 @@ namespace Ghost.Services
         var col = db.GetCollection<Video>(collectionName);
 
         return new VideoDto(col.FindOne(v => v._id == _id));
+      }
+    }
+
+    internal static void DeleteRange(IEnumerable<ObjectId> ids)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        foreach (var id in ids)
+        {
+          col.Delete(id);
+        }
       }
     }
   }
