@@ -179,6 +179,9 @@ namespace Ghost.Services
         col.Delete(library._id);
       }
 
+      if (library.Paths == null) throw new NullReferenceException("Paths for library was null");
+      if (library.Videos == null) throw new NullReferenceException("Videoas were null");
+
       DirectoryService.DeleteRange(library.Paths.Select(p => p._id));
       VideoService.DeleteRange(library.Videos.Select(v => v._id));
     }

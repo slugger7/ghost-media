@@ -57,7 +57,7 @@ namespace Ghost.Services
       }
     }
 
-    internal static void DeleteRange(IEnumerable<ObjectId> ids)
+    internal static void DeleteRange(IEnumerable<ObjectId?> ids)
     {
       using (var db = new LiteDatabase(connectionString))
       {
