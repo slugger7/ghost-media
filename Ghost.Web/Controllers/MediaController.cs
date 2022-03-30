@@ -51,8 +51,15 @@ namespace Ghost.Api.Controllers
     [HttpGet("{id}/thumbnail")]
     public IActionResult GetThumbnail(string id)
     {
-      var image = videoService.GenerateThumbnail(id);
-      return PhysicalFile(videoService.GenerateThumbnail(id), "image/png", true);
+      try
+      {
+        var image = videoService.GenerateThumbnail(id);
+        return PhysicalFile(videoService.GenerateThumbnail(id), "image/png", true);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
     }
   }
 }
