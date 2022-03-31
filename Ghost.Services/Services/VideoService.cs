@@ -89,5 +89,15 @@ namespace Ghost.Services
         return basePath;
       }
     }
+
+    public VideoMetaDataDto? GetVideoMetaData(string id)
+    {
+      var video = GetVideoById(id);
+
+      if (video == null) throw new NullReferenceException("Video not found");
+      if (video.Path == null) return default;
+
+      return VideoFns.GetVideoInformation(video.Path);
+    }
   }
 }

@@ -37,6 +37,21 @@ namespace Ghost.Api.Controllers
       return video;
     }
 
+    [HttpGet("{id}/metadata")]
+    public ActionResult<VideoMetaDataDto> GetVideoMetaData(string id)
+    {
+      try
+      {
+        var videoInfo = videoService.GetVideoMetaData(id);
+        if (videoInfo == null) return NoContent();
+        return videoInfo;
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
+
     [HttpGet("{id}")]
     public ActionResult GetVideo(string id)
     {

@@ -7,5 +7,6 @@ namespace Ghost.Services.Interfaces
     PageResultDto<VideoDto> GetVideos(int page, int limit);
     VideoDto GetVideoById(string id);
     string GenerateThumbnail(string id);
+    VideoMetaDataDto? GetVideoMetaData(string id);
   }
 }
