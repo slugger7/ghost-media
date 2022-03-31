@@ -10,4 +10,8 @@
     <PackageReference Include="FFMpegCore" Version="4.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ghost.Dtos\Ghost.Dtos.csproj" />
+  </ItemGroup>
+
 </Project>
