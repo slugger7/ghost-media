@@ -99,35 +99,38 @@ namespace Ghost.Services
     public void Sync(string id)
     {
       var library = this.Get(id);
+      var currentVideos = library.Videos.Select(v => v.Path);
 
       foreach (var path in library.Paths)
       {
         if (path.Path == null) continue;
 
         var directories = directoryService.GetDirectories(path.Path);
-        var files = directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4");
+        var videos = directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4");
 
         var dirIndex = 0;
 
         while (directories.Count() > dirIndex)
         {
           var currentDirectory = directories.ElementAt(dirIndex++);
-          files = files.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "mp4")).ToList();
+          videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "mp4")).ToList();
         }
 
-        var videoEntities = files.Select(v =>
-        {
-          var videoSplit = v.Split(Path.DirectorySeparatorChar);
-          var fileName = videoSplit[videoSplit.Length - 1];
-          var initialTitle = fileName.Substring(0, fileName.LastIndexOf('.'));
-          return new Video
+        var videoEntities = videos
+          .Where(f => !currentVideos.Any(cv => cv != null && cv.Equals(f)))
+          .Select(v =>
           {
-            Path = v,
-            FileName = fileName,
-            Title = initialTitle
-          };
-        })
-        .ToList();
+            var videoSplit = v.Split(Path.DirectorySeparatorChar);
+            var fileName = videoSplit[videoSplit.Length - 1];
+            var initialTitle = fileName.Substring(0, fileName.LastIndexOf('.'));
+            return new Video
+            {
+              Path = v,
+              FileName = fileName,
+              Title = initialTitle
+            };
+          })
+          .ToList();
 
 
         using (var db = new LiteDatabase(connectionString))
