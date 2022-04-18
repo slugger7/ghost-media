@@ -36,5 +36,19 @@ namespace Ghost.Services
 
       return genre;
     }
+
+    public GenreDto GetGenreByName(string name)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var genre = col.FindOne(g => g.Name.ToUpper().Equals(name.ToUpper()));
+
+        if (genre == null) throw new NullReferenceException("Genre not found");
+
+        return new GenreDto(genre);
+      }
+    }
   }
 }

@@ -25,7 +25,7 @@ export const Media = () => {
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/media/${params.id}/thumbnail`}
       />
-      {media.result.genres.map(genre => <Link key={genre._id} to={`${axios.defaults.baseURL}/genres${encodeURIComponent(genre.name)}`}>{genre.name}</Link>)}
+      {media.result.genres.map(genre => <Link key={genre._id} to={`/genre/${encodeURIComponent(genre.name)}`}>{genre.name}</Link>)}
     </>}
   </>
 }
