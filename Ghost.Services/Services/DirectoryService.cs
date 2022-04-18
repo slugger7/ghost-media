@@ -7,7 +7,7 @@ namespace Ghost.Services
 {
   public class DirectoryService : IDirectoryService
   {
-    private static string connectionString = @"..\Ghost.Data\Ghost.db";
+    private static string connectionString = $"..{Path.DirectorySeparatorChar}Ghost.Data{Path.DirectorySeparatorChar}Ghost.db";
     internal static ILiteCollection<LibraryPath> GetCollection(LiteDatabase db)
     {
       var col = db.GetCollection<LibraryPath>("paths");

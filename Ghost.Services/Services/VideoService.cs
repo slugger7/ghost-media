@@ -8,7 +8,8 @@ namespace Ghost.Services
 {
   public class VideoService : IVideoService
   {
-    private static string connectionString = @"..\Ghost.Data\Ghost.db";
+    private static string connectionString = $"..{Path.DirectorySeparatorChar}Ghost.Data{Path.DirectorySeparatorChar}Ghost.db";
+
     private static string collectionName = "videos";
 
     internal static ILiteCollection<Video> GetCollection(LiteDatabase db)
@@ -25,7 +26,7 @@ namespace Ghost.Services
       {
         var col = db.GetCollection<Video>(collectionName);
 
-        var size = col.Count();
+        var total = col.Count();
 
         var videos = col.Query()
           .Limit(limit)
@@ -38,7 +39,7 @@ namespace Ghost.Services
 
         return new PageResultDto<VideoDto>
         {
-          Total = size,
+          Total = total,
           Page = page,
           Content = videos
         };

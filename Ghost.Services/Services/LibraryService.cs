@@ -9,7 +9,7 @@ namespace Ghost.Services
   {
     private readonly IDirectoryService directoryService;
     private readonly IVideoService videoService;
-    private string connectionString = @"..\Ghost.Data\Ghost.db";
+    private string connectionString = $"..{Path.DirectorySeparatorChar}Ghost.Data{Path.DirectorySeparatorChar}Ghost.db";
     private static string collectionName = "libraries";
 
     public LibraryService(
