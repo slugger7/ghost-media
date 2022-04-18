@@ -9,6 +9,7 @@ namespace Ghost.Dtos
     public string? Title { get; set; }
     public string? FileName { get; set; }
     public string? Type { get; set; }
+    public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
 
     public VideoDto(Video video)
     {
@@ -19,6 +20,7 @@ namespace Ghost.Dtos
         this.FileName = video.FileName;
         this.Title = video.Title;
         this.Type = "video/mp4";
+        this.Genres = video.Genres.Select(g => new GenreDto(g)).ToList();
       }
     }
   }

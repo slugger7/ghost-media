@@ -8,5 +8,6 @@ namespace Ghost.Data.Entities
     public string? FileName { get; set; }
     public string? Title { get; set; }
     public string? Path { get; set; }
+    public List<Genre> Genres { get; set; } = new List<Genre>();
   }
 }

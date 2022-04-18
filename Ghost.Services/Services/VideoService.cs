@@ -12,9 +12,16 @@ namespace Ghost.Services
 
     private static string collectionName = "videos";
 
+    private readonly IGenreService genreService;
+
+    public VideoService(IGenreService genreService)
+    {
+      this.genreService = genreService;
+    }
+
     internal static ILiteCollection<Video> GetCollection(LiteDatabase db)
     {
-      var col = db.GetCollection<Video>("videos");
+      var col = db.GetCollection<Video>(collectionName);
       col.EnsureIndex(v => v.Path);
 
       return col;
@@ -24,7 +31,7 @@ namespace Ghost.Services
     {
       using (var db = new LiteDatabase(connectionString))
       {
-        var col = db.GetCollection<Video>(collectionName);
+        var col = VideoService.GetCollection(db);
 
         var total = col.Count();
 
@@ -52,10 +59,16 @@ namespace Ghost.Services
 
       using (var db = new LiteDatabase(connectionString))
       {
-        var col = db.GetCollection<Video>(collectionName);
+        var video = GetVideoEntityById(db, new ObjectId(id));
 
-        return new VideoDto(col.FindOne(v => v._id == _id));
+        return new VideoDto(video);
       }
+    }
+
+    private Video GetVideoEntityById(LiteDatabase db, ObjectId id)
+    {
+      var col = GetCollection(db);
+      return col.FindById(id);
     }
 
     internal static void DeleteRange(IEnumerable<ObjectId?> ids)
@@ -99,6 +112,24 @@ namespace Ghost.Services
       if (video.Path == null) return default;
 
       return VideoFns.GetVideoInformation(video.Path);
+    }
+
+    public VideoDto AddGenreByNameToVideo(string id, string genre)
+    {
+      if (genre == string.Empty) throw new NullReferenceException("No genre");
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var video = GetVideoEntityById(db, new ObjectId(id));
+        if (video == null) throw new NullReferenceException("Video not found");
+        var genreEntity = GenreService.UpsertGenreByNameEntity(db, genre);
+        video.Genres.Add(genreEntity);
+
+        var col = GetCollection(db);
+
+        col.Update(video);
+
+        return new VideoDto(video);
+      }
     }
   }
 }
