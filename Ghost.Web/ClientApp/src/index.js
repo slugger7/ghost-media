@@ -1,14 +1,15 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom'
 import { App } from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import reportWebVitals from './reportWebVitals'
 import axios from 'axios'
 
-const rootElement = document.getElementById('root')
+const container = document.getElementById('root')
+const root = createRoot(container)
 axios.defaults.baseURL = 'https://localhost:7110/api'
 
-ReactDOM.render(<App />, rootElement)
+root.render(<App />)
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
