@@ -7,6 +7,8 @@ import { Libraries } from './components/Libraries.jsx';
 import { AddLibrary } from './components/AddLibrary.jsx';
 import { Media } from './components/Media.jsx'
 
+import './styles.scss'
+
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 
 export const App = () => {

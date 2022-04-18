@@ -22,11 +22,11 @@ export const Home = () => {
   }, [videosPage])
 
   useEffect(() => {
-    setLimit(searchParams.get("limit") || 24)
+    setLimit(searchParams.get("limit") || 42)
     setPage(searchParams.get("page") || 1)
   }, [searchParams])
 
-  const paginationComponent = <Pagination page={page} count={Math.ceil(total / limit)} showFirstButton showLastButton onChange={(e, newPage) => setSearchParams({ page: newPage, limit })} />
+  const paginationComponent = <Pagination color="primary" page={page} count={Math.ceil(total / limit)} showFirstButton showLastButton onChange={(e, newPage) => setSearchParams({ page: newPage, limit })} />
   return (<>
     {paginationComponent}
 
