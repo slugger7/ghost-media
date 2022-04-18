@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAsync } from 'react-async-hook'
-import { ButtonLink } from './ButtonLink.jsx'
 import axios from 'axios'
+import { VideoCard } from './VideoCard.jsx';
 
 const fetchVideos = async () => (await axios.get("media")).data
 
@@ -10,9 +10,6 @@ export const Home = () => {
 
   return (<>
     {videosPage.loading && <span>loading ...</span>}
-    {!videosPage.loading && videosPage.result?.content?.map(video =>
-      <ButtonLink key={video._id} variant="contained" to={`/media/${video._id}`}
-      >{video.title}</ButtonLink>)}
-    {!videosPage.loading && videosPage.result.content.map(video => <img key={video._id} src={`${axios.defaults.baseURL}/media/${video._id}/thumbnail`} alt={`${video.title}`} />)}
+    {!videosPage.loading && videosPage.result?.content?.map(video => <VideoCard key={video._id} id={video._id} title={video.title} />)}
   </>)
 }
