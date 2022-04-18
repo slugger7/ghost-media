@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
 import { IconButton, Typography } from '@mui/material'
@@ -25,6 +25,7 @@ export const Media = () => {
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/media/${params.id}/thumbnail`}
       />
+      {media.result.genres.map(genre => <Link key={genre._id} to={`${axios.defaults.baseURL}/genres${encodeURIComponent(genre.name)}`}>{genre.name}</Link>)}
     </>}
   </>
 }
