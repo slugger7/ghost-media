@@ -12,8 +12,8 @@ const darkTheme = createTheme({
 })
 
 export const Layout = ({ children }) => (<ThemeProvider theme={darkTheme}>
-  <Container component="main">
-    <CssBaseline />
+  <CssBaseline />
+  <Container maxWidth={false}>
     <NavMenu />
     {children}
   </Container>
