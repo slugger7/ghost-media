@@ -17,7 +17,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet]
-    public ActionResult<PageResultDto<VideoDto>> GetVideos(int page = 0, int limit = 10)
+    public ActionResult<PageResultDto<VideoDto>> GetVideos(int page = 0, int limit = 12)
     {
       if (page >= 0 && limit > 0)
       {
