@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, CircularProgress } from '@mui/material'
+import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField } from '@mui/material'
 import { Link } from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
 import { useAsync } from 'react-async-hook';
@@ -34,7 +34,7 @@ export const Genres = ({ genres, videoId, updateGenres }) => {
           key={index}
           label={genre}
           component={Link}
-          to={`/genre/${encodeURIComponent(genre)}`}
+          to={`/genre/${encodeURIComponent(genre.toLowerCase())}`}
           clickable
         />)}
         {!editing && genres.length === 0 && <Chip variant="outlined" label="None"></Chip>}
