@@ -9,7 +9,8 @@ import {
   ListItem,
   Paper,
   Container,
-  Divider
+  Divider,
+  Stack
 } from '@mui/material'
 import AddIcon from "@mui/icons-material/Add"
 import { remove, append } from 'ramda'
@@ -48,6 +49,10 @@ export const AddLibrary = () => {
     }
   }
 
+  const handleCancel = () => {
+    navigate('/libraries');
+  }
+
   return (<Container><Box
     component="form"
     onSubmit={handleSubmit}
@@ -71,7 +76,10 @@ export const AddLibrary = () => {
         </Fragment>)}
       </List>
     </Paper>
-    <Button variant='contained' type='submit'>Create Library</Button>
+    <Stack direction="row" spacing={1}>
+      <Button variant='contained' type='submit'>Create Library</Button>
+      <Button onClick={handleCancel}>Cancel</Button>
+    </Stack>
   </Box>
   </Container>)
 }
