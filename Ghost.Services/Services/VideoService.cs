@@ -116,16 +116,15 @@ namespace Ghost.Services
       return VideoFns.GetVideoInformation(video.Path);
     }
 
-    public VideoDto AddGenreByNameToVideo(string id, string genre)
+    public VideoDto AddGenresByNameToVideo(string id, List<string> genres)
     {
-      if (genre == string.Empty) throw new NullReferenceException("No genre");
+      if (genres == null) throw new NullReferenceException("No genres");
       using (var db = new LiteDatabase(connectionString))
       {
         var video = GetVideoEntityById(db, new ObjectId(id));
         if (video == null) throw new NullReferenceException("Video not found");
-        var genreEntity = GenreService.UpsertGenreByNameEntity(db, genre, video);
-        if (genre == null) throw new NullReferenceException("Genre was not upserted");
-        video.Genres.Add(genreEntity);
+        var genreEntities = genres.Select(g => GenreService.UpsertGenreByNameEntity(db, g, video));
+        video.Genres = genreEntities.ToList();
 
         var col = GetCollection(db);
         col.Update(video);

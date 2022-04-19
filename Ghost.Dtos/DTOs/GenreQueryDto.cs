@@ -2,6 +2,6 @@ namespace Ghost.Dtos
 {
   public class GenreQueryDto
   {
-    public string Name { get; set; } = String.Empty;
+    public List<string> Genres { get; set; } = new List<string>();
   }
 }

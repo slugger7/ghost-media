@@ -77,13 +77,12 @@ namespace Ghost.Api.Controllers
       }
     }
 
-    [HttpPut("{id}/genre")]
-    public ActionResult<VideoDto> AddGenreByNameToVideo(string id, [FromBody] GenreQueryDto genre)
+    [HttpPut("{id}/genres")]
+    public ActionResult<VideoDto> AddGenresByNameToVideo(string id, [FromBody] GenreQueryDto genreQuery)
     {
       try
       {
-        Console.WriteLine(genre.Name);
-        return this.videoService.AddGenreByNameToVideo(id, genre.Name);
+        return this.videoService.AddGenresByNameToVideo(id, genreQuery.Genres);
       }
       catch (NullReferenceException)
       {

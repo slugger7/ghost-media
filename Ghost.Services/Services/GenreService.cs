@@ -60,7 +60,7 @@ namespace Ghost.Services
       }
     }
 
-    public PageResultDto<GenreDto> GetGenres(int page, int limit)
+    public List<GenreDto> GetGenres(int page, int limit)
     {
       using (var db = new LiteDatabase(connectionString))
       {
@@ -75,12 +75,23 @@ namespace Ghost.Services
           .Select(g => new GenreDto(g))
           .ToList();
 
-        return new PageResultDto<GenreDto>
-        {
-          Total = total,
-          Page = page,
-          Content = genres
-        };
+        return genres;
+      }
+    }
+
+    public List<GenreDto> SearchTopGenres(int limit, string search)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        return col.Query()
+          .Where(g => g.Name.Contains(search))
+          .OrderBy(g => g.Name)
+          .Limit(limit)
+          .ToEnumerable()
+          .Select(g => new GenreDto(g))
+          .ToList();
       }
     }
   }

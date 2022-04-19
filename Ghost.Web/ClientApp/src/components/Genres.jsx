@@ -1,38 +1,64 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField } from '@mui/material'
+import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, CircularProgress } from '@mui/material'
 import { Link } from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
+import axios from 'axios'
+import { useAsync } from 'react-async-hook';
+import { prop } from 'ramda'
+import LoadingButton from '@mui/lab/LoadingButton';
+import SaveIcon from '@mui/icons-material/Save';
 
-export const Genres = ({ genres }) => {
+const fetchGenres = async () => (await axios.get(`/genre`)).data
+
+export const Genres = ({ genres, videoId, updateGenres }) => {
   const [editing, setEditing] = useState(false);
+  const allGenres = useAsync(fetchGenres, []);
+  const [selectedGenres, setSelectedGenres] = useState([...genres]);
+  const [submitting, setSubmitting] = useState(false)
 
   const handleCancel = () => { setEditing(false) }
-  const handleSubmit = () => { }
+  const handleSubmit = async () => {
+    setSubmitting(true)
+    updateGenres({ genres: selectedGenres });
+    setSubmitting(false)
+    setEditing(false)
+  }
+
   return <Paper sx={{ p: 2 }}>
     <Typography variant="h5" component="h5">Genres {!editing && <IconButton onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
       <Stack direction="row" spacing={1}>
-        {!editing && genres.map(genre => <Chip
-          key={genre._id}
-          label={genre.name}
+        {!editing && genres.map((genre, index) => <Chip
+          key={index}
+          label={genre}
           component={Link}
-          to={`/genre/${encodeURIComponent(genre.name)}`}
+          to={`/genre/${encodeURIComponent(genre)}`}
           clickable
         />)}
       </Stack >
       {editing && <>
         <Autocomplete
           multiple
-          options={genres}
-          getOptionLabel={(option) => option.name}
+          freeSolo
+          onChange={(e, newGenres) => setSelectedGenres(newGenres)}
+          options={allGenres?.result?.map(prop('name')) || []}
           defaultValue={genres}
-          renderInput={(params) => <TextField {...params}
-            variant="standard"
-            placeholder='Genres' />}
+          loading={allGenres.loading}
+          renderInput={(params) => <TextField
+            {...params}
+          />}
         />
         <Stack direction="row" spacing={2}>
-          <Button onClick={handleSubmit} variant="contained">Done</Button>
+          <LoadingButton
+            onClick={handleSubmit}
+            variant="contained"
+            loading={submitting}
+            disabled={submitting}
+            loadingPosition="start"
+            startIcon={<SaveIcon />}>
+            Done
+          </LoadingButton>
           <Button onClick={handleCancel}>Cancel</Button>
         </Stack>
       </>}
@@ -41,8 +67,7 @@ export const Genres = ({ genres }) => {
 }
 
 Genres.propTypes = {
-  genres: PropTypes.arrayOf(PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
-  })).isRequired
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+  videoId: PropTypes.string.isRequired,
+  updateGenres: PropTypes.func.isRequired
 }
