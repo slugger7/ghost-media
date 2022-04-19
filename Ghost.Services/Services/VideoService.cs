@@ -35,7 +35,11 @@ namespace Ghost.Services
 
         var total = col.Count();
 
-        var videos = col.Query()
+        var videos = col
+          .Include(v => v.Genres)
+          .Include(v => v.Actors)
+          .Query()
+          .OrderBy(v => v.Title)
           .Limit(limit)
           .Skip(limit * page)
           .ToEnumerable()
@@ -70,6 +74,7 @@ namespace Ghost.Services
       var col = GetCollection(db);
       return col
         .Include(v => v.Genres)
+        .Include(v => v.Actors)
         .FindById(id);
     }
 
@@ -151,12 +156,31 @@ namespace Ghost.Services
         {
           Total = count,
           Page = page,
-          Content = videos.Limit(limit)
+          Content = videos
+            .OrderBy(v => v.Title)
+            .Limit(limit)
             .Skip(limit * page)
             .ToEnumerable()
             .Select(v => new VideoDto(v))
             .ToList()
         };
+      }
+    }
+
+    public VideoDto AddActorsByNameToVideo(string id, List<string> actors)
+    {
+      if (actors == null) throw new NullReferenceException("Actors not found");
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var video = GetVideoEntityById(db, new ObjectId(id));
+        if (video == null) throw new NullReferenceException("Video not found");
+        var actorEntities = actors.Select(a => ActorService.UpsertActorByNameEntity(db, a, video));
+        video.Actors = actorEntities.ToList();
+
+        var col = GetCollection(db);
+        col.Update(video);
+
+        return new VideoDto(video);
       }
     }
   }

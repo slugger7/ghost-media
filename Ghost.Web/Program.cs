@@ -22,6 +22,7 @@ builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 builder.Services.AddScoped<IDirectoryService, DirectoryService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IActorService, ActorService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

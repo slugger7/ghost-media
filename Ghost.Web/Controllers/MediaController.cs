@@ -78,11 +78,11 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpPut("{id}/genres")]
-    public ActionResult<VideoDto> AddGenresByNameToVideo(string id, [FromBody] GenreQueryDto genreQuery)
+    public ActionResult<VideoDto> AddGenresByNameToVideo(string id, [FromBody] GenreAddDto genreAddDto)
     {
       try
       {
-        return this.videoService.AddGenresByNameToVideo(id, genreQuery.Genres);
+        return this.videoService.AddGenresByNameToVideo(id, genreAddDto.Genres);
       }
       catch (NullReferenceException)
       {
@@ -94,6 +94,19 @@ namespace Ghost.Api.Controllers
     public ActionResult<PageResultDto<VideoDto>> GetVideosForGenre(string genre, int page = 0, int limit = 12)
     {
       return videoService.GetVideosForGenre(genre, page, limit);
+    }
+
+    [HttpPut("{id}/actors")]
+    public ActionResult<VideoDto> AddActorsByNameToVideo(string id, [FromBody] ActorAddDto actorAddDto)
+    {
+      try
+      {
+        return this.videoService.AddActorsByNameToVideo(id, actorAddDto.Actors);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
     }
   }
 }
