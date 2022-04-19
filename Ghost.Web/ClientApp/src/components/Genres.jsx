@@ -4,7 +4,7 @@ import { useAsync } from 'react-async-hook'
 import { fetchGenres } from '../services/genre.service'
 import { Link } from 'react-router-dom'
 
-export const GenresView = () => {
+export const Genres = () => {
   const genresResult = useAsync(fetchGenres, [])
 
   return <>

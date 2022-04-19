@@ -60,17 +60,14 @@ namespace Ghost.Services
       }
     }
 
-    public List<GenreDto> GetGenres(int page, int limit)
+    public List<GenreDto> GetGenres()
     {
       using (var db = new LiteDatabase(connectionString))
       {
         var col = GetCollection(db);
 
-        var total = col.Count();
-
         var genres = col.Query()
-          .Limit(limit)
-          .Skip(limit * page)
+          .OrderBy(g => g.Name)
           .ToEnumerable()
           .Select(g => new GenreDto(g))
           .ToList();

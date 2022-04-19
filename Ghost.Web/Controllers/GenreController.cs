@@ -29,16 +29,9 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet]
-    public ActionResult<List<GenreDto>> GetGenres(int page = 0, int limit = 12)
+    public ActionResult<List<GenreDto>> GetGenres()
     {
-      if (page >= 0 && limit > 0)
-      {
-        return genreService.GetGenres(page, limit);
-      }
-      else
-      {
-        return BadRequest();
-      }
+      return genreService.GetGenres();
     }
 
     [HttpGet("top")]
