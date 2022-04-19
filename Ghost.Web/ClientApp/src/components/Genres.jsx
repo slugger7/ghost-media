@@ -30,6 +30,8 @@ export const Genres = ({ genres, videoId, updateGenres }) => {
     <Stack direction="column" spacing={1}>
       <Stack direction="row" spacing={1}>
         {!editing && genres.map((genre, index) => <Chip
+          variant="outlined"
+          color="primary"
           key={index}
           label={genre}
           component={Link}
