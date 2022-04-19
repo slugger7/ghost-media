@@ -3,13 +3,12 @@ import PropTypes from 'prop-types'
 import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, CircularProgress } from '@mui/material'
 import { Link } from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
-import axios from 'axios'
 import { useAsync } from 'react-async-hook';
 import { prop } from 'ramda'
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
-const fetchGenres = async () => (await axios.get(`/genre`)).data
+import { fetchGenres } from '../services/genre.service'
 
 export const Genres = ({ genres, videoId, updateGenres }) => {
   const [editing, setEditing] = useState(false);
