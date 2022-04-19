@@ -38,6 +38,7 @@ export const Genres = ({ genres, videoId, updateGenres }) => {
           to={`/genre/${encodeURIComponent(genre)}`}
           clickable
         />)}
+        {!editing && genres.length === 0 && <Chip variant="outlined" label="None"></Chip>}
       </Stack >
       {editing && <>
         <Autocomplete
