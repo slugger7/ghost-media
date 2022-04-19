@@ -45,7 +45,7 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
           freeSolo
           onChange={(e, newActors) => setSelectedActors(newActors)}
           options={allActors?.result?.map(prop('name')) || []}
-          defaultValue={actors}
+          defaultValue={actors.map(prop('name'))}
           loading={allActors.loading}
           renderInput={(params) => <TextField
             {...params}

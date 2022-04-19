@@ -21,8 +21,14 @@ namespace Ghost.Dtos
         this.FileName = video.FileName;
         this.Title = video.Title;
         this.Type = "video/mp4";
-        this.Genres = video.Genres.Select(g => new GenreDto(g)).ToList();
-        this.Actors = video.Actors.Select(a => new ActorDto(a)).ToList();
+        this.Genres = video.Genres
+          .OrderBy(g => g.Name)
+          .Select(g => new GenreDto(g))
+          .ToList();
+        this.Actors = video.Actors
+          .OrderBy(a => a.Name)
+          .Select(a => new ActorDto(a))
+          .ToList();
       }
     }
   }
