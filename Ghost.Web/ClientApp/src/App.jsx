@@ -8,6 +8,8 @@ import { AddLibrary } from './components/AddLibrary.jsx';
 import { Media } from './components/Media.jsx'
 import { Genre } from './components/Genre.jsx'
 import { GenresView } from './components/GenresView.jsx'
+import { Actor } from './components/Actor.jsx'
+import { Actors } from './components/Actors.jsx'
 
 import './styles.scss'
 
@@ -22,8 +24,10 @@ export const App = () => {
           <Route path='/libraries' element={<Libraries />} />
           <Route path='/libraries/add' element={<AddLibrary />} />
           <Route path='/media/:id' element={<Media />} />
-          <Route path='/genre' element={<GenresView />} />
-          <Route path='/genre/:name' element={<Genre />} />
+          <Route path='/genres' element={<GenresView />} />
+          <Route path='/genres/:name' element={<Genre />} />
+          <Route path='/actors/:id/:name' element={<Actor />} />
+          <Route path='/actors' element={<Actors />} />
         </Routes>
       </Layout>
     </BrowserRouter>

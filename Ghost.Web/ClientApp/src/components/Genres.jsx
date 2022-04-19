@@ -34,7 +34,7 @@ export const Genres = ({ genres, videoId, updateGenres }) => {
           key={index}
           label={genre}
           component={Link}
-          to={`/genre/${encodeURIComponent(genre.toLowerCase())}`}
+          to={`/genres/${encodeURIComponent(genre.toLowerCase())}`}
           clickable
         />)}
         {!editing && genres.length === 0 && <Chip variant="outlined" label="None"></Chip>}

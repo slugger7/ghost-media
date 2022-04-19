@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
