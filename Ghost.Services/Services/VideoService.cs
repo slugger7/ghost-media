@@ -132,5 +132,32 @@ namespace Ghost.Services
         return new VideoDto(video);
       }
     }
+
+    public PageResultDto<VideoDto> GetVideosForGenre(string genre, int page, int limit)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var genreDto = genreService.GetGenreByName(genre);
+        var genreId = new ObjectId(genreDto._id);
+
+        var videos = col.Query()
+          .Where(v => v.Genres.Select(g => g._id).Any(id => id.Equals(genreId)));
+
+        var count = videos.Count();
+
+        return new PageResultDto<VideoDto>
+        {
+          Total = count,
+          Page = page,
+          Content = videos.Limit(limit)
+            .Skip(limit * page)
+            .ToEnumerable()
+            .Select(v => new VideoDto(v))
+            .ToList()
+        };
+      }
+    }
   }
 }

@@ -89,5 +89,11 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
+
+    [HttpGet("genre/{genre}")]
+    public ActionResult<PageResultDto<VideoDto>> GetVideosForGenre(string genre, int page = 0, int limit = 12)
+    {
+      return videoService.GetVideosForGenre(genre, page, limit);
+    }
   }
 }

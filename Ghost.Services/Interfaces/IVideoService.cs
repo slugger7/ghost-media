@@ -9,5 +9,6 @@ namespace Ghost.Services.Interfaces
     string GenerateThumbnail(string id);
     VideoMetaDataDto? GetVideoMetaData(string id);
     VideoDto AddGenresByNameToVideo(string id, List<string> genres);
+    PageResultDto<VideoDto> GetVideosForGenre(string genre, int page, int limit);
   }
 }
