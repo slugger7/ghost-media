@@ -10,7 +10,7 @@ const fetchVideos = async (page, limit) => (await axios.get(`media?page=${page -
 
 export const Home = () => {
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(0)
+  const [limit, setLimit] = useState(1)
   const videosPage = useAsync(fetchVideos, [page, limit])
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams()
@@ -22,15 +22,15 @@ export const Home = () => {
   }, [videosPage])
 
   useEffect(() => {
-    setLimit(searchParams.get("limit") || 48)
-    setPage(searchParams.get("page") || 1)
+    setLimit(parseInt(searchParams.get("limit")) || 48)
+    setPage(parseInt(searchParams.get("page")) || 1)
   }, [searchParams])
 
   const paginationComponent = <Pagination
     color="primary"
     page={page}
     defaultPage={1}
-    count={Math.ceil(total / limit)}
+    count={Math.ceil(total / limit) || 1}
     showFirstButton showLastButton
     onChange={(e, newPage) => setSearchParams({ page: newPage, limit })}
   />
