@@ -4,6 +4,7 @@ namespace Ghost.Services.Interfaces
 {
   public interface IGenreService
   {
-    GenreDto GetGenreByName(string name);
+    GenreViewDto GetGenreByName(string name);
+    PageResultDto<GenreDto> GetGenres(int page, int limit);
   }
 }

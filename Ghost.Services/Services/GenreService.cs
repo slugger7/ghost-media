@@ -18,7 +18,7 @@ namespace Ghost.Services
       return col;
     }
 
-    internal static Genre UpsertGenreByNameEntity(LiteDatabase db, string name)
+    internal static Genre UpsertGenreByNameEntity(LiteDatabase db, string name, Video video)
     {
       var col = GenreService.GetCollection(db);
 
@@ -29,25 +29,58 @@ namespace Ghost.Services
         genre = new Genre
         {
           Name = name
+          // Videos = new List<Video> { video }
         };
 
         col.Insert(genre);
       }
+      // else
+      // {
+      //   genre.Videos.Add(video);
+
+      //   col.Update(genre);
+      // }
 
       return genre;
     }
 
-    public GenreDto GetGenreByName(string name)
+    public GenreViewDto GetGenreByName(string name)
     {
       using (var db = new LiteDatabase(connectionString))
       {
         var col = GetCollection(db);
 
-        var genre = col.FindOne(g => g.Name.ToUpper().Equals(name.ToUpper()));
+        var genre = col
+          // .Include(g => g.Videos)
+          .FindOne(g => g.Name.ToUpper().Equals(name.ToUpper()));
 
         if (genre == null) throw new NullReferenceException("Genre not found");
 
-        return new GenreDto(genre);
+        return new GenreViewDto(genre);
+      }
+    }
+
+    public PageResultDto<GenreDto> GetGenres(int page, int limit)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var total = col.Count();
+
+        var genres = col.Query()
+          .Limit(limit)
+          .Skip(limit * page)
+          .ToEnumerable()
+          .Select(g => new GenreDto(g))
+          .ToList();
+
+        return new PageResultDto<GenreDto>
+        {
+          Total = total,
+          Page = page,
+          Content = genres
+        };
       }
     }
   }

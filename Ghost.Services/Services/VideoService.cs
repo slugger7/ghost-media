@@ -68,7 +68,9 @@ namespace Ghost.Services
     private Video GetVideoEntityById(LiteDatabase db, ObjectId id)
     {
       var col = GetCollection(db);
-      return col.FindById(id);
+      return col
+        .Include(v => v.Genres)
+        .FindById(id);
     }
 
     internal static void DeleteRange(IEnumerable<ObjectId?> ids)
@@ -121,11 +123,11 @@ namespace Ghost.Services
       {
         var video = GetVideoEntityById(db, new ObjectId(id));
         if (video == null) throw new NullReferenceException("Video not found");
-        var genreEntity = GenreService.UpsertGenreByNameEntity(db, genre);
+        var genreEntity = GenreService.UpsertGenreByNameEntity(db, genre, video);
+        if (genre == null) throw new NullReferenceException("Genre was not upserted");
         video.Genres.Add(genreEntity);
 
         var col = GetCollection(db);
-
         col.Update(video);
 
         return new VideoDto(video);

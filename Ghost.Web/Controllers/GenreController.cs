@@ -16,7 +16,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{name}")]
-    public ActionResult<GenreDto> GetGenreByName(string name)
+    public ActionResult<GenreViewDto> GetGenreByName(string name)
     {
       try
       {
@@ -25,6 +25,19 @@ namespace Ghost.Api.Controllers
       catch (NullReferenceException)
       {
         return NotFound();
+      }
+    }
+
+    [HttpGet]
+    public ActionResult<PageResultDto<GenreDto>> GetGenres(int page = 0, int limit = 12)
+    {
+      if (page >= 0 && limit > 0)
+      {
+        return genreService.GetGenres(page, limit);
+      }
+      else
+      {
+        return BadRequest();
       }
     }
   }
