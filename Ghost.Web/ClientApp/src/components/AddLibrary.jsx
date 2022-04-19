@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 import {
   Box,
   TextField,
@@ -8,7 +8,8 @@ import {
   Button,
   ListItem,
   Paper,
-  Container
+  Container,
+  Divider
 } from '@mui/material'
 import AddIcon from "@mui/icons-material/Add"
 import { remove, append } from 'ramda'
@@ -53,9 +54,9 @@ export const AddLibrary = () => {
   >
     <AddPathModal open={addingPath} addPath={addPath} onClose={() => setAddingPath(false)} />
 
-    <Paper sx={{ p: 2 }}>
-      <Typography variant='h3' gutterBottom component='h3'>Add library</Typography>
-      <TextField label="Name" variant="outlined" value={libraryName} onChange={e => setLibraryName(e.target.value)} />
+    <Typography variant='h3' gutterBottom component='h3'>Add library</Typography>
+    <TextField sx={{ mb: 1 }} label="Name" variant="outlined" value={libraryName} onChange={e => setLibraryName(e.target.value)} />
+    <Paper sx={{ p: 1, mb: 1 }}>
       <Typography variant='h4' component='h4'>Paths <IconButton
         onClick={() => setAddingPath(true)}>
         <AddIcon />
@@ -63,12 +64,14 @@ export const AddLibrary = () => {
       </Typography>
       <List dense={true} sx={{ mb: 1 }}>
         {chosenPaths?.length === 0 && <ListItem>No folders</ListItem>}
-        {chosenPaths?.map((chosenFolder, index) => <PathListItem
-          key={index} path={chosenFolder} onRemove={removePathAtIndex(index)}
-        />)}
+        {chosenPaths?.map((chosenFolder, index) => <Fragment key={index}><PathListItem
+          path={chosenFolder} onRemove={removePathAtIndex(index)}
+        />
+          {index + 1 !== chosenPaths.length && <Divider sx={{ m: 1 }} />}
+        </Fragment>)}
       </List>
-      <Button variant='contained' type='submit'>Create Library</Button>
     </Paper>
+    <Button variant='contained' type='submit'>Create Library</Button>
   </Box>
   </Container>)
 }
