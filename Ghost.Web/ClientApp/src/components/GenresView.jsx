@@ -15,7 +15,7 @@ export const GenresView = () => {
         variant="outlined"
         color="primary"
         component={Link}
-        to={`/genre/${encodeURIComponent(genre.name)}`}
+        to={`/genres/${encodeURIComponent(genre.name)}`}
         clickable />)}
     </Stack>
   </>
