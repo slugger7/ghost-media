@@ -108,5 +108,11 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
+
+    [HttpGet("actor/{id}")]
+    public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(string id, int page = 0, int limit = 12)
+    {
+      return videoService.GetVideosForActor(id, page, limit);
+    }
   }
 }

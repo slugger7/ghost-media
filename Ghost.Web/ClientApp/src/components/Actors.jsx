@@ -15,7 +15,7 @@ export const Actors = () => {
         variant="outlined"
         color="primary"
         component={Link}
-        to={`/actors/${encodeURIComponent(actor.name.toLowerCase())}`}
+        to={`/actors/${actor._id}/${encodeURIComponent(actor.name.toLowerCase())}`}
         clickable
       />)}
     </Stack>

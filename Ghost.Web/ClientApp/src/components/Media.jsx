@@ -38,7 +38,7 @@ export const Media = () => {
         }}
       />
       <VideoActors
-        actors={media.result.actors.map(prop('name'))}
+        actors={media.result.actors}
         videoId={params.id}
         updateActors={async (actors) => {
           const video = await updateActors(params.id, actors)

@@ -11,5 +11,6 @@ namespace Ghost.Services.Interfaces
     VideoDto AddGenresByNameToVideo(string id, List<string> genres);
     PageResultDto<VideoDto> GetVideosForGenre(string genre, int page, int limit);
     VideoDto AddActorsByNameToVideo(string id, List<string> actors);
+    PageResultDto<VideoDto> GetVideosForActor(string id, int page, int limit);
   }
 }

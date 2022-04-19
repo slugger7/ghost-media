@@ -13,10 +13,12 @@ namespace Ghost.Services
     private static string collectionName = "videos";
 
     private readonly IGenreService genreService;
+    private readonly IActorService actorService;
 
-    public VideoService(IGenreService genreService)
+    public VideoService(IGenreService genreService, IActorService actorService)
     {
       this.genreService = genreService;
+      this.actorService = actorService;
     }
 
     internal static ILiteCollection<Video> GetCollection(LiteDatabase db)
@@ -181,6 +183,34 @@ namespace Ghost.Services
         col.Update(video);
 
         return new VideoDto(video);
+      }
+    }
+
+    public PageResultDto<VideoDto> GetVideosForActor(string id, int page, int limit)
+    {
+      using (var db = new LiteDatabase(connectionString))
+      {
+        var col = GetCollection(db);
+
+        var actorId = new ObjectId(id);
+
+        var videos = col.Query()
+          .Where(v => v.Actors.Select(a => a._id).Any(id => id.Equals(actorId)));
+
+        var count = videos.Count();
+
+        return new PageResultDto<VideoDto>
+        {
+          Total = count,
+          Page = page,
+          Content = videos
+            .OrderBy(v => v.Title)
+            .Limit(limit)
+            .Skip(limit * page)
+            .ToEnumerable()
+            .Select(v => new VideoDto(v))
+            .ToList()
+        };
       }
     }
   }

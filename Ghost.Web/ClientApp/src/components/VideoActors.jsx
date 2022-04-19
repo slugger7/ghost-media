@@ -32,9 +32,9 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
           variant="outlined"
           color="primary"
           key={index}
-          label={actor}
+          label={actor.name}
           component={Link}
-          to={`/actors/${encodeURIComponent(actor.toLowerCase())}`}
+          to={`/actors/${actor._id}/${encodeURIComponent(actor.name.toLowerCase())}`}
           clickable
         />)}
         {!editing && actors.length === 0 && <Chip variant="outlined" label="None"></Chip>}
@@ -69,7 +69,10 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
 }
 
 VideoActors.propTypes = {
-  actors: PropTypes.arrayOf(PropTypes.string).isRequired,
+  actors: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
+  })).isRequired,
   videoId: PropTypes.string.isRequired,
   updateActors: PropTypes.func.isRequired
 }

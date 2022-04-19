@@ -1,12 +1,12 @@
-import { Pagination, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-async-hook';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { VideoGrid } from './VideoGrid.jsx';
 
-const fetchGenre = async (name) => (await axios.get(`/genre/${name}`)).data;
-const fetchVideos = async (genre, page, limit) => (await axios.get(`/media/genre/${genre}?page=${page - 1}&limit=${limit}`)).data
+const fetchGenre = async (name) => (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
+const fetchVideos = async (genre, page, limit) => (await axios.get(`/media/genre/${encodeURIComponent(genre)}?page=${page - 1}&limit=${limit}`)).data
 
 export const Genre = () => {
   const params = useParams()
