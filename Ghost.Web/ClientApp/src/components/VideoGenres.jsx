@@ -10,7 +10,7 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import { fetchGenres } from '../services/genre.service'
 
-export const Genres = ({ genres, videoId, updateGenres }) => {
+export const VideoGenres = ({ genres, videoId, updateGenres }) => {
   const [editing, setEditing] = useState(false);
   const allGenres = useAsync(fetchGenres, []);
   const [selectedGenres, setSelectedGenres] = useState([...genres]);
@@ -68,7 +68,7 @@ export const Genres = ({ genres, videoId, updateGenres }) => {
   </Paper>
 }
 
-Genres.propTypes = {
+VideoGenres.propTypes = {
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   videoId: PropTypes.string.isRequired,
   updateGenres: PropTypes.func.isRequired
