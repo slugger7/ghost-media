@@ -1,11 +1,12 @@
 import React from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
 import { IconButton, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 
 import { Video } from './Video.jsx'
+import { Genres } from './Genres.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 
@@ -25,7 +26,7 @@ export const Media = () => {
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/media/${params.id}/thumbnail`}
       />
-      {media.result.genres.map(genre => <Link key={genre._id} to={`/genre/${encodeURIComponent(genre.name)}`}>{genre.name}</Link>)}
+      <Genres genres={media.result.genres} />
     </>}
   </>
 }
