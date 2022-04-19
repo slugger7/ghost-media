@@ -1,21 +1,33 @@
 import { Grid, Pagination, Typography } from '@mui/material';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-async-hook';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { VideoCard } from './VideoCard.jsx';
 import { VideoCardSkeleton } from './VideoCardSkeleton.jsx';
 
 const fetchGenre = async (name) => (await axios.get(`/genre/${name}`)).data;
-const fetchVideos = async (genre) => (await axios.get(`/media/genre/${genre}`)).data
+const fetchVideos = async (genre, page, limit) => (await axios.get(`/media/genre/${genre}`)).data
 
 export const Genre = () => {
   const params = useParams()
   const genreResult = useAsync(fetchGenre, [params.name])
-  const videosPage = useAsync(fetchVideos, [params.name])
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(1)
   const [total, setTotal] = useState(0)
+  const videosPage = useAsync(fetchVideos, [params.name, page, limit])
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  useEffect(() => {
+    if (!videosPage.loading && !videosPage.error) {
+      setTotal(videosPage.result.total)
+    }
+  }, [videosPage])
+
+  useEffect(() => {
+    setLimit(parseInt(searchParams.get("limit")) || 48)
+    setPage(parseInt(searchParams.get("page")) || 1)
+  }, [searchParams])
 
   const paginationComponent = <Pagination
     color="primary"
