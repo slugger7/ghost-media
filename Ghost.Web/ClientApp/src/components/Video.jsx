@@ -6,7 +6,7 @@ export const Video = ({ source, type, poster }) => {
 
   useEffect(() => videoRef.current?.load(), [source])
 
-  return (<video controls ref={videoRef} poster={poster}>
+  return (<video className="ghost-video" controls ref={videoRef} poster={poster}>
     <source src={source} type={type} />
   </video>)
 }

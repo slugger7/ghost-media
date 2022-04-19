@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar, IconButton, ListItem, ListItemAvatar, ListItemText, Paper } from "@mui/material"
+import { Avatar, IconButton, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
 import FolderIcon from "@mui/icons-material/Folder"
 import DeleteIcon from "@mui/icons-material/Delete"
 import PropTypes from 'prop-types'

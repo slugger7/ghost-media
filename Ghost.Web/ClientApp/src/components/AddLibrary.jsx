@@ -7,7 +7,8 @@ import {
   IconButton,
   Button,
   ListItem,
-  Paper
+  Paper,
+  Container
 } from '@mui/material'
 import AddIcon from "@mui/icons-material/Add"
 import { remove, append } from 'ramda'
@@ -46,26 +47,28 @@ export const AddLibrary = () => {
     }
   }
 
-  return (<Box
+  return (<Container><Box
     component="form"
     onSubmit={handleSubmit}
   >
     <AddPathModal open={addingPath} addPath={addPath} onClose={() => setAddingPath(false)} />
-    <Typography variant='h3' gutterBottom component='h3'>Add library</Typography>
-    <TextField label="Name" variant="outlined" value={libraryName} onChange={e => setLibraryName(e.target.value)} />
-    <Typography variant='h4' component='h4'>Paths <IconButton
-      onClick={() => setAddingPath(true)}>
-      <AddIcon />
-    </IconButton>
-    </Typography>
-    <Paper elevation={2}>
-      <List dense={true}>
+
+    <Paper sx={{ p: 2 }}>
+      <Typography variant='h3' gutterBottom component='h3'>Add library</Typography>
+      <TextField label="Name" variant="outlined" value={libraryName} onChange={e => setLibraryName(e.target.value)} />
+      <Typography variant='h4' component='h4'>Paths <IconButton
+        onClick={() => setAddingPath(true)}>
+        <AddIcon />
+      </IconButton>
+      </Typography>
+      <List dense={true} sx={{ mb: 1 }}>
         {chosenPaths?.length === 0 && <ListItem>No folders</ListItem>}
         {chosenPaths?.map((chosenFolder, index) => <PathListItem
           key={index} path={chosenFolder} onRemove={removePathAtIndex(index)}
         />)}
       </List>
+      <Button variant='contained' type='submit'>Create Library</Button>
     </Paper>
-    <Button variant='contained' type='submit'>Create Library</Button>
-  </Box>)
+  </Box>
+  </Container>)
 }
