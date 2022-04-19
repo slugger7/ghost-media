@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 const fetchVideos = async (page, limit) => (await axios.get(`media?page=${page - 1}&limit=${limit}`)).data
 
 export const Home = () => {
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(0)
   const videosPage = useAsync(fetchVideos, [page, limit])
   const [total, setTotal] = useState(0);
