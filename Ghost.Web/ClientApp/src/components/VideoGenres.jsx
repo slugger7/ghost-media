@@ -25,7 +25,7 @@ export const VideoGenres = ({ genres, videoId, updateGenres }) => {
   }
 
   return <Paper sx={{ p: 2 }}>
-    <Typography variant="h5" component="h5">Genres {!editing && <IconButton onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
+    <Typography variant="h5" component="h5">Genres {!editing && <IconButton color="primary" onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
       <Stack direction="row" spacing={1}>
         {!editing && genres.map((genre, index) => <Chip
