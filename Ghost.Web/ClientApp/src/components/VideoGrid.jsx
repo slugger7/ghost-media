@@ -13,7 +13,7 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange }) => {
     defaultPage={1}
     count={count}
     showFirstButton showLastButton
-    onChange={(e, newPage) => setSearchParams({ page: newPage, limit })}
+    onChange={onPageChange}
   />
 
   return <>
