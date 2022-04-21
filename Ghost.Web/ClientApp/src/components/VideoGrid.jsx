@@ -7,14 +7,16 @@ import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 
 export const VideoGrid = ({ videosPage, page, count, onPageChange }) => {
 
-  const paginationComponent = <Pagination
-    color="primary"
-    page={page}
-    defaultPage={1}
-    count={count}
-    showFirstButton showLastButton
-    onChange={onPageChange}
-  />
+  const paginationComponent = <>
+    {count > 1 && <Pagination
+      color="primary"
+      page={page}
+      defaultPage={1}
+      count={count}
+      showFirstButton showLastButton
+      onChange={onPageChange}
+    />}
+  </>
 
   return <>
     {paginationComponent}
