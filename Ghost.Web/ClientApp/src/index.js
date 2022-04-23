@@ -4,12 +4,22 @@ import { App } from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import reportWebVitals from './reportWebVitals'
 import axios from 'axios'
+import { head } from 'ramda'
 
 const container = document.getElementById('root')
 const root = createRoot(container)
-axios.defaults.baseURL = 'https://localhost:7110/api'
 
-root.render(<App />)
+const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href')
+const hostUrl = [
+  window.location.protocol,
+  '//',
+  head(window.location.host.split(':')),
+  ':7110',
+  '/api',
+].join('')
+axios.defaults.baseURL = hostUrl
+
+root.render(<App baseUrl={baseUrl} />)
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

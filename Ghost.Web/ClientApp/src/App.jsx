@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import { Layout } from './components/Layout.jsx';
 import { Home } from './components/Home.jsx';
@@ -13,9 +14,7 @@ import { Actors } from './components/Actors.jsx'
 
 import './styles.scss'
 
-const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
-
-export const App = () => {
+export const App = ({ baseUrl }) => {
   return (
     <BrowserRouter basename={baseUrl}>
       <Layout>
@@ -32,4 +31,8 @@ export const App = () => {
       </Layout>
     </BrowserRouter>
   );
+}
+
+App.propTypes = {
+  baseUrl: PropTypes.string.isRequired
 }
