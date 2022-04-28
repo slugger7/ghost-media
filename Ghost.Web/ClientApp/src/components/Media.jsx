@@ -19,7 +19,7 @@ export const Media = () => {
   const params = useParams()
   const media = useAsync(fetchMedia, [params.id])
 
-  return <Container>
+  return <>
     {media.loading && <span>...loading</span>}
     {!media.loading && <>
       <Video
@@ -27,25 +27,27 @@ export const Media = () => {
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/media/${params.id}/thumbnail`}
       />
+      <Container>
 
-      <VideoTitle video={media.result} updateTitle={async (title) => {
-        const video = await updateTitle(params.id, title)
-        media.set(mergeDeepRight(media, { result: video }))
-      }} />
-      <VideoGenres genres={media.result.genres.map(prop('name'))} videoId={params.id}
-        updateGenres={async (genres) => {
-          const video = await updateGenres(params.id, genres)
+        <VideoTitle video={media.result} updateTitle={async (title) => {
+          const video = await updateTitle(params.id, title)
           media.set(mergeDeepRight(media, { result: video }))
-        }}
-      />
-      <VideoActors
-        actors={media.result.actors}
-        videoId={params.id}
-        updateActors={async (actors) => {
-          const video = await updateActors(params.id, actors)
-          media.set(mergeDeepRight(media, { result: video }))
-        }}
-      />
+        }} />
+        <VideoGenres genres={media.result.genres.map(prop('name'))} videoId={params.id}
+          updateGenres={async (genres) => {
+            const video = await updateGenres(params.id, genres)
+            media.set(mergeDeepRight(media, { result: video }))
+          }}
+        />
+        <VideoActors
+          actors={media.result.actors}
+          videoId={params.id}
+          updateActors={async (actors) => {
+            const video = await updateActors(params.id, actors)
+            media.set(mergeDeepRight(media, { result: video }))
+          }}
+        />
+      </Container>
     </>}
-  </Container>
+  </>
 }
