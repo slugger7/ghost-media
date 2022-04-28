@@ -25,7 +25,9 @@ export const VideoCard = ({ id, title }) => {
     </CardActionArea>
     <CardHeader
       className="ghost-video-card-header"
-      title={<Tooltip title={title}><Typography variant="h6" component="h6" noWrap={true}>{title}</Typography></Tooltip>}
+      title={<Tooltip title={title}><Typography variant="h6" noWrap={true}>
+        <Link to={`/media/${id}`}>{title}</Link>
+      </Typography></Tooltip>}
       disableTypography={true}
       action={<IconButton
         onClick={handleMenuClick}
