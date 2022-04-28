@@ -11,7 +11,7 @@ export const Genres = () => {
     {!genresResult.loading && genresResult.result.map(genre => <Chip
       sx={{ m: 0.5 }}
       key={genre._id}
-      label={genre.name}
+      label={`${genre.name} ${genre.videoCount}`}
       variant="outlined"
       color="primary"
       component={Link}

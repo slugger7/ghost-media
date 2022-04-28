@@ -11,7 +11,7 @@ export const Actors = () => {
     {!actorsResult.loading && actorsResult.result.map(actor => <Chip
       sx={{ m: 0.5 }}
       key={actor._id}
-      label={actor.name}
+      label={`${actor.name} ${actor.videoCount}`}
       variant="outlined"
       color="primary"
       component={Link}

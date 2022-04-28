@@ -4,13 +4,15 @@ namespace Ghost.Dtos
 {
   public class GenreDto
   {
-    public string? _id { get; set; }
-    public string? Name { get; set; }
+    public string _id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public int VideoCount { get; set; }
 
     public GenreDto(Genre genre)
     {
       this._id = genre.Id.ToString();
       this.Name = genre.Name;
+      this.VideoCount = genre.VideoGenres.Count();
     }
   }
 }

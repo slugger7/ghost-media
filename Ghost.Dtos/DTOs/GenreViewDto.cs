@@ -6,12 +6,13 @@ namespace Ghost.Dtos
   {
     public int _id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public List<VideoDto> Videos { get; set; } = new List<VideoDto>();
+    public int VideoCount { get; set; }
 
     public GenreViewDto(Genre genre)
     {
       this._id = genre.Id;
       this.Name = genre.Name;
+      this.VideoCount = genre.VideoGenres.Count;
     }
   }
 }

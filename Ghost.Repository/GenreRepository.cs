@@ -25,7 +25,7 @@ namespace Ghost.Repository
 
     public IEnumerable<Genre> GetGenres()
     {
-      return context.Genres.OrderBy(g => g.Name);
+      return context.Genres.Include("VideoGenres").OrderBy(g => g.Name);
     }
 
     public IEnumerable<Genre> Search(string search, int limit = 10)
