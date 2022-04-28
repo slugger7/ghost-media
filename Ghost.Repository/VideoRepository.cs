@@ -99,15 +99,16 @@ namespace Ghost.Repository
 
     public PageResult<Video> SearchVideos(int page = 0, int limit = 10, string search = "")
     {
-      return new PageResult<Video>
-      {
-        Total = context.Videos.Count(),
-        Page = page,
-        Content = context.Videos
+      var videos = context.Videos
           .Include("VideoActors.Actor")
           .Include("VideoGenres.Genre")
           .Where(v => v.Title.ToUpper().Contains(search.Trim().ToUpper()))
-          .OrderBy(v => v.Title)
+          .OrderBy(v => v.Title);
+      return new PageResult<Video>
+      {
+        Total = videos.Count(),
+        Page = page,
+        Content = videos
           .Skip(limit * page)
           .Take(limit)
       };
