@@ -120,5 +120,12 @@ namespace Ghost.Services
         Content = videosPage.Content.Select(v => new VideoDto(v)).ToList()
       };
     }
+
+    public async Task<VideoDto> UpdateTitle(int id, string title)
+    {
+      var video = await videoRepository.UpdateTitle(id, title);
+
+      return new VideoDto(video);
+    }
   }
 }

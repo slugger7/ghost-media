@@ -136,5 +136,17 @@ namespace Ghost.Repository
 
       await context.SaveChangesAsync();
     }
+
+    public async Task<Video> UpdateTitle(int id, string title)
+    {
+      var video = this.FindById(id);
+      if (video == null) throw new NullReferenceException("Video not fonud");
+
+      video.Title = title;
+
+      await context.SaveChangesAsync();
+
+      return video;
+    }
   }
 }

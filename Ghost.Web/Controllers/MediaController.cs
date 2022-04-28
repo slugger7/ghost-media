@@ -22,6 +22,19 @@ namespace Ghost.Api.Controllers
       return videoService.SearchVideos(pageRequest);
     }
 
+    [HttpPut("{id}/title")]
+    public async Task<ActionResult<VideoDto>> UpdateTitle(int id, [FromBody] TitleUpdateDto titleUpdate)
+    {
+      try
+      {
+        return await videoService.UpdateTitle(id, titleUpdate.Title);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
+
     [HttpGet("{id}/info")]
     public ActionResult<VideoDto> GetVideoInfo(int id)
     {
