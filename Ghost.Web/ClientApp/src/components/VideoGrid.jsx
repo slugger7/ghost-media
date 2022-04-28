@@ -21,8 +21,8 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
   return <>
     <Container sx={{ p: 1 }}>
       <Stack direction="row" spacing={1}>
-        {paginationComponent}
         <Search search={search} setSearch={setSearch} />
+        {paginationComponent}
       </Stack>
     </Container>
     <Grid container spacing={2}>

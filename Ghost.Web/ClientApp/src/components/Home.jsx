@@ -13,7 +13,7 @@ const fetchVideos = async (page, limit, search) => {
   if (limit) {
     params.push(`limit=${limit}`)
   }
-  if (search.length > 0) {
+  if (search) {
     params.push(`search=${encodeURIComponent(search)}`)
   }
   const videosResult = await axios.get(`media?${params.join('&')}`)
@@ -36,16 +36,19 @@ export const Home = () => {
   }, [videosPage])
 
   useEffect(() => {
-    setLimit(parseInt(searchParams.get("limit")) || 48)
-    setPage(parseInt(searchParams.get("page")) || 1)
-    setSearch(decodeURIComponent(searchParams.get("search") || ''))
+    setLimit(parseInt(searchParams.get("limit")) || limit || 48)
+    setPage(parseInt(searchParams.get("page")) || page || 1)
+    setSearch(decodeURIComponent(searchParams.get("search") || search || ''))
   }, [searchParams])
 
-  const handleSearchChange = (searchValue) => setSearchParams({
-    search: encodeURIComponent(searchValue),
-    page: 0,
-    limit: limit || 48
-  })
+  const handleSearchChange = (searchValue) => {
+    setSearchParams({
+      search: encodeURIComponent(searchValue),
+      page: 0,
+      limit: limit || 48
+    })
+    setSearch(searchValue);
+  }
 
   return (<>
     <VideoGrid
