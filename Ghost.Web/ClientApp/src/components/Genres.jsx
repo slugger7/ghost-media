@@ -1,4 +1,4 @@
-import { Chip, Stack } from '@mui/material'
+import { Chip } from '@mui/material'
 import React from 'react'
 import { useAsync } from 'react-async-hook'
 import { fetchGenres } from '../services/genre.service'

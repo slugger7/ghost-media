@@ -13,7 +13,7 @@ import { fetchGenres } from '../services/genre.service'
 export const VideoGenres = ({ genres, videoId, updateGenres }) => {
   const [editing, setEditing] = useState(false);
   const allGenres = useAsync(fetchGenres, []);
-  const [selectedGenres, setSelectedGenres] = useState([...genres]);
+  const [selectedGenres, setSelectedGenres] = useState([...genres.map(prop("name"))]);
   const [submitting, setSubmitting] = useState(false)
 
   const handleCancel = () => { setEditing(false) }
@@ -28,13 +28,13 @@ export const VideoGenres = ({ genres, videoId, updateGenres }) => {
     <Typography variant="h5" component="h5">Genres {!editing && <IconButton color="primary" onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
       <Stack direction="row" spacing={1}>
-        {!editing && genres.map((genre, index) => <Chip
+        {!editing && genres.map(({ name, videoCount }, index) => <Chip
           variant="outlined"
           color="primary"
           key={index}
-          label={genre}
+          label={`${name} ${videoCount}`}
           component={Link}
-          to={`/genres/${encodeURIComponent(genre.toLowerCase())}`}
+          to={`/genres/${encodeURIComponent(name.toLowerCase())}`}
           clickable
         />)}
         {!editing && genres.length === 0 && <Chip variant="outlined" label="None"></Chip>}
@@ -45,7 +45,7 @@ export const VideoGenres = ({ genres, videoId, updateGenres }) => {
           freeSolo
           onChange={(e, newGenres) => setSelectedGenres(newGenres)}
           options={allGenres?.result?.map(prop('name')) || []}
-          defaultValue={genres}
+          defaultValue={selectedGenres}
           loading={allGenres.loading}
           renderInput={(params) => <TextField
             {...params}
@@ -69,7 +69,10 @@ export const VideoGenres = ({ genres, videoId, updateGenres }) => {
 }
 
 VideoGenres.propTypes = {
-  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+  genres: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    videoCount: PropTypes.number.isRequired
+  })).isRequired,
   videoId: PropTypes.string.isRequired,
   updateGenres: PropTypes.func.isRequired
 }

@@ -28,13 +28,13 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
     <Typography variant="h5" component="h5">Actors {!editing && <IconButton color="primary" onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
       <Stack direction="row" spacing={1}>
-        {!editing && actors.map((actor, index) => <Chip
+        {!editing && actors.map(({ name, videoCount, _id }, index) => <Chip
           variant="outlined"
           color="primary"
           key={index}
-          label={actor.name}
+          label={`${name} ${videoCount}`}
           component={Link}
-          to={`/actors/${actor._id}/${encodeURIComponent(actor.name.toLowerCase())}`}
+          to={`/actors/${_id}/${encodeURIComponent(name.toLowerCase())}`}
           clickable
         />)}
         {!editing && actors.length === 0 && <Chip variant="outlined" label="None"></Chip>}

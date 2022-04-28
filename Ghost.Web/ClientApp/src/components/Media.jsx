@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
 import { Container } from '@mui/material'
-import { mergeDeepRight, prop } from 'ramda'
+import { mergeDeepRight } from 'ramda'
 
 import { Video } from './Video.jsx'
 import { VideoGenres } from './VideoGenres.jsx'
@@ -33,7 +33,7 @@ export const Media = () => {
           const video = await updateTitle(params.id, title)
           media.set(mergeDeepRight(media, { result: video }))
         }} />
-        <VideoGenres genres={media.result.genres.map(prop('name'))} videoId={params.id}
+        <VideoGenres genres={media.result.genres} videoId={params.id}
           updateGenres={async (genres) => {
             const video = await updateGenres(params.id, genres)
             media.set(mergeDeepRight(media, { result: video }))
