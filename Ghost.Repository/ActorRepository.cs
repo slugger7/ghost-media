@@ -27,7 +27,7 @@ namespace Ghost.Repository
 
     public IEnumerable<Actor> GetActors()
     {
-      return context.Actors;
+      return context.Actors.OrderBy(a => a.Name);
     }
 
     public Actor UpsertActor(string name)
