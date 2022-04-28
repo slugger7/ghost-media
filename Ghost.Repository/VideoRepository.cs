@@ -40,8 +40,8 @@ namespace Ghost.Repository
     public Video? FindById(int id)
     {
       return context.Videos
-        .Include("VideoGenres.Genre")
-        .Include("VideoActors.Actor")
+        .Include("VideoGenres.Genre.VideoGenres")
+        .Include("VideoActors.Actor.VideoActors")
         .FirstOrDefault(v => v.Id == id);
     }
     public PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10, string search = "")
