@@ -8,6 +8,7 @@ namespace Ghost.Repository
     private readonly GhostContext context;
     private readonly IActorRepository actorRepository;
     private readonly IGenreRepository genreRepository;
+    private Func<String, Func<Video, bool>> videoSearch = search => v => v.Title.ToUpper().Contains(search.Trim().ToUpper());
 
     public VideoRepository(
       GhostContext context,
@@ -43,40 +44,41 @@ namespace Ghost.Repository
         .Include("VideoActors.Actor")
         .FirstOrDefault(v => v.Id == id);
     }
-
-    public PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10)
+    public PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10, string search = "")
     {
       var genre = genreRepository.GetByName(name);
 
       if (genre == null) throw new NullReferenceException("Genre not found");
-
+      var videos = genre.VideoGenres
+          .OrderBy(vg => vg.Video.Title)
+          .Select(vg => vg.Video)
+          .Where(videoSearch(search));
       return new PageResult<Video>
       {
-        Total = genre.VideoGenres.Count(),
+        Total = videos.Count(),
         Page = page,
-        Content = genre.VideoGenres
-          .OrderBy(vg => vg.Video.Title)
+        Content = videos
           .Skip(limit * page)
           .Take(limit)
-          .Select(va => va.Video)
       };
     }
 
-    public PageResult<Video> GetForActor(int actorId, int page = 0, int limit = 10)
+    public PageResult<Video> GetForActor(int actorId, int page = 0, int limit = 10, string search = "")
     {
       var actor = actorRepository.FindById(actorId);
 
       if (actor == null) throw new NullReferenceException("Actor not found");
-
+      var videos = actor.VideoActors
+          .OrderBy(va => va.Video.Title)
+          .Select(va => va.Video)
+          .Where(videoSearch(search));
       return new PageResult<Video>
       {
-        Total = actor.VideoActors.Count(),
+        Total = videos.Count(),
         Page = page,
-        Content = actor.VideoActors
-          .OrderBy(va => va.Video.Title)
+        Content = videos
           .Skip(limit * page)
           .Take(limit)
-          .Select(va => va.Video)
       };
     }
 
@@ -102,7 +104,7 @@ namespace Ghost.Repository
       var videos = context.Videos
           .Include("VideoActors.Actor")
           .Include("VideoGenres.Genre")
-          .Where(v => v.Title.ToUpper().Contains(search.Trim().ToUpper()))
+          .Where(videoSearch(search))
           .OrderBy(v => v.Title);
       return new PageResult<Video>
       {

@@ -84,9 +84,9 @@ namespace Ghost.Services
       return new VideoDto(videoEntity);
     }
 
-    public PageResultDto<VideoDto> GetVideosForGenre(string name, int page, int limit)
+    public PageResultDto<VideoDto> GetVideosForGenre(string name, PageRequestDto pageRequest)
     {
-      var videosPage = videoRepository.GetForGenre(name, page, limit);
+      var videosPage = videoRepository.GetForGenre(name, pageRequest.Page, pageRequest.Limit, pageRequest.Search);
       return new PageResultDto<VideoDto>
       {
         Total = videosPage.Total,
@@ -110,9 +110,9 @@ namespace Ghost.Services
       return new VideoDto(videoEntity);
     }
 
-    public PageResultDto<VideoDto> GetVideosForActor(int actorId, int page, int limit)
+    public PageResultDto<VideoDto> GetVideosForActor(int actorId, PageRequestDto pageRequest)
     {
-      var videosPage = videoRepository.GetForActor(actorId, page, limit);
+      var videosPage = videoRepository.GetForActor(actorId, pageRequest.Page, pageRequest.Limit, pageRequest.Search);
       return new PageResultDto<VideoDto>
       {
         Total = videosPage.Total,
