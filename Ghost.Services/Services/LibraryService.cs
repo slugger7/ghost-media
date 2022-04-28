@@ -85,7 +85,7 @@ namespace Ghost.Services
             {
               Path = v,
               FileName = fileName,
-              Title = initialTitle
+              Title = initialTitle.Trim()
             };
           })
           .ToList();

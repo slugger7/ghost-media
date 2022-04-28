@@ -4,7 +4,7 @@ namespace Ghost.Services
 {
   public interface IVideoService
   {
-    PageResultDto<VideoDto> GetVideos(int page = 0, int limit = 12);
+    PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest);
     VideoDto GetVideoById(int id);
     string GenerateThumbnail(int id);
     VideoMetaDataDto? GetVideoMetaData(int id);

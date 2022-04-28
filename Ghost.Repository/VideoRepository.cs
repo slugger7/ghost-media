@@ -97,7 +97,7 @@ namespace Ghost.Repository
       return video;
     }
 
-    public PageResult<Video> GetVideos(int page = 0, int limit = 10)
+    public PageResult<Video> SearchVideos(int page = 0, int limit = 10, string search = "")
     {
       return new PageResult<Video>
       {
@@ -106,6 +106,7 @@ namespace Ghost.Repository
         Content = context.Videos
           .Include("VideoActors.Actor")
           .Include("VideoGenres.Genre")
+          .Where(v => v.Title.ToUpper().Contains(search.Trim().ToUpper()))
           .OrderBy(v => v.Title)
           .Skip(limit * page)
           .Take(limit)

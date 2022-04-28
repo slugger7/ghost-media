@@ -26,9 +26,9 @@ namespace Ghost.Services
       this.actorRepository = actorRepository;
     }
 
-    public PageResultDto<VideoDto> GetVideos(int page = 0, int limit = 10)
+    public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest)
     {
-      var videosPage = videoRepository.GetVideos(page, limit);
+      var videosPage = videoRepository.SearchVideos(pageRequest.Page, pageRequest.Limit, pageRequest.Search);
       return new PageResultDto<VideoDto>
       {
         Total = videosPage.Total,

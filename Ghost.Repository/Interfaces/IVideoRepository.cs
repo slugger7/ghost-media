@@ -4,7 +4,7 @@ namespace Ghost.Repository
 {
   public interface IVideoRepository
   {
-    PageResult<Video> GetVideos(int page = 0, int limit = 10);
+    PageResult<Video> SearchVideos(int page = 0, int limit = 10, string search = "");
     PageResult<Video> GetForActor(int actorId, int page = 0, int limit = 10);
     PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10);
     Video? FindById(int id);
