@@ -106,10 +106,31 @@ namespace Ghost.Repository
         Content = context.Videos
           .Include("VideoActors.Actor")
           .Include("VideoGenres.Genre")
-          .OrderBy(v => v.Id)
+          .OrderBy(v => v.Title)
           .Skip(limit * page)
           .Take(limit)
       };
+    }
+
+    public async Task Delete(int id)
+    {
+      var video = context.Videos
+        .Include("VideoActors")
+        .Include("VideoGenres")
+        .FirstOrDefault(v => v.Id == id);
+      if (video == null) throw new NullReferenceException();
+
+      foreach (var videoGenre in video.VideoGenres)
+      {
+        context.VideoGenres.Remove(videoGenre);
+      }
+
+      foreach (var videoActor in video.VideoActors)
+      {
+        context.VideoActors.Remove(videoActor);
+      }
+
+      await context.SaveChangesAsync();
     }
   }
 }

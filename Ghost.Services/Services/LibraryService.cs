@@ -101,9 +101,9 @@ namespace Ghost.Services
       return new LibraryDto(library);
     }
 
-    public void Delete(int id)
+    public async Task Delete(int id)
     {
-      throw new NotImplementedException();
+      await libraryRepository.Delete(id);
     }
   }
 }
