@@ -1,119 +1,66 @@
-using LiteDB;
-using Ghost.Services.Interfaces;
-using Ghost.Data.Entities;
 using Ghost.Dtos;
 using Ghost.Media;
+using Ghost.Repository;
 
 namespace Ghost.Services
 {
   public class VideoService : IVideoService
   {
-    private static string connectionString = $"..{Path.DirectorySeparatorChar}Ghost.Data{Path.DirectorySeparatorChar}Ghost.db";
-
-    private static string collectionName = "videos";
-
     private readonly IGenreService genreService;
     private readonly IActorService actorService;
+    private readonly IGenreRepository genreRepository;
+    private readonly IVideoRepository videoRepository;
+    private readonly IActorRepository actorRepository;
 
-    public VideoService(IGenreService genreService, IActorService actorService)
+    public VideoService(
+      IGenreService genreService,
+      IActorService actorService,
+      IGenreRepository genreRepository,
+      IVideoRepository videoRepository,
+      IActorRepository actorRepository)
     {
       this.genreService = genreService;
       this.actorService = actorService;
+      this.genreRepository = genreRepository;
+      this.videoRepository = videoRepository;
+      this.actorRepository = actorRepository;
     }
 
-    internal static ILiteCollection<Video> GetCollection(LiteDatabase db)
+    public PageResultDto<VideoDto> GetVideos(int page = 0, int limit = 10)
     {
-      var col = db.GetCollection<Video>(collectionName);
-      col.EnsureIndex(v => v.Path);
-
-      return col;
-    }
-
-    public PageResultDto<VideoDto> GetVideos(int page, int limit)
-    {
-      using (var db = new LiteDatabase(connectionString))
+      var videosPage = videoRepository.GetVideos(page, limit);
+      return new PageResultDto<VideoDto>
       {
-        var col = VideoService.GetCollection(db);
-
-        var total = col.Count();
-
-        var videos = col
-          .Include(v => v.Genres)
-          .Include(v => v.Actors)
-          .Query()
-          .OrderBy(v => v.Title)
-          .Limit(limit)
-          .Skip(limit * page)
-          .ToEnumerable()
-          .Select(v => new VideoDto(v))
-          .ToList();
-
-        db.Dispose();
-
-        return new PageResultDto<VideoDto>
-        {
-          Total = total,
-          Page = page,
-          Content = videos
-        };
-      }
+        Total = videosPage.Total,
+        Page = videosPage.Page,
+        Content = videosPage.Content.Select(v => new VideoDto(v)).ToList()
+      };
     }
 
-    public VideoDto GetVideoById(string id)
+    public VideoDto GetVideoById(int id)
     {
-      var _id = new ObjectId(id);
+      var video = videoRepository.FindById(id);
+      if (video == null) throw new NullReferenceException("Video not found");
 
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var video = GetVideoEntityById(db, new ObjectId(id));
-
-        return new VideoDto(video);
-      }
+      return new VideoDto(video);
     }
 
-    private Video GetVideoEntityById(LiteDatabase db, ObjectId id)
+    public string GenerateThumbnail(int id)
     {
-      var col = GetCollection(db);
-      return col
-        .Include(v => v.Genres)
-        .Include(v => v.Actors)
-        .FindById(id);
+      var video = videoRepository.FindById(id);
+
+      if (video == null) throw new NullReferenceException("Video not found");
+      if (video.Path == null) throw new NullReferenceException("Path was null");
+
+      var basePath = video.Path
+        .Substring(0, video.Path.LastIndexOf(Path.DirectorySeparatorChar)) + Path.DirectorySeparatorChar + video.Title + ".png";
+
+      ImageFns.GenerateImage(video.Path, basePath);
+
+      return basePath;
     }
 
-    internal static void DeleteRange(IEnumerable<ObjectId?> ids)
-    {
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var col = GetCollection(db);
-
-        foreach (var id in ids)
-        {
-          col.Delete(id);
-        }
-      }
-    }
-
-    public string GenerateThumbnail(string id)
-    {
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var col = GetCollection(db);
-
-        var video = col.FindById(new ObjectId(id));
-
-        if (video == null) throw new NullReferenceException("Video not found");
-        if (video.Path == null) throw new NullReferenceException("Path was null");
-
-        var basePath = video.Path
-          .Substring(0, video.Path.LastIndexOf(Path.DirectorySeparatorChar)) + Path.DirectorySeparatorChar + video.Title + ".png";
-
-        ImageFns.GenerateImage(video.Path, basePath);
-
-        return basePath;
-      }
-    }
-
-    public VideoMetaDataDto? GetVideoMetaData(string id)
+    public VideoMetaDataDto? GetVideoMetaData(int id)
     {
       var video = GetVideoById(id);
 
@@ -123,95 +70,55 @@ namespace Ghost.Services
       return VideoFns.GetVideoInformation(video.Path);
     }
 
-    public VideoDto AddGenresByNameToVideo(string id, List<string> genres)
+    public VideoDto AddGenresByNameToVideo(int id, List<string> genres)
     {
-      if (genres == null) throw new NullReferenceException("No genres");
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var video = GetVideoEntityById(db, new ObjectId(id));
-        if (video == null) throw new NullReferenceException("Video not found");
-        var genreEntities = genres.Select(g => GenreService.UpsertGenreByNameEntity(db, g, video));
-        video.Genres = genreEntities.ToList();
+      if (genres == null) throw new NullReferenceException("Genres not provided");
+      var videoEntity = videoRepository.FindById(id);
 
-        var col = GetCollection(db);
-        col.Update(video);
+      if (videoEntity == null) throw new NullReferenceException("Video not found");
+      var genreEntities = genres.Select(g => genreRepository.Upsert(g));
 
-        return new VideoDto(video);
-      }
+      var newGenres = genreEntities.Where(g => !videoEntity.VideoGenres.Any(vg => vg.Genre.Id == g.Id));
+
+      videoEntity = videoRepository.AddGenres(videoEntity.Id, newGenres);
+      return new VideoDto(videoEntity);
     }
 
-    public PageResultDto<VideoDto> GetVideosForGenre(string genre, int page, int limit)
+    public PageResultDto<VideoDto> GetVideosForGenre(string name, int page, int limit)
     {
-      using (var db = new LiteDatabase(connectionString))
+      var videosPage = videoRepository.GetForGenre(name, page, limit);
+      return new PageResultDto<VideoDto>
       {
-        var col = GetCollection(db);
-
-        var genreDto = genreService.GetGenreByName(genre);
-        var genreId = new ObjectId(genreDto._id);
-
-        var videos = col.Query()
-          .Where(v => v.Genres.Select(g => g._id).Any(id => id.Equals(genreId)));
-
-        var count = videos.Count();
-
-        return new PageResultDto<VideoDto>
-        {
-          Total = count,
-          Page = page,
-          Content = videos
-            .OrderBy(v => v.Title)
-            .Limit(limit)
-            .Skip(limit * page)
-            .ToEnumerable()
-            .Select(v => new VideoDto(v))
-            .ToList()
-        };
-      }
+        Total = videosPage.Total,
+        Page = videosPage.Page,
+        Content = videosPage.Content.Select(v => new VideoDto(v)).ToList()
+      };
     }
 
-    public VideoDto AddActorsByNameToVideo(string id, List<string> actors)
+    public VideoDto AddActorsByNameToVideo(int id, List<string> actors)
     {
-      if (actors == null) throw new NullReferenceException("Actors not found");
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var video = GetVideoEntityById(db, new ObjectId(id));
-        if (video == null) throw new NullReferenceException("Video not found");
-        var actorEntities = actors.Select(a => ActorService.UpsertActorByNameEntity(db, a, video));
-        video.Actors = actorEntities.ToList();
+      if (actors == null) throw new NullReferenceException("Actors not provided");
+      var videoEntity = videoRepository.FindById(id);
 
-        var col = GetCollection(db);
-        col.Update(video);
+      if (videoEntity == null) throw new NullReferenceException("Video not found");
+      var actorEntities = actors.Select(a => actorRepository.UpsertActor(a));
 
-        return new VideoDto(video);
-      }
+      var newActors = actorEntities.Where(a => !videoEntity.VideoActors.Any(va => va.Actor.Id == a.Id));
+
+      videoEntity = videoRepository.AddActors(videoEntity.Id, newActors);
+
+      return new VideoDto(videoEntity);
     }
 
-    public PageResultDto<VideoDto> GetVideosForActor(string id, int page, int limit)
+    public PageResultDto<VideoDto> GetVideosForActor(int actorId, int page, int limit)
     {
-      using (var db = new LiteDatabase(connectionString))
+      var videosPage = videoRepository.GetForActor(actorId, page, limit);
+      return new PageResultDto<VideoDto>
       {
-        var col = GetCollection(db);
-
-        var actorId = new ObjectId(id);
-
-        var videos = col.Query()
-          .Where(v => v.Actors.Select(a => a._id).Any(id => id.Equals(actorId)));
-
-        var count = videos.Count();
-
-        return new PageResultDto<VideoDto>
-        {
-          Total = count,
-          Page = page,
-          Content = videos
-            .OrderBy(v => v.Title)
-            .Limit(limit)
-            .Skip(limit * page)
-            .ToEnumerable()
-            .Select(v => new VideoDto(v))
-            .ToList()
-        };
-      }
+        Total = videosPage.Total,
+        Page = videosPage.Page,
+        Content = videosPage.Content.Select(v => new VideoDto(v)).ToList()
+      };
     }
   }
 }

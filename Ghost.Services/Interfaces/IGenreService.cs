@@ -1,11 +1,11 @@
 using Ghost.Dtos;
 
-namespace Ghost.Services.Interfaces
+namespace Ghost.Services
 {
   public interface IGenreService
   {
     GenreViewDto GetGenreByName(string name);
     List<GenreDto> GetGenres();
-    List<GenreDto> SearchTopGenres(int limit, string search);
+    List<GenreDto> SearchTopGenres(string search, int limit = 10);
   }
 }

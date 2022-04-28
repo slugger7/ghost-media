@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghost.Data", "Ghost.Data\Gh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghost.Media", "Ghost.Media\Ghost.Media.csproj", "{A86ED888-BDA8-40D2-99F9-1ADAD021FF87}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghost.Repository", "Ghost.Repository\Ghost.Repository.csproj", "{8A1A91F8-A1F1-452F-8448-233C23A12622}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{A86ED888-BDA8-40D2-99F9-1ADAD021FF87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A86ED888-BDA8-40D2-99F9-1ADAD021FF87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A86ED888-BDA8-40D2-99F9-1ADAD021FF87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A1A91F8-A1F1-452F-8448-233C23A12622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A1A91F8-A1F1-452F-8448-233C23A12622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A1A91F8-A1F1-452F-8448-233C23A12622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A1A91F8-A1F1-452F-8448-233C23A12622}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

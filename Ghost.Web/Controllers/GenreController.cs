@@ -1,5 +1,5 @@
 using Ghost.Dtos;
-using Ghost.Services.Interfaces;
+using Ghost.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ghost.Api.Controllers
@@ -37,7 +37,7 @@ namespace Ghost.Api.Controllers
     [HttpGet("top")]
     public ActionResult<List<GenreDto>> GetTopGenres(int limit = 5, string search = "")
     {
-      return genreService.SearchTopGenres(limit, search);
+      return genreService.SearchTopGenres(search, limit);
     }
   }
 }

@@ -1,4 +1,4 @@
-using Ghost.Data.Entities;
+using Ghost.Data;
 
 namespace Ghost.Dtos
 {
@@ -9,7 +9,7 @@ namespace Ghost.Dtos
 
     public ActorDto(Actor actor)
     {
-      this._id = actor._id.ToString();
+      this._id = actor.Id.ToString();
       this.Name = actor.Name;
     }
   }

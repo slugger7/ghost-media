@@ -1,4 +1,4 @@
-namespace Ghost.Services.Interfaces
+namespace Ghost.Services
 {
   public interface IDirectoryService
   {

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Ghost.Dtos;
-using Ghost.Services.Interfaces;
+using Ghost.Services;
 
 namespace Ghost.Api.Controllers
 {
@@ -30,7 +30,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{id}/info")]
-    public ActionResult<VideoDto> GetVideoInfo(string id)
+    public ActionResult<VideoDto> GetVideoInfo(int id)
     {
       var video = videoService.GetVideoById(id);
 
@@ -38,7 +38,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{id}/metadata")]
-    public ActionResult<VideoMetaDataDto> GetVideoMetaData(string id)
+    public ActionResult<VideoMetaDataDto> GetVideoMetaData(int id)
     {
       try
       {
@@ -53,7 +53,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{id}")]
-    public ActionResult GetVideo(string id)
+    public ActionResult GetVideo(int id)
     {
       var video = videoService.GetVideoById(id);
       if (video != null)
@@ -64,7 +64,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{id}/thumbnail")]
-    public IActionResult GetThumbnail(string id)
+    public IActionResult GetThumbnail(int id)
     {
       try
       {
@@ -78,7 +78,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpPut("{id}/genres")]
-    public ActionResult<VideoDto> AddGenresByNameToVideo(string id, [FromBody] GenreAddDto genreAddDto)
+    public ActionResult<VideoDto> AddGenresByNameToVideo(int id, [FromBody] GenreAddDto genreAddDto)
     {
       try
       {
@@ -97,7 +97,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpPut("{id}/actors")]
-    public ActionResult<VideoDto> AddActorsByNameToVideo(string id, [FromBody] ActorAddDto actorAddDto)
+    public ActionResult<VideoDto> AddActorsByNameToVideo(int id, [FromBody] ActorAddDto actorAddDto)
     {
       try
       {
@@ -110,9 +110,16 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("actor/{id}")]
-    public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(string id, int page = 0, int limit = 12)
+    public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(int id, int page = 0, int limit = 12)
     {
-      return videoService.GetVideosForActor(id, page, limit);
+      try
+      {
+        return videoService.GetVideosForActor(id, page, limit);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
     }
   }
 }

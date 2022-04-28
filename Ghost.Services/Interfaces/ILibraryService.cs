@@ -1,14 +1,14 @@
 using Ghost.Dtos;
 
-namespace Ghost.Services.Interfaces
+namespace Ghost.Services
 {
   public interface ILibraryService
   {
     LibraryDto Create(string libraryName);
-    LibraryDto AddDirectory(string id, AddPathsToLibraryDto pathsLibraryDto);
-    PageResultDto<LibraryDto> GetMany(int page, int limit);
-    LibraryDto GetDto(string id);
-    void Sync(string id);
-    void Delete(string id);
+    LibraryDto AddDirectories(int id, AddPathsToLibraryDto pathsLibraryDto);
+    PageResultDto<LibraryDto> GetLibraries(int page = 0, int limit = 10);
+    LibraryDto GetLibrary(int id);
+    void Sync(int id);
+    void Delete(int id);
   }
 }

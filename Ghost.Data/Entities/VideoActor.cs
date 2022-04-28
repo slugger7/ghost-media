@@ -1,7 +1,8 @@
-namespace Ghost.Data.Ents
+namespace Ghost.Data
 {
   public class VideoActor
   {
+    public int Id { get; set; }
     public virtual Video Video { get; set; }
     public virtual Actor Actor { get; set; }
   }

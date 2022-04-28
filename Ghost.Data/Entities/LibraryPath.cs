@@ -1,12 +1,10 @@
-using LiteDB;
-
-namespace Ghost.Data.Entities
+namespace Ghost.Data
 {
   public class LibraryPath
   {
-    public ObjectId? _id { get; set; }
-    public string? Path { get; set; }
-    [BsonRef("videos")]
-    public List<Video> Videos { get; set; } = new List<Video>();
+
+    public int Id { get; set; }
+    public string Path { get; set; }
+    public virtual List<Video> Videos { get; set; } = new List<Video>();
   }
 }

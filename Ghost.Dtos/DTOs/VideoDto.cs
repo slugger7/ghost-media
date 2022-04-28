@@ -1,4 +1,4 @@
-using Ghost.Data.Entities;
+using Ghost.Data;
 
 namespace Ghost.Dtos
 {
@@ -16,18 +16,18 @@ namespace Ghost.Dtos
     {
       if (video != null)
       {
-        this._id = video._id?.ToString();
+        this._id = video.Id.ToString();
         this.Path = video.Path;
         this.FileName = video.FileName;
         this.Title = video.Title;
         this.Type = "video/mp4";
-        this.Genres = video.Genres
-          .OrderBy(g => g.Name)
-          .Select(g => new GenreDto(g))
+        this.Genres = video.VideoGenres
+          .OrderBy(vg => vg.Genre.Name)
+          .Select(vg => new GenreDto(vg.Genre))
           .ToList();
-        this.Actors = video.Actors
-          .OrderBy(a => a.Name)
-          .Select(a => new ActorDto(a))
+        this.Actors = video.VideoActors
+          .OrderBy(va => va.Actor.Name)
+          .Select(va => new ActorDto(va.Actor))
           .ToList();
       }
     }

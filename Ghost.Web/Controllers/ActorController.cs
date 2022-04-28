@@ -1,5 +1,5 @@
 using Ghost.Dtos;
-using Ghost.Services.Interfaces;
+using Ghost.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ghost.Api.Controllers
@@ -16,11 +16,11 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{name}")]
-    public ActionResult<ActorDto> GetGenreByName(string name)
+    public ActionResult<ActorDto> GetActorByName(string name)
     {
       try
       {
-        return actorService.GetGenreByName(name);
+        return actorService.GetActorByName(name);
       }
       catch (NullReferenceException)
       {
@@ -29,7 +29,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet]
-    public ActionResult<List<ActorDto>> GetGenres()
+    public ActionResult<List<ActorDto>> GetActors()
     {
       return actorService.GetActors();
     }

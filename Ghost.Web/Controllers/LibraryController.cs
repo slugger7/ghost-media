@@ -1,5 +1,5 @@
 using Ghost.Dtos;
-using Ghost.Services.Interfaces;
+using Ghost.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ghost.Api.Controllers
@@ -19,21 +19,21 @@ namespace Ghost.Api.Controllers
     public ActionResult<LibraryDto> CreateLibrary([FromBody] CreateLibraryDto library)
     {
       if (library == null) return BadRequest();
-      return libraryService.Create(library.Name ?? "");
+      return libraryService.Create(library.Name);
     }
 
     [HttpGet]
     public ActionResult<PageResultDto<LibraryDto>> GetLibraries(int page = 0, int limit = 10)
     {
-      return libraryService.GetMany(page, limit);
+      return libraryService.GetLibraries(page, limit);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<LibraryDto> GetLibrary(string id)
+    public ActionResult<LibraryDto> GetLibrary(int id)
     {
       try
       {
-        return libraryService.GetDto(id);
+        return libraryService.GetLibrary(id);
       }
       catch (NullReferenceException)
       {
@@ -42,20 +42,21 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpPut("{id}/add-paths")]
-    public ActionResult<LibraryDto> AddFolderToLibrary(string id, [FromBody] AddPathsToLibraryDto pathsLibraryDto)
+    public ActionResult<LibraryDto> AddFoldersToLibrary(int id, [FromBody] AddPathsToLibraryDto pathsLibraryDto)
     {
       try
       {
-        return libraryService.AddDirectory(id, pathsLibraryDto);
+        return libraryService.AddDirectories(id, pathsLibraryDto);
       }
-      catch (NullReferenceException)
+      catch (NullReferenceException ex)
       {
-        return NotFound();
+        // return NotFound(ex.Message);
+        throw ex;
       }
     }
 
     [HttpGet("{id}/sync")]
-    public ActionResult SyncLibrary(string id)
+    public ActionResult SyncLibrary(int id)
     {
       try
       {
@@ -69,7 +70,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpDelete("{id}")]
-    public ActionResult DeleteLibrary(string id)
+    public ActionResult DeleteLibrary(int id)
     {
       try
       {

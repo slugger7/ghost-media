@@ -1,4 +1,4 @@
-using Ghost.Data.Entities;
+using Ghost.Data;
 
 namespace Ghost.Dtos
 {
@@ -9,9 +9,8 @@ namespace Ghost.Dtos
 
     public GenreDto(Genre genre)
     {
-      this._id = genre._id.ToString();
+      this._id = genre.Id.ToString();
       this.Name = genre.Name;
     }
-
   }
 }

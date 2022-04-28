@@ -1,10 +1,9 @@
-using LiteDB;
-
-namespace Ghost.Data.Entities
+namespace Ghost.Data
 {
   public class Actor
   {
-    public ObjectId _id { get; set; } = new ObjectId();
+    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    public virtual List<VideoActor> VideoActors { get; set; } = new List<VideoActor>();
   }
 }

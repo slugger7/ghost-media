@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ghost.Dtos\Ghost.Dtos.csproj" />
     <ProjectReference Include="..\Ghost.Media\Ghost.Media.csproj" />
+    <ProjectReference Include="..\Ghost.Repository\Ghost.Repository.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

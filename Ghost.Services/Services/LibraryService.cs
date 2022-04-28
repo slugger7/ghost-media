@@ -1,7 +1,6 @@
-using Ghost.Data.Entities;
+using Ghost.Data;
 using Ghost.Dtos;
-using Ghost.Services.Interfaces;
-using LiteDB;
+using Ghost.Repository;
 
 namespace Ghost.Services
 {
@@ -9,100 +8,59 @@ namespace Ghost.Services
   {
     private readonly IDirectoryService directoryService;
     private readonly IVideoService videoService;
-    private string connectionString = $"..{Path.DirectorySeparatorChar}Ghost.Data{Path.DirectorySeparatorChar}Ghost.db";
-    private static string collectionName = "libraries";
+    private readonly ILibraryRepository libraryRepository;
 
     public LibraryService(
       IDirectoryService directoryService,
-      IVideoService videoService
+      IVideoService videoService,
+      ILibraryRepository libraryRepository
     )
     {
       this.directoryService = directoryService;
       this.videoService = videoService;
+      this.libraryRepository = libraryRepository;
     }
 
-    internal static ILiteCollection<Library> GetCollection(LiteDatabase db)
-    {
-      var col = db.GetCollection<Library>(collectionName);
-      col.EnsureIndex(x => x.Name);
-
-      return col;
-    }
-
-    public LibraryDto AddDirectory(string id, AddPathsToLibraryDto pathsToLibraryDto)
+    public LibraryDto AddDirectories(int id, AddPathsToLibraryDto pathsToLibraryDto)
     {
       if (pathsToLibraryDto.Paths == null) throw new NullReferenceException("Paths were null");
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var col = GetCollection(db);
+      var newPaths = pathsToLibraryDto.Paths.Select(p => new LibraryPath { Path = p });
 
-        var library = col.FindById(new ObjectId(id));
-        if (library == null) throw new NullReferenceException("No library found");
+      var library = libraryRepository.AddPaths(id, newPaths);
 
-        var folderCollection = DirectoryService.GetCollection(db);
-
-        foreach (var path in pathsToLibraryDto.Paths)
-        {
-          var folder = new LibraryPath
-          {
-            Path = path
-          };
-
-          folderCollection.Insert(folder);
-          library.Paths.Add(folder);
-        }
-
-        col.Update(library);
-
-        return new LibraryDto(library);
-      }
+      return new LibraryDto(library);
     }
 
     public LibraryDto Create(string libraryName)
     {
-      using (var db = new LiteDatabase(connectionString))
+      var library = libraryRepository.Create(new Library
       {
-        var col = GetCollection(db);
+        Name = libraryName
+      });
 
-        var library = new Library
-        {
-          Name = libraryName
-        };
-        col.Insert(library);
-
-        return new LibraryDto(library);
-      }
+      return new LibraryDto(library);
     }
 
-    public PageResultDto<LibraryDto> GetMany(int page, int limit)
+    public PageResultDto<LibraryDto> GetLibraries(int page = 0, int limit = 10)
     {
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var col = GetCollection(db);
+      var libraryPage = libraryRepository.GetLibraries(page, limit);
 
-        var libraries = col.Include(l => l.Paths)
-          .Query()
-          .Limit(limit)
-          .Skip(limit * page)
-          .ToEnumerable()
-          .Select(l => new LibraryDto(l))
-          .ToList();
-        return new PageResultDto<LibraryDto>
-        {
-          Total = col.Count(),
-          Page = page,
-          Content = libraries
-        };
-      }
+      return new PageResultDto<LibraryDto>
+      {
+        Total = libraryPage.Total,
+        Page = libraryPage.Page,
+        Content = libraryPage.Content.Select(l => new LibraryDto(l)).ToList()
+      };
     }
 
-    public void Sync(string id)
+    public void Sync(int id)
     {
-      var library = this.Get(id);
-      var currentVideos = library.Videos.Select(v => v.Path);
+      var library = libraryRepository.FindById(id);
+      if (library == null) throw new NullReferenceException("Library not found");
 
       foreach (var path in library.Paths)
       {
+        var currentVideos = path.Videos;
         if (path.Path == null) continue;
 
         var directories = directoryService.GetDirectories(path.Path);
@@ -117,7 +75,7 @@ namespace Ghost.Services
         }
 
         var videoEntities = videos
-          .Where(f => !currentVideos.Any(cv => cv != null && cv.Equals(f)))
+          .Where(v => !currentVideos.Any(cv => cv.Path.Equals(v)))
           .Select(v =>
           {
             var videoSplit = v.Split(Path.DirectorySeparatorChar);
@@ -131,62 +89,21 @@ namespace Ghost.Services
             };
           })
           .ToList();
-
-
-        using (var db = new LiteDatabase(connectionString))
-        {
-          var col = GetCollection(db);
-          var videoCollection = VideoService.GetCollection(db);
-
-          videoCollection.InsertBulk(videoEntities);
-
-          library.Videos = videoEntities;
-
-          col.Update(library);
-        }
+        libraryRepository.AddVideosToPath(path.Id, videoEntities);
       }
     }
 
-    internal Library Get(string id)
+    public LibraryDto GetLibrary(int id)
     {
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var col = GetCollection(db);
+      var library = libraryRepository.FindById(id);
+      if (library == null) throw new NullReferenceException("Library not found");
 
-        var library = col
-          .Include(l => l.Paths)
-          .FindById(new ObjectId(id));
-
-        if (library == null) throw new NullReferenceException("Library not found");
-
-        return library;
-      }
+      return new LibraryDto(library);
     }
 
-    public LibraryDto GetDto(string id) => new LibraryDto(this.Get(id));
-
-    public void Delete(string id)
+    public void Delete(int id)
     {
-      Library library;
-      using (var db = new LiteDatabase(connectionString))
-      {
-        var col = GetCollection(db);
-
-        library = col
-          .Include(l => l.Videos)
-          .Include(l => l.Paths)
-          .FindById(new ObjectId(id));
-
-        if (library == null) throw new NullReferenceException("Library not found");
-
-        col.Delete(library._id);
-      }
-
-      if (library.Paths == null) throw new NullReferenceException("Paths for library was null");
-      if (library.Videos == null) throw new NullReferenceException("Videoas were null");
-
-      DirectoryService.DeleteRange(library.Paths.Select(p => p._id));
-      VideoService.DeleteRange(library.Videos.Select(v => v._id));
+      throw new NotImplementedException();
     }
   }
 }

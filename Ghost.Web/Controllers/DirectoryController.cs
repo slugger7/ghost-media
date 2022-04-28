@@ -1,5 +1,5 @@
 using Ghost.Dtos;
-using Ghost.Services.Interfaces;
+using Ghost.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ghost.Api.Controllers

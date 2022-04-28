@@ -1,10 +1,9 @@
-using LiteDB;
-
-namespace Ghost.Data.Entities
+namespace Ghost.Data
 {
   public class Genre
   {
-    public ObjectId _id { get; set; } = new ObjectId();
-    public string Name { get; set; } = "";
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public List<VideoGenre> VideoGenres { get; set; } = new List<VideoGenre>();
   }
 }

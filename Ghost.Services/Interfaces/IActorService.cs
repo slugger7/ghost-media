@@ -1,10 +1,10 @@
 using Ghost.Dtos;
 
-namespace Ghost.Services.Interfaces
+namespace Ghost.Services
 {
   public interface IActorService
   {
     List<ActorDto> GetActors();
-    ActorDto GetGenreByName(string name);
+    ActorDto GetActorByName(string name);
   }
 }
