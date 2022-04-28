@@ -1,5 +1,6 @@
 using Ghost.Data;
 using Ghost.Dtos;
+using Ghost.Media;
 using Ghost.Repository;
 
 namespace Ghost.Services
@@ -81,12 +82,13 @@ namespace Ghost.Services
             var videoSplit = v.Split(Path.DirectorySeparatorChar);
             var fileName = videoSplit[videoSplit.Length - 1];
             var initialTitle = fileName.Substring(0, fileName.LastIndexOf('.'));
-            return new Video
+            var video = new Video
             {
               Path = v,
               FileName = fileName,
               Title = initialTitle.Trim()
             };
+            return video;
           })
           .ToList();
         libraryRepository.AddVideosToPath(path.Id, videoEntities);

@@ -13,5 +13,6 @@ namespace Ghost.Services
     VideoDto AddActorsByNameToVideo(int id, List<string> actors);
     PageResultDto<VideoDto> GetVideosForActor(int actorId, PageRequestDto pageRequest);
     Task<VideoDto> UpdateTitle(int id, string title);
+    Task<VideoDto> SyncWithNFO(int id);
   }
 }

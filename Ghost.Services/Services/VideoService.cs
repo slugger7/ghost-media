@@ -127,5 +127,24 @@ namespace Ghost.Services
 
       return new VideoDto(video);
     }
+
+    public async Task<VideoDto> SyncWithNFO(int id)
+    {
+      var video = videoRepository.FindById(id);
+      if (video == null) throw new NullReferenceException("Video not found");
+
+      var vdieoNfo = NfoFns.Hydrate(video);
+      if (vdieoNfo != null)
+      {
+        this.AddActorsByNameToVideo(id, vdieoNfo.actors.Select(a => a.name).ToList());
+        this.AddGenresByNameToVideo(id, vdieoNfo.genres);
+        await this.UpdateTitle(id, vdieoNfo.title);
+        video = videoRepository.FindById(id);
+        if (video == null) throw new NullReferenceException("Video not found");
+      }
+
+
+      return new VideoDto(video);
+    }
   }
 }

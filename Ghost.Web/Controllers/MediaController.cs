@@ -127,5 +127,11 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
+
+    [HttpPut("{id}/nfo")]
+    public async Task<ActionResult<VideoDto>> UpdateFromNFO(int id)
+    {
+      return await videoService.SyncWithNFO(id);
+    }
   }
 }
