@@ -8,16 +8,15 @@ export const Actors = () => {
   const actorsResult = useAsync(fetchActors, [])
 
   return <>
-    <Stack direction="row" spacing={1}>
-      {!actorsResult.loading && actorsResult.result.map(actor => <Chip
-        key={actor._id}
-        label={actor.name}
-        variant="outlined"
-        color="primary"
-        component={Link}
-        to={`/actors/${actor._id}/${encodeURIComponent(actor.name.toLowerCase())}`}
-        clickable
-      />)}
-    </Stack>
+    {!actorsResult.loading && actorsResult.result.map(actor => <Chip
+      sx={{ m: 0.5 }}
+      key={actor._id}
+      label={actor.name}
+      variant="outlined"
+      color="primary"
+      component={Link}
+      to={`/actors/${actor._id}/${encodeURIComponent(actor.name.toLowerCase())}`}
+      clickable
+    />)}
   </>
 }

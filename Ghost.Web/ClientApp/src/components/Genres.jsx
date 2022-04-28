@@ -8,15 +8,14 @@ export const Genres = () => {
   const genresResult = useAsync(fetchGenres, [])
 
   return <>
-    <Stack direction="row" spacing={1}>
-      {!genresResult.loading && genresResult.result.map(genre => <Chip
-        key={genre._id}
-        label={genre.name}
-        variant="outlined"
-        color="primary"
-        component={Link}
-        to={`/genres/${encodeURIComponent(genre.name)}`}
-        clickable />)}
-    </Stack>
+    {!genresResult.loading && genresResult.result.map(genre => <Chip
+      sx={{ m: 0.5 }}
+      key={genre._id}
+      label={genre.name}
+      variant="outlined"
+      color="primary"
+      component={Link}
+      to={`/genres/${encodeURIComponent(genre.name)}`}
+      clickable />)}
   </>
 }
