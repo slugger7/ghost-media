@@ -14,7 +14,7 @@ const fetchVideos = async (page, limit, search) => {
     params.push(`limit=${limit}`)
   }
   if (search.length > 0) {
-    params.push(`search=${search}`)
+    params.push(`search=${encodeURIComponent(search)}`)
   }
   const videosResult = await axios.get(`media?${params.join('&')}`)
 
@@ -41,15 +41,20 @@ export const Home = () => {
     setSearch(decodeURIComponent(searchParams.get("search") || ''))
   }, [searchParams])
 
+  const handleSearchChange = (searchValue) => setSearchParams({
+    search: encodeURIComponent(searchValue),
+    page: 0,
+    limit: limit || 48
+  })
 
   return (<>
     <VideoGrid
       videosPage={videosPage}
-      onPageChange={(e, newPage) => setSearchParams({ page: newPage, limit })}
+      onPageChange={(e, newPage) => setSearchParams({ page: newPage, limit, search })}
       page={page}
       count={Math.ceil(total / limit) || 1}
       search={search}
-      setSearch={(searchValue) => setSearchParams({ search: encodeURIComponent(searchValue), page: 0, limit: limit || 48 })}
+      setSearch={handleSearchChange}
     />
   </>)
 }
