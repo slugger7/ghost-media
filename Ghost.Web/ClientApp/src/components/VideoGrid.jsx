@@ -1,14 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Grid, Pagination } from '@mui/material'
+import { Container, Grid, Pagination, Stack } from '@mui/material'
 
 import { VideoCard } from './VideoCard.jsx'
 import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
+import { Search } from './Search';
 
-export const VideoGrid = ({ videosPage, page, count, onPageChange }) => {
-
+export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, search }) => {
   const paginationComponent = <>
-    {count > 1 && <Pagination
+    {count > 1 && page && <Pagination
       color="primary"
       page={page}
       defaultPage={1}
@@ -19,7 +19,12 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange }) => {
   </>
 
   return <>
-    {paginationComponent}
+    <Container sx={{ p: 1 }}>
+      <Stack direction="row" spacing={1}>
+        {paginationComponent}
+        <Search search={search} setSearch={setSearch} />
+      </Stack>
+    </Container>
     <Grid container spacing={2}>
       {videosPage.loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
       {!videosPage.loading && videosPage.result?.content?.length === 0 && <span>nothing here</span>}
@@ -28,7 +33,9 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange }) => {
         <VideoCard id={video._id} title={video.title} />
       </Grid>)}
     </Grid>
-    {paginationComponent}
+    <Container sx={{ p: 1 }}>
+      {paginationComponent}
+    </Container>
   </>
 }
 
@@ -38,7 +45,9 @@ VideoGrid.propTypes = {
     error: PropTypes.object,
     result: PropTypes.object
   }),
-  page: PropTypes.number.isRequired,
+  page: PropTypes.number,
   count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired
+  onPageChange: PropTypes.func.isRequired,
+  search: PropTypes.string.isRequired,
+  setSearch: PropTypes.func.isRequired
 }
