@@ -2,17 +2,18 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
-import { Container, IconButton, Typography } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit';
+import { Container } from '@mui/material'
 import { mergeDeepRight, prop } from 'ramda'
 
 import { Video } from './Video.jsx'
 import { VideoGenres } from './VideoGenres.jsx'
 import { VideoActors } from './VideoActors.jsx'
+import { VideoTitle } from './VideoTitle.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const updateGenres = async (id, genres) => (await axios.put(`/media/${id}/genres`, genres)).data
 const updateActors = async (id, actors) => (await axios.put(`/media/${id}/actors`, actors)).data
+const updateTitle = async (id, title) => (await axios.put(`/media/${id}/title`, { title })).data
 
 export const Media = () => {
   const params = useParams()
@@ -21,16 +22,16 @@ export const Media = () => {
   return <Container>
     {media.loading && <span>...loading</span>}
     {!media.loading && <>
-      <Typography variant="h3" gutterBottom component="h3">{media.result.title} <IconButton>
-        <EditIcon />
-      </IconButton>
-      </Typography>
-
       <Video
         source={`${axios.defaults.baseURL}/media/${params.id}`}
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/media/${params.id}/thumbnail`}
       />
+
+      <VideoTitle video={media.result} updateTitle={async (title) => {
+        const video = await updateTitle(params.id, title)
+        media.set(mergeDeepRight(media, { result: video }))
+      }} />
       <VideoGenres genres={media.result.genres.map(prop('name'))} videoId={params.id}
         updateGenres={async (genres) => {
           const video = await updateGenres(params.id, genres)

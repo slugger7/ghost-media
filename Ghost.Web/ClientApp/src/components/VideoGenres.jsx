@@ -19,7 +19,7 @@ export const VideoGenres = ({ genres, videoId, updateGenres }) => {
   const handleCancel = () => { setEditing(false) }
   const handleSubmit = async () => {
     setSubmitting(true)
-    updateGenres({ genres: selectedGenres });
+    await updateGenres({ genres: selectedGenres });
     setSubmitting(false)
     setEditing(false)
   }
