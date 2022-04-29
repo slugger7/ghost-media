@@ -10,5 +10,6 @@ namespace Ghost.Data
     public virtual LibraryPath LibraryPath { get; set; }
     public virtual List<VideoGenre> VideoGenres { get; set; } = new List<VideoGenre>();
     public virtual List<VideoActor> VideoActors { get; set; } = new List<VideoActor>();
+    public virtual List<VideoImage> VideoImages { get; set; } = new List<VideoImage>();
   }
 }

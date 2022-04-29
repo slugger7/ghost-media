@@ -8,6 +8,7 @@ namespace Ghost.Data
     public DbSet<Library> Libraries { get; set; }
     public DbSet<LibraryPath> LibraryPaths { get; set; }
     public DbSet<Video> Videos { get; set; }
+    public DbSet<Image> Images { get; set; }
     public DbSet<VideoGenre> VideoGenres { get; set; }
     public DbSet<VideoActor> VideoActors { get; set; }
     public DbSet<Genre> Genres { get; set; }
@@ -15,7 +16,7 @@ namespace Ghost.Data
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      optionsBuilder.UseSqlite("Data Source=Ghost.db;");
+      optionsBuilder.UseSqlite($"Data Source=..{Path.DirectorySeparatorChar}Ghost.Web{Path.DirectorySeparatorChar}Ghost.db;");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -23,6 +24,7 @@ namespace Ghost.Data
       modelBuilder.Entity<Library>().ToTable("Libraries");
       modelBuilder.Entity<LibraryPath>().ToTable("LibraryPaths");
       modelBuilder.Entity<Video>().ToTable("Videos");
+      modelBuilder.Entity<Image>().ToTable("Images");
       var videoGenre = modelBuilder.Entity<VideoGenre>().ToTable("VideoGenres");
       videoGenre
         .HasOne<Video>(x => x.Video)
@@ -37,6 +39,13 @@ namespace Ghost.Data
       videoActor
         .HasOne<Actor>(x => x.Actor)
         .WithMany(x => x.VideoActors);
+      var videoImage = modelBuilder.Entity<VideoImage>().ToTable("VideoImages");
+      videoImage
+        .HasOne<Video>(x => x.Video)
+        .WithMany(x => x.VideoImages);
+      videoImage
+        .HasOne<Image>(x => x.Image)
+        .WithMany(x => x.VideoImages);
       modelBuilder.Entity<Genre>().ToTable("Genres");
       modelBuilder.Entity<Actor>().ToTable("Actors");
     }
