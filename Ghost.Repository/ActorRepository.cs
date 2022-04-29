@@ -27,7 +27,7 @@ namespace Ghost.Repository
 
     public IEnumerable<Actor> GetActors()
     {
-      return context.Actors.Include("VideoActors").OrderBy(a => a.Name);
+      return context.Actors.Include("VideoActors").OrderByDescending(a => a.VideoActors.Count());
     }
 
     public Actor UpsertActor(string name)
