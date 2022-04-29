@@ -6,6 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import axios from 'axios';
 
 export const LibraryCard = ({ library, refresh }) => {
@@ -19,14 +20,19 @@ export const LibraryCard = ({ library, refresh }) => {
     setAnchorEl(null)
   }
 
-  const sync = async () => {
-    await axios.get(`/library/${library._id}/sync`)
+  const sync = () => {
+    axios.put(`/library/${library._id}/sync`)
     handleMenuClose()
   }
 
-  const deleteLibrary = async () => {
-    await axios.delete(`/library/${library._id}`)
+  const deleteLibrary = () => {
+    axios.delete(`/library/${library._id}`)
     refresh()
+    handleMenuClose();
+  }
+
+  const syncNfo = () => {
+    axios.put(`/library/${library._id}/sync-nfo`);
     handleMenuClose();
   }
 
@@ -63,6 +69,10 @@ export const LibraryCard = ({ library, refresh }) => {
       <MenuItem onClick={sync}>
         <ListItemIcon><SyncIcon fontSize="small" /></ListItemIcon>
         <ListItemText>Sync</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={syncNfo}>
+        <ListItemIcon><SyncAltIcon fontSize="small" /></ListItemIcon>
+        <ListItemText>Sync all NFOs</ListItemText>
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>
         <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>

@@ -10,5 +10,6 @@ namespace Ghost.Services
     LibraryDto GetLibrary(int id);
     void Sync(int id);
     Task Delete(int id);
+    Task SyncNfos(int id);
   }
 }

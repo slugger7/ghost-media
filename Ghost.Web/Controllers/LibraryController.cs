@@ -55,12 +55,26 @@ namespace Ghost.Api.Controllers
       }
     }
 
-    [HttpGet("{id}/sync")]
+    [HttpPut("{id}/sync")]
     public ActionResult SyncLibrary(int id)
     {
       try
       {
         libraryService.Sync(id);
+        return Ok();
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
+
+    [HttpPut("{id}/sync-nfo")]
+    public ActionResult SyncNfos(int id)
+    {
+      try
+      {
+        libraryService.SyncNfos(id);
         return Ok();
       }
       catch (NullReferenceException)

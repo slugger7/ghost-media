@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField } from '@mui/material'
+import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, Box } from '@mui/material'
 import { Link } from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
 import { useAsync } from 'react-async-hook';
@@ -27,8 +27,9 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
   return <Paper sx={{ p: 2 }}>
     <Typography variant="h5" component="h5">Actors {!editing && <IconButton color="primary" onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
-      <Stack direction="row" spacing={1}>
+      <Box>
         {!editing && actors.map(({ name, videoCount, _id }, index) => <Chip
+          sx={{ m: 0.5 }}
           variant="outlined"
           color="primary"
           key={index}
@@ -38,7 +39,7 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
           clickable
         />)}
         {!editing && actors.length === 0 && <Chip variant="outlined" label="None"></Chip>}
-      </Stack >
+      </Box>
       {editing && <>
         <Autocomplete
           multiple

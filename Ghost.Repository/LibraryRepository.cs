@@ -69,7 +69,7 @@ namespace Ghost.Repository
 
     public Library? FindById(int id)
     {
-      return context.Libraries.Include("Paths").FirstOrDefault(l => l.Id == id);
+      return context.Libraries.Include("Paths.Videos").FirstOrDefault(l => l.Id == id);
     }
 
     public PageResult<Library> GetLibraries(int page = 0, int limit = 10)

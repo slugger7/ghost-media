@@ -107,5 +107,24 @@ namespace Ghost.Services
     {
       await libraryRepository.Delete(id);
     }
+
+    public async Task SyncNfos(int id)
+    {
+      var library = libraryRepository.FindById(id);
+      if (library == null) throw new NullReferenceException("Library not found");
+      var videos = new List<Video>();
+      foreach (var path in library.Paths)
+      {
+        videos.AddRange(path.Videos);
+      }
+
+      var videoCount = videos.Count();
+
+      for (int i = 0; i < videoCount; i++)
+      {
+        var video = videos.ElementAt(i);
+        await videoService.SyncWithNFO(video.Id);
+      }
+    }
   }
 }

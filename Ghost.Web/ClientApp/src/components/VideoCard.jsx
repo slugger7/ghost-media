@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { Card, CardActionArea, CardHeader, CardMedia, Typography, IconButton, Tooltip, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material'
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
 
 export const VideoCard = ({ id, title }) => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -15,6 +16,12 @@ export const VideoCard = ({ id, title }) => {
   const handleMenuClose = () => {
     setAnchorEl(null)
   }
+
+  const syncFromNfo = () => {
+    axios.put(`/media/${id}/nfo`)
+    handleMenuClose()
+  }
+
   return (<Card sx={{ maxHeight: '400px' }}>
     <CardActionArea LinkComponent={Link} to={`/media/${id}`}>
       <CardMedia
@@ -46,9 +53,9 @@ export const VideoCard = ({ id, title }) => {
       onClose={handleMenuClose}
       MenuListProps={{ 'aria-labelledby': `${id}-video-card-menu-button` }}
     >
-      <MenuItem>
-        <ListItemIcon><MoreVertIcon fontSize="small" /></ListItemIcon>
-        <ListItemText>This is a test</ListItemText>
+      <MenuItem onClick={syncFromNfo}>
+        <ListItemIcon><SyncAltIcon fontSize="small" /></ListItemIcon>
+        <ListItemText>Sync from NFO</ListItemText>
       </MenuItem>
     </Menu>
   </Card>)

@@ -142,7 +142,7 @@ namespace Ghost.Repository
       var video = this.FindById(id);
       if (video == null) throw new NullReferenceException("Video not fonud");
 
-      video.Title = title;
+      video.Title = title.Trim();
 
       await context.SaveChangesAsync();
 
