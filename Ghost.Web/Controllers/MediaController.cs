@@ -74,7 +74,6 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        var image = videoService.GenerateThumbnail(id);
         return PhysicalFile(videoService.GenerateThumbnail(id), "image/png", true);
       }
       catch (NullReferenceException)
