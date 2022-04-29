@@ -124,6 +124,11 @@ namespace Ghost.Services
       {
         var video = videos.ElementAt(i);
         await videoService.SyncWithNFO(video.Id);
+        Console.Write("Video: ");
+        Console.Write(i);
+        Console.Write(" of ");
+        Console.WriteLine(videoCount);
+        Console.WriteLine(video.Title);
       }
     }
   }
