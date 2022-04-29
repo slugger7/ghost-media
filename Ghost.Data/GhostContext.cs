@@ -15,7 +15,7 @@ namespace Ghost.Data
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      optionsBuilder.UseSqlite("Data Source=/home/slugger/dev/ghost-media/Ghost.Data/Ghost.db;");
+      optionsBuilder.UseSqlite("Data Source=Ghost.db;");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
