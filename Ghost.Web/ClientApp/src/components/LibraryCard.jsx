@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Avatar, Card, CardHeader, CircularProgress, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
