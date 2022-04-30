@@ -20,13 +20,13 @@ export const LibraryCard = ({ library, refresh }) => {
     setAnchorEl(null)
   }
 
-  const sync = () => {
-    axios.put(`/library/${library._id}/sync`)
+  const sync = async () => {
+    await axios.put(`/library/${library._id}/sync`)
     handleMenuClose()
   }
 
-  const deleteLibrary = () => {
-    axios.delete(`/library/${library._id}`)
+  const deleteLibrary = async () => {
+    await axios.delete(`/library/${library._id}`)
     refresh()
     handleMenuClose();
   }
