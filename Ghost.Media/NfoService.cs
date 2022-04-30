@@ -17,6 +17,7 @@ namespace Ghost.Media
       logger.LogInformation("Hydrating video {0}", video.Id);
       var nfoPath = $"{FileFns.GetFilePathWithoutExtension(video.Path)}.nfo";
 
+      if (!File.Exists(nfoPath)) return null;
       using var fileStream = File.Open(nfoPath, FileMode.Open);
       var serializer = new XmlSerializer(typeof(VideoNfo));
       var deserializedNfo = serializer.Deserialize(fileStream);

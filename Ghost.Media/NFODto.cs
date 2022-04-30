@@ -4,17 +4,17 @@ namespace Ghost.Media
 {
   public class ActorNfo
   {
-    public string name;
+    public string name { get; set; } = string.Empty;
   }
 
   [XmlRoot("movie")]
   public class VideoNfo
   {
-    public string title { get; set; }
-    public string dateadded { get; set; }
+    public string title { get; set; } = string.Empty;
+    public string dateadded { get; set; } = string.Empty;
     [XmlElement("genre")]
-    public List<string> genres { get; set; }
+    public List<string> genres { get; set; } = new List<string>();
     [XmlElement("actor")]
-    public List<ActorNfo> actors { get; set; }
+    public List<ActorNfo> actors { get; set; } = new List<ActorNfo>();
   }
 }
