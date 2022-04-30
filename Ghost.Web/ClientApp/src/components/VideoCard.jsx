@@ -6,7 +6,7 @@ import { Card, CardActionArea, CardHeader, CardMedia, Typography, IconButton, To
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 
-export const VideoCard = ({ id, title }) => {
+export const VideoCard = ({ id, title, imageId }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleMenuClick = (event) => {
@@ -24,11 +24,16 @@ export const VideoCard = ({ id, title }) => {
 
   return (<Card sx={{ maxHeight: '400px' }}>
     <CardActionArea LinkComponent={Link} to={`/media/${id}`}>
-      <CardMedia
+      {imageId && <CardMedia
         component="img"
-        image={`${axios.defaults.baseURL}/media/${id}/thumbnail`}
+        image={`${axios.defaults.baseURL}/image/${imageId}`}
         alt={title}
-      />
+      />}
+      {!imageId && <CardMedia
+        component="img"
+        image={`${axios.defaults.baseURL}/image/video/${id}`}
+        alt={title}
+      />}
     </CardActionArea>
     <CardHeader
       className="ghost-video-card-header"
@@ -62,6 +67,7 @@ export const VideoCard = ({ id, title }) => {
 }
 
 VideoCard.propTypes = {
-  id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  id: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  imageId: PropTypes.number
 } 

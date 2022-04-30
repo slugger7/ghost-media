@@ -52,7 +52,7 @@ export const VideoTitle = ({ video, updateTitle }) => {
 
 VideoTitle.propTypes = {
   video: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
+    _id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired
   }).isRequired,
   updateTitle: PropTypes.func.isRequired
