@@ -1,4 +1,5 @@
 using Ghost.Data;
+using Ghost.Media;
 using Ghost.Repository;
 using Ghost.Services;
 
@@ -18,7 +19,7 @@ builder.Services.AddCors(options =>
           .AllowAnyMethod();
   });
 });
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 builder.Services.AddScoped<IDirectoryService, DirectoryService>();
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IImageIoService, ImageIoService>();
 builder.Services.AddDbContext<GhostContext>();
 var app = builder.Build();
 

@@ -42,6 +42,7 @@ namespace Ghost.Repository
       return context.Videos
         .Include("VideoGenres.Genre.VideoGenres")
         .Include("VideoActors.Actor.VideoActors")
+        .Include("VideoImages.Image")
         .FirstOrDefault(v => v.Id == id);
     }
     public PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10, string search = "")

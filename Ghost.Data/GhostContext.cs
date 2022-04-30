@@ -11,6 +11,7 @@ namespace Ghost.Data
     public DbSet<Image> Images { get; set; }
     public DbSet<VideoGenre> VideoGenres { get; set; }
     public DbSet<VideoActor> VideoActors { get; set; }
+    public DbSet<VideoImage> VideoImages { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Actor> Actors { get; set; }
 

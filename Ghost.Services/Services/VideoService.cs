@@ -11,19 +11,22 @@ namespace Ghost.Services
     private readonly IGenreRepository genreRepository;
     private readonly IVideoRepository videoRepository;
     private readonly IActorRepository actorRepository;
+    private readonly IImageIoService imageIoService;
 
     public VideoService(
       IGenreService genreService,
       IActorService actorService,
       IGenreRepository genreRepository,
       IVideoRepository videoRepository,
-      IActorRepository actorRepository)
+      IActorRepository actorRepository,
+      IImageIoService imageIoService)
     {
       this.genreService = genreService;
       this.actorService = actorService;
       this.genreRepository = genreRepository;
       this.videoRepository = videoRepository;
       this.actorRepository = actorRepository;
+      this.imageIoService = imageIoService;
     }
 
     public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest)
@@ -52,12 +55,11 @@ namespace Ghost.Services
       if (video == null) throw new NullReferenceException("Video not found");
       if (video.Path == null) throw new NullReferenceException("Path was null");
 
-      var basePath = video.Path
-        .Substring(0, video.Path.LastIndexOf(Path.DirectorySeparatorChar)) + Path.DirectorySeparatorChar + video.Title + ".png";
+      var outputPath = ImageIoService.GenerateFileName(video.Path, video.Title, ".png");
 
-      ImageFns.GenerateImage(video.Path, basePath);
+      imageIoService.GenerateImage(video.Path, outputPath);
 
-      return basePath;
+      return outputPath;
     }
 
     public VideoMetaDataDto? GetVideoMetaData(int id)

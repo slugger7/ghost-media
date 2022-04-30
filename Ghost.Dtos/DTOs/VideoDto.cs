@@ -11,6 +11,7 @@ namespace Ghost.Dtos
     public string? Type { get; set; }
     public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
     public List<ActorDto> Actors { get; set; } = new List<ActorDto>();
+    public List<ImageDto> Images { get; set; } = new List<ImageDto>();
 
     public VideoDto(Video video)
     {
@@ -28,6 +29,9 @@ namespace Ghost.Dtos
         this.Actors = video.VideoActors
           .OrderBy(va => va.Actor.Name)
           .Select(va => new ActorDto(va.Actor))
+          .ToList();
+        this.Images = video.VideoImages
+          .Select(vi => new ImageDto(vi.Image))
           .ToList();
       }
     }

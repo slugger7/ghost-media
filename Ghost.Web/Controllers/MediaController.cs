@@ -10,9 +10,11 @@ namespace Ghost.Api.Controllers
   public class MediaController : Controller
   {
     private readonly IVideoService videoService;
+    private readonly ILogger<MediaController> logger;
 
-    public MediaController(IVideoService videoService)
+    public MediaController(ILogger<MediaController> logger, IVideoService videoService)
     {
+      this.logger = logger;
       this.videoService = videoService;
     }
 
@@ -74,7 +76,8 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        return PhysicalFile(videoService.GenerateThumbnail(id), "image/png", true);
+        return Ok();
+        //return PhysicalFile(videoService.GenerateThumbnail(id), "image/png", true);
       }
       catch (NullReferenceException)
       {
