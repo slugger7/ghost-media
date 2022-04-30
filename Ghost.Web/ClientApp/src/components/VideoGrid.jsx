@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Container, Grid, Pagination, Stack } from '@mui/material'
+import { Container, Grid, Pagination, Stack, Paper } from '@mui/material'
 
 import { VideoCard } from './VideoCard.jsx'
 import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 import { Search } from './Search';
+import { NothingHere } from './NothingHere.jsx'
 
 export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, search }) => {
   const paginationComponent = <>
@@ -27,7 +28,7 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
     </Container>
     <Grid container spacing={2}>
       {videosPage.loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
-      {!videosPage.loading && videosPage.result?.content?.length === 0 && <span>nothing here</span>}
+      {!videosPage.loading && videosPage.result?.content?.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
 
       {!videosPage.loading && videosPage.result?.content?.map(video => <Grid key={video._id} item xs={12} sm={6} md={4} lg={3} xl={2}>
         <VideoCard video={video} />
