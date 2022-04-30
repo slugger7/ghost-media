@@ -105,6 +105,7 @@ namespace Ghost.Repository
       var videos = context.Videos
           .Include("VideoActors.Actor")
           .Include("VideoGenres.Genre")
+          .Include("VideoImages.Image")
           .Where(videoSearch(search))
           .OrderBy(v => v.Title);
       return new PageResult<Video>

@@ -49,7 +49,7 @@ namespace Ghost.Api.Controllers
       }
     }
 
-    [HttpPut("video/{videoId}")]
+    [HttpGet("video/{videoId}")]
     public ActionResult GenerateThumbnailForVideo(int videoId, bool overwrite = false, int timestamp = -1)
     {
       logger.LogDebug("Generating thumbnail for {0}", videoId);

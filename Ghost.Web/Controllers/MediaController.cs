@@ -63,12 +63,19 @@ namespace Ghost.Api.Controllers
     [HttpGet("{id}")]
     public ActionResult GetVideo(int id)
     {
-      var video = videoService.GetVideoById(id);
-      if (video != null)
+      try
       {
-        return PhysicalFile(video.Path ?? "", "video/mp4", true);
+        var video = videoService.GetVideoById(id);
+        if (video != null)
+        {
+          return PhysicalFile(video.Path ?? "", "video/mp4", true);
+        }
+        return NotFound();
       }
-      return NotFound();
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
     }
 
     [HttpGet("{id}/thumbnail")]
