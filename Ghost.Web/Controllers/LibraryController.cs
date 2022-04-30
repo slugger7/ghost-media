@@ -50,8 +50,7 @@ namespace Ghost.Api.Controllers
       }
       catch (NullReferenceException ex)
       {
-        // return NotFound(ex.Message);
-        throw ex;
+        return NotFound(ex.Message);
       }
     }
 

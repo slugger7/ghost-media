@@ -58,7 +58,7 @@ namespace Ghost.Services
       };
     }
 
-    public void Sync(int id)
+    public Task Sync(int id)
     {
       var library = libraryRepository.FindById(id);
       if (library == null) throw new NullReferenceException("Library not found");
@@ -95,8 +95,12 @@ namespace Ghost.Services
             return video;
           })
           .ToList();
+
+        logger.LogInformation("Synced {0} new videos", videoEntities.Count());
         libraryRepository.AddVideosToPath(path.Id, videoEntities);
       }
+
+      return Task.CompletedTask;
     }
 
     public LibraryDto GetLibrary(int id)
