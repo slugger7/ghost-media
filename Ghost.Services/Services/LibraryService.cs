@@ -2,6 +2,7 @@ using Ghost.Data;
 using Ghost.Dtos;
 using Ghost.Media;
 using Ghost.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services
 {
@@ -10,16 +11,19 @@ namespace Ghost.Services
     private readonly IDirectoryService directoryService;
     private readonly IVideoService videoService;
     private readonly ILibraryRepository libraryRepository;
+    private readonly ILogger<LibraryService> logger;
 
     public LibraryService(
       IDirectoryService directoryService,
       IVideoService videoService,
-      ILibraryRepository libraryRepository
+      ILibraryRepository libraryRepository,
+      ILogger<LibraryService> logger
     )
     {
       this.directoryService = directoryService;
       this.videoService = videoService;
       this.libraryRepository = libraryRepository;
+      this.logger = logger;
     }
 
     public LibraryDto AddDirectories(int id, AddPathsToLibraryDto pathsToLibraryDto)
@@ -124,11 +128,7 @@ namespace Ghost.Services
       {
         var video = videos.ElementAt(i);
         await videoService.SyncWithNFO(video.Id);
-        Console.Write("Video: ");
-        Console.Write(i);
-        Console.Write(" of ");
-        Console.WriteLine(videoCount);
-        Console.WriteLine(video.Title);
+        logger.LogInformation("Video: {0} of {1} - {2}", i, videoCount, video.Title);
       }
     }
   }

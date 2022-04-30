@@ -32,6 +32,7 @@ builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IImageIoService, ImageIoService>();
+builder.Services.AddScoped<INfoService, NfoService>();
 builder.Services.AddDbContext<GhostContext>();
 var app = builder.Build();
 

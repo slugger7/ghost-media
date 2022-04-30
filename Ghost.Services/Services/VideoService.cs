@@ -12,6 +12,7 @@ namespace Ghost.Services
     private readonly IVideoRepository videoRepository;
     private readonly IActorRepository actorRepository;
     private readonly IImageIoService imageIoService;
+    private readonly INfoService nfoService;
 
     public VideoService(
       IGenreService genreService,
@@ -19,7 +20,8 @@ namespace Ghost.Services
       IGenreRepository genreRepository,
       IVideoRepository videoRepository,
       IActorRepository actorRepository,
-      IImageIoService imageIoService)
+      IImageIoService imageIoService,
+      INfoService nfoService)
     {
       this.genreService = genreService;
       this.actorService = actorService;
@@ -27,6 +29,7 @@ namespace Ghost.Services
       this.videoRepository = videoRepository;
       this.actorRepository = actorRepository;
       this.imageIoService = imageIoService;
+      this.nfoService = nfoService;
     }
 
     public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest)
@@ -135,7 +138,7 @@ namespace Ghost.Services
       var video = videoRepository.FindById(id);
       if (video == null) throw new NullReferenceException("Video not found");
 
-      var vdieoNfo = NfoFns.Hydrate(video);
+      var vdieoNfo = nfoService.HydrateVideo(video);
       if (vdieoNfo != null)
       {
         this.AddActorsByNameToVideo(id, vdieoNfo.actors.Select(a => a.name).ToList());

@@ -15,6 +15,7 @@ namespace Ghost.Repository
     {
       return context.Actors
         .Include("VideoActors.Video")
+        .Include("VideoActors.Video.VideoImages.Image")
         .FirstOrDefault(a => a.Id == id);
     }
 
@@ -22,6 +23,7 @@ namespace Ghost.Repository
     {
       return context.Actors
         .Include("VideoActors.Video")
+        .Include("VideoActors.Video.VideoImages.Image")
         .FirstOrDefault(a => a.Name.ToUpper().Equals(name.Trim().ToUpper()));
     }
 

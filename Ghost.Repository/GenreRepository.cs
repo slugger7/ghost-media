@@ -20,6 +20,7 @@ namespace Ghost.Repository
     {
       return context.Genres
         .Include("VideoGenres.Video")
+        .Include("VideoGenres.Video.VideoImages.Image")
         .FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
     }
 
