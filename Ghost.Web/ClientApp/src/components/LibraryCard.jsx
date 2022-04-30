@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types'
-import { Avatar, Card, CardHeader, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
+import { Avatar, Card, CardHeader, CircularProgress, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,6 +11,9 @@ import axios from 'axios';
 
 export const LibraryCard = ({ library, refresh }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [loadingSync, setLoadingSync] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingSyncNfo, setLoadingSyncNfo] = useState(false);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -21,19 +24,37 @@ export const LibraryCard = ({ library, refresh }) => {
   }
 
   const sync = async () => {
-    await axios.put(`/library/${library._id}/sync`)
-    handleMenuClose()
+    if (loadingSync) return;
+    setLoadingSync(true);
+    try {
+      await axios.put(`/library/${library._id}/sync`)
+    } finally {
+      setLoadingSync(false)
+      handleMenuClose()
+    }
   }
 
   const deleteLibrary = async () => {
-    await axios.delete(`/library/${library._id}`)
-    refresh()
-    handleMenuClose();
+    if (loadingDelete) return;
+    setLoadingDelete(true);
+    try {
+      await axios.delete(`/library/${library._id}`)
+    } finally {
+      refresh()
+      setLoadingDelete(false);
+      handleMenuClose();
+    }
   }
 
-  const syncNfo = () => {
-    axios.put(`/library/${library._id}/sync-nfo`);
-    handleMenuClose();
+  const syncNfo = async () => {
+    if (loadingSyncNfo) return;
+    setLoadingSyncNfo(true)
+    try {
+      await axios.put(`/library/${library._id}/sync-nfo`);
+    } finally {
+      setLoadingSyncNfo(false)
+      handleMenuClose()
+    }
   }
 
   return <>
@@ -67,19 +88,24 @@ export const LibraryCard = ({ library, refresh }) => {
         'aria-labelledby': `${library._id}-menu-button`
       }}>
       <MenuItem onClick={sync}>
-        <ListItemIcon><SyncIcon fontSize="small" /></ListItemIcon>
+        <ListItemIcon>
+          {loadingSync && <CircularProgress sx={{ mr: 1 }} fontSize="small" />}
+          {!loadingSync && <SyncIcon fontSize="small" />}
+        </ListItemIcon>
         <ListItemText>Sync</ListItemText>
       </MenuItem>
       <MenuItem onClick={syncNfo}>
-        <ListItemIcon><SyncAltIcon fontSize="small" /></ListItemIcon>
+        <ListItemIcon>
+          {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} fontSize="small" />}
+          {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
+        </ListItemIcon>
         <ListItemText>Sync all NFOs</ListItemText>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
-        <ListItemText>Edit</ListItemText>
-      </MenuItem>
       <MenuItem onClick={deleteLibrary}>
-        <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
+        <ListItemIcon>
+          {loadingDelete && <CircularProgress sx={{ mr: 1 }} fontSize="small" />}
+          {!loadingDelete && <DeleteIcon fontSize="small" />}
+        </ListItemIcon>
         <ListItemText>Delete</ListItemText>
       </MenuItem>
     </Menu>
