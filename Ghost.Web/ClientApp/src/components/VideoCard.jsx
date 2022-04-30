@@ -1,13 +1,25 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import { Card, CardActionArea, CardHeader, CardMedia, Typography, IconButton, Tooltip, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material'
+import { Card, CardActionArea, CardHeader, CardMedia, Typography, IconButton, Tooltip, Menu, MenuItem, ListItemIcon, ListItemText, Skeleton } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 
-export const VideoCard = ({ id, title }) => {
+const generateThumbnail = async ({ videoId, setVideoThumbnail }) => {
+  const videoThumbnail = await axios.put(`/image/video/${videoId}`);
+  setVideoThumbnail(videoThumbnail.data);
+}
+
+const syncFromNfo = async ({ videoId, setVideo }) => {
+  const video = await axios.put(`/media/${videoId}/nfo`)
+  setVideo(video.data);
+}
+
+export const VideoCard = ({ video }) => {
+  const [localVideo, setLocalVideo] = useState(video);
   const [anchorEl, setAnchorEl] = useState(null)
+  const [videoThumbnail, setVideoThumbnail] = useState();
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -17,28 +29,37 @@ export const VideoCard = ({ id, title }) => {
     setAnchorEl(null)
   }
 
-  const syncFromNfo = () => {
-    axios.put(`/media/${id}/nfo`)
+  const handleSyncFromNfo = () => {
+    syncFromNfo({ videoId: localVideo._id, setVideo: setLocalVideo });
     handleMenuClose()
   }
 
+  useEffect(() => {
+    if (localVideo.thumbnail) {
+      setVideoThumbnail(video.thumbnail);
+    } else {
+      generateThumbnail({ videoId: localVideo._id, setVideoThumbnail });
+    }
+  }, [video]);
+
   return (<Card sx={{ maxHeight: '400px' }}>
-    <CardActionArea LinkComponent={Link} to={`/media/${id}`}>
-      <CardMedia
+    <CardActionArea LinkComponent={Link} to={`/media/${localVideo._id}`}>
+      {videoThumbnail && <CardMedia
         component="img"
-        image={`${axios.defaults.baseURL}/image/video/${id}`}
-        alt={title}
-      />
+        image={`${axios.defaults.baseURL}/image/${videoThumbnail.id}`}
+        alt={localVideo.title}
+      />}
+      {!videoThumbnail && <Skeleton variant="rectangle" height="150px" />}
     </CardActionArea>
     <CardHeader
       className="ghost-video-card-header"
-      title={<Tooltip title={title}><Typography variant="h6" noWrap={true}>
-        <Link to={`/media/${id}`}>{title}</Link>
+      title={<Tooltip title={localVideo.title}><Typography variant="h6" noWrap={true}>
+        <Link to={`/media/${video._id}`}>{localVideo.title}</Link>
       </Typography></Tooltip>}
       disableTypography={true}
       action={<IconButton
         onClick={handleMenuClick}
-        id={`${id}-video-card-menu-button`}
+        id={`${localVideo._id}-video-card-menu-button`}
         aria-controls={!!anchorEl ? 'video-card-menu' : undefined}
         aria-haspopup={true}
         aria-expanded={!!anchorEl}
@@ -47,13 +68,13 @@ export const VideoCard = ({ id, title }) => {
       </IconButton>}
     />
     <Menu
-      id={`${id}-video-card-menu`}
+      id={`${localVideo._id}-video-card-menu`}
       anchorEl={anchorEl}
       open={!!anchorEl}
       onClose={handleMenuClose}
-      MenuListProps={{ 'aria-labelledby': `${id}-video-card-menu-button` }}
+      MenuListProps={{ 'aria-labelledby': `${localVideo._id}-video-card-menu-button` }}
     >
-      <MenuItem onClick={syncFromNfo}>
+      <MenuItem onClick={handleSyncFromNfo}>
         <ListItemIcon><SyncAltIcon fontSize="small" /></ListItemIcon>
         <ListItemText>Sync from NFO</ListItemText>
       </MenuItem>
@@ -62,6 +83,11 @@ export const VideoCard = ({ id, title }) => {
 }
 
 VideoCard.propTypes = {
-  id: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired
+  video: PropTypes.shape({
+    _id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    thumbnail: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    })
+  }).isRequired
 } 

@@ -25,7 +25,7 @@ export const Media = () => {
       <Video
         source={`${axios.defaults.baseURL}/media/${params.id}`}
         type={media.result.type}
-        poster={`${axios.defaults.baseURL}/image/video/${params.id}`}
+        poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}`}
       />
       <Container>
 

@@ -25,21 +25,21 @@ namespace Ghost.Services
       this.imageIoService = imageIoService;
     }
 
-    public ImageDto GenerateThumbnailForVideo(int videoId, string type, bool overwrite, int timestamp)
+    public ImageDto GenerateThumbnailForVideo(GenerateImageRequestDto generateImageRequest)
     {
-      var video = videoRepository.FindById(videoId);
+      var video = videoRepository.FindById(generateImageRequest.VideoId);
       if (video is null)
       {
-        logger.LogWarning("Video not found {0}", videoId);
+        logger.LogWarning("Video not found {0}", generateImageRequest.VideoId);
         throw new NullReferenceException("Video not found");
       }
 
-      if (!overwrite)
+      if (!generateImageRequest.Overwrite)
       {
-        var videoImage = video.VideoImages.FirstOrDefault(vi => vi.Type.Equals(type));
+        var videoImage = video.VideoImages.FirstOrDefault(vi => vi.Type.Equals(generateImageRequest.Type));
         if (videoImage is not null)
         {
-          logger.LogInformation("Image found not regenerating {0}", videoId);
+          logger.LogInformation("Image found not regenerating {0}", generateImageRequest.VideoId);
           return new ImageDto(videoImage.Image);
         }
       }
