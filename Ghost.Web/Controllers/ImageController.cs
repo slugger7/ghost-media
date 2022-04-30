@@ -50,12 +50,12 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("video/{videoId}")]
-    public ActionResult GenerateThumbnailForVideo(int videoId, bool overwrite = false, int timestamp = -1)
+    public ActionResult GenerateThumbnailForVideo(int videoId, string type = "thumbnail", bool overwrite = false, int timestamp = -1)
     {
       logger.LogDebug("Generating thumbnail for {0}", videoId);
       try
       {
-        var image = imageService.GenerateThumbnailForVideo(videoId, overwrite, timestamp);
+        var image = imageService.GenerateThumbnailForVideo(videoId, type, overwrite, timestamp);
         return PhysicalFile(image.Path, "image/png", true);
       }
       catch (NullReferenceException)

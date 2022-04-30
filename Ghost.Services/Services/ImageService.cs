@@ -25,7 +25,7 @@ namespace Ghost.Services
       this.imageIoService = imageIoService;
     }
 
-    public ImageDto GenerateThumbnailForVideo(int videoId, bool overwrite, int timestamp)
+    public ImageDto GenerateThumbnailForVideo(int videoId, string type, bool overwrite, int timestamp)
     {
       var video = videoRepository.FindById(videoId);
       if (video is null)
@@ -36,7 +36,7 @@ namespace Ghost.Services
 
       if (!overwrite)
       {
-        var videoImage = video.VideoImages.FirstOrDefault(vi => vi.Type.Equals("thumnail"));
+        var videoImage = video.VideoImages.FirstOrDefault(vi => vi.Type.Equals(type));
         if (videoImage is not null)
         {
           logger.LogInformation("Image found not regenerating {0}", videoId);

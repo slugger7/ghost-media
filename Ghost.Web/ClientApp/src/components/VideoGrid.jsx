@@ -30,7 +30,7 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
       {!videosPage.loading && videosPage.result?.content?.length === 0 && <span>nothing here</span>}
 
       {!videosPage.loading && videosPage.result?.content?.map(video => <Grid key={video._id} item xs={12} sm={6} md={4} lg={3} xl={2}>
-        <VideoCard id={video._id} title={video.title} imageId={video.thumbnail?.id} />
+        <VideoCard id={video._id} title={video.title} />
       </Grid>)}
     </Grid>
     <Container sx={{ p: 1 }}>
