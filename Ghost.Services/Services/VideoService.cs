@@ -75,7 +75,7 @@ namespace Ghost.Services
       return VideoFns.GetVideoInformation(video.Path);
     }
 
-    public VideoDto AddGenresByNameToVideo(int id, List<string> genres)
+    public VideoDto SetGenresByNameToVideo(int id, List<string> genres)
     {
       if (genres == null) throw new NullReferenceException("Genres not provided");
       var videoEntity = videoRepository.FindById(id);
@@ -83,9 +83,7 @@ namespace Ghost.Services
       if (videoEntity == null) throw new NullReferenceException("Video not found");
       var genreEntities = genres.Select(g => genreRepository.Upsert(g));
 
-      var newGenres = genreEntities.Where(g => !videoEntity.VideoGenres.Any(vg => vg.Genre.Id == g.Id));
-
-      videoEntity = videoRepository.AddGenres(videoEntity.Id, newGenres);
+      videoEntity = videoRepository.SetGenres(videoEntity.Id, genreEntities);
       return new VideoDto(videoEntity);
     }
 
@@ -100,7 +98,7 @@ namespace Ghost.Services
       };
     }
 
-    public VideoDto AddActorsByNameToVideo(int id, List<string> actors)
+    public VideoDto SetActorsByNameToVideo(int id, List<string> actors)
     {
       if (actors == null) throw new NullReferenceException("Actors not provided");
       var videoEntity = videoRepository.FindById(id);
@@ -108,9 +106,7 @@ namespace Ghost.Services
       if (videoEntity == null) throw new NullReferenceException("Video not found");
       var actorEntities = actors.Select(a => actorRepository.UpsertActor(a));
 
-      var newActors = actorEntities.Where(a => !videoEntity.VideoActors.Any(va => va.Actor.Id == a.Id));
-
-      videoEntity = videoRepository.AddActors(videoEntity.Id, newActors);
+      videoEntity = videoRepository.SetActors(videoEntity.Id, actorEntities);
 
       return new VideoDto(videoEntity);
     }
@@ -141,8 +137,8 @@ namespace Ghost.Services
       var vdieoNfo = nfoService.HydrateVideo(video);
       if (vdieoNfo != null)
       {
-        this.AddActorsByNameToVideo(id, vdieoNfo.actors.Select(a => a.name).ToList());
-        this.AddGenresByNameToVideo(id, vdieoNfo.genres);
+        this.SetActorsByNameToVideo(id, vdieoNfo.actors.Select(a => a.name).ToList());
+        this.SetGenresByNameToVideo(id, vdieoNfo.genres);
         await this.UpdateTitle(id, vdieoNfo.title);
         video = videoRepository.FindById(id);
         if (video == null) throw new NullReferenceException("Video not found");

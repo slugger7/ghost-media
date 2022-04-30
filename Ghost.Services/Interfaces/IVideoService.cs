@@ -8,9 +8,9 @@ namespace Ghost.Services
     VideoDto GetVideoById(int id);
     string GenerateThumbnail(int id);
     VideoMetaDataDto? GetVideoMetaData(int id);
-    VideoDto AddGenresByNameToVideo(int id, List<string> genres);
+    VideoDto SetGenresByNameToVideo(int id, List<string> genres);
     PageResultDto<VideoDto> GetVideosForGenre(string genre, PageRequestDto pageRequest);
-    VideoDto AddActorsByNameToVideo(int id, List<string> actors);
+    VideoDto SetActorsByNameToVideo(int id, List<string> actors);
     PageResultDto<VideoDto> GetVideosForActor(int actorId, PageRequestDto pageRequest);
     Task<VideoDto> UpdateTitle(int id, string title);
     Task<VideoDto> SyncWithNFO(int id);

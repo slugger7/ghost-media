@@ -97,7 +97,7 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        return this.videoService.AddGenresByNameToVideo(id, genreAddDto.Genres);
+        return this.videoService.SetGenresByNameToVideo(id, genreAddDto.Genres);
       }
       catch (NullReferenceException)
       {
@@ -116,7 +116,7 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        return this.videoService.AddActorsByNameToVideo(id, actorAddDto.Actors);
+        return this.videoService.SetActorsByNameToVideo(id, actorAddDto.Actors);
       }
       catch (NullReferenceException)
       {

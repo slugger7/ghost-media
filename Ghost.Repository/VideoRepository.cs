@@ -20,7 +20,7 @@ namespace Ghost.Repository
       this.genreRepository = genreRepository;
     }
 
-    public Video AddActors(int id, IEnumerable<Actor> actors)
+    public Video SetActors(int id, IEnumerable<Actor> actors)
     {
       var video = context.Videos.Find(id);
       if (video == null) throw new NullReferenceException("Video was null");
@@ -31,7 +31,8 @@ namespace Ghost.Repository
         Video = video
       });
 
-      video.VideoActors.AddRange(videoActors);
+      context.VideoActors.RemoveRange(video.VideoActors);
+      video.VideoActors = videoActors.ToList();
       context.SaveChanges();
 
       return video;
@@ -83,7 +84,7 @@ namespace Ghost.Repository
       };
     }
 
-    public Video AddGenres(int id, IEnumerable<Genre> genres)
+    public Video SetGenres(int id, IEnumerable<Genre> genres)
     {
       var video = context.Videos.Find(id);
       if (video == null) throw new NullReferenceException("Video was null");
@@ -94,7 +95,8 @@ namespace Ghost.Repository
         Video = video
       });
 
-      video.VideoGenres.AddRange(videoGenres);
+      context.VideoGenres.RemoveRange(video.VideoGenres);
+      video.VideoGenres = videoGenres.ToList();
       context.SaveChanges();
 
       return video;
