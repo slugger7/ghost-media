@@ -157,6 +157,7 @@ namespace Ghost.Services
       if (videoNfo != null)
       {
         video.Title = videoNfo.title;
+        video.LastNfoScan = DateTime.UtcNow;
         DateTime DateAdded;
         if (DateTime.TryParse(videoNfo.dateadded, out DateAdded))
         {
