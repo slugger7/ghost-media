@@ -1,34 +1,41 @@
 using Ghost.Dtos;
 using Ghost.Media;
 using Ghost.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services
 {
   public class VideoService : IVideoService
   {
+    private readonly ILogger<VideoService> logger;
     private readonly IGenreService genreService;
     private readonly IActorService actorService;
     private readonly IGenreRepository genreRepository;
     private readonly IVideoRepository videoRepository;
     private readonly IActorRepository actorRepository;
     private readonly IImageIoService imageIoService;
+    private readonly IImageService imageService;
     private readonly INfoService nfoService;
 
     public VideoService(
+      ILogger<VideoService> logger,
       IGenreService genreService,
       IActorService actorService,
       IGenreRepository genreRepository,
       IVideoRepository videoRepository,
       IActorRepository actorRepository,
       IImageIoService imageIoService,
+      IImageService imageService,
       INfoService nfoService)
     {
+      this.logger = logger;
       this.genreService = genreService;
       this.actorService = actorService;
       this.genreRepository = genreRepository;
       this.videoRepository = videoRepository;
       this.actorRepository = actorRepository;
       this.imageIoService = imageIoService;
+      this.imageService = imageService;
       this.nfoService = nfoService;
     }
 
@@ -58,7 +65,7 @@ namespace Ghost.Services
       if (video == null) throw new NullReferenceException("Video not found");
       if (video.Path == null) throw new NullReferenceException("Path was null");
 
-      var outputPath = ImageIoService.GenerateFileName(video.Path, video.Title, ".png");
+      var outputPath = ImageIoService.GenerateFileName(video.Path, ".png");
 
       imageIoService.GenerateImage(video.Path, outputPath);
 
@@ -146,6 +153,12 @@ namespace Ghost.Services
 
 
       return new VideoDto(video);
+    }
+
+    public async Task DeletePermanently(int id)
+    {
+      var video = await videoRepository.Delete(id);
+      File.Delete(video.Path);
     }
   }
 }

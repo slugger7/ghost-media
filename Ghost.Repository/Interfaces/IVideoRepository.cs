@@ -10,7 +10,7 @@ namespace Ghost.Repository
     Video? FindById(int id);
     Video SetActors(int id, IEnumerable<Actor> actors);
     Video SetGenres(int id, IEnumerable<Genre> genres);
-    Task Delete(int id);
+    Task<Video> Delete(int id);
     Task<Video> UpdateTitle(int id, string title);
   }
 }

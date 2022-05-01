@@ -78,16 +78,17 @@ namespace Ghost.Api.Controllers
       }
     }
 
-    [HttpGet("{id}/thumbnail")]
-    public IActionResult GetThumbnail(int id)
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteVideo(int id)
     {
       try
       {
-        return Ok();
-        //return PhysicalFile(videoService.GenerateThumbnail(id), "image/png", true);
+        await videoService.DeletePermanently(id);
+        return NoContent();
       }
       catch (NullReferenceException)
       {
+        logger.LogWarning("Video was not found: {id}", id);
         return NotFound();
       }
     }

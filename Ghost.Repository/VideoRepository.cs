@@ -1,23 +1,30 @@
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Repository
 {
   public class VideoRepository : IVideoRepository
   {
     private readonly GhostContext context;
+    private readonly ILogger<VideoRepository> logger;
     private readonly IActorRepository actorRepository;
     private readonly IGenreRepository genreRepository;
+    private readonly IImageRepository imageRepository;
     private Func<String, Func<Video, bool>> videoSearch = search => v => v.Title.ToUpper().Contains(search.Trim().ToUpper());
 
     public VideoRepository(
       GhostContext context,
+      ILogger<VideoRepository> logger,
       IActorRepository actorRepository,
-      IGenreRepository genreRepository)
+      IGenreRepository genreRepository,
+      IImageRepository imageRepository)
     {
       this.context = context;
+      this.logger = logger;
       this.actorRepository = actorRepository;
       this.genreRepository = genreRepository;
+      this.imageRepository = imageRepository;
     }
 
     public Video SetActors(int id, IEnumerable<Actor> actors)
@@ -120,25 +127,24 @@ namespace Ghost.Repository
       };
     }
 
-    public async Task Delete(int id)
+    public async Task<Video> Delete(int id)
     {
       var video = context.Videos
         .Include("VideoActors")
         .Include("VideoGenres")
+        .Include("VideoImages.Image")
         .FirstOrDefault(v => v.Id == id);
       if (video == null) throw new NullReferenceException();
 
-      foreach (var videoGenre in video.VideoGenres)
-      {
-        context.VideoGenres.Remove(videoGenre);
-      }
-
-      foreach (var videoActor in video.VideoActors)
-      {
-        context.VideoActors.Remove(videoActor);
-      }
+      context.VideoGenres.RemoveRange(video.VideoGenres);
+      context.VideoActors.RemoveRange(video.VideoActors);
+      context.Images.RemoveRange(video.VideoImages.Select(vi => vi.Image));
+      context.VideoImages.RemoveRange(video.VideoImages);
+      context.Videos.Remove(video);
 
       await context.SaveChangesAsync();
+      logger.LogDebug("Saving changes");
+      return video;
     }
 
     public async Task<Video> UpdateTitle(int id, string title)

@@ -44,7 +44,7 @@ namespace Ghost.Services
         }
       }
 
-      var outputPath = ImageIoService.GenerateFileName(video.Path, video.Title, ".png");
+      var outputPath = ImageIoService.GenerateFileName(video.Path, ".png");
       imageIoService.GenerateImage(video.Path, outputPath);
 
       var image = imageRepository.CreateImageForVideo(video, outputPath);
@@ -62,6 +62,20 @@ namespace Ghost.Services
       }
 
       return new ImageDto(image);
+    }
+
+    public PageResultDto<ImageDto> GetImages(PageRequestDto pageRequest)
+    {
+      var pageResult = imageRepository.GetImages(pageRequest.Page, pageRequest.Limit);
+
+      return new PageResultDto<ImageDto>
+      {
+        Total = pageResult.Total,
+        Page = pageResult.Total,
+        Content = pageResult.Content
+          .Select(i => new ImageDto(i))
+          .ToList()
+      };
     }
   }
 }

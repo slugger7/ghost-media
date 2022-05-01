@@ -20,6 +20,12 @@ namespace Ghost.Api.Controllers
       this.imageService = imageService;
     }
 
+    [HttpGet]
+    public ActionResult<PageResultDto<ImageDto>> GetImages([FromQuery] PageRequestDto pageRequest)
+    {
+      return imageService.GetImages(pageRequest);
+    }
+
     [HttpGet("{id}/info")]
     public ActionResult<ImageDto> GetImageInfo(int id)
     {

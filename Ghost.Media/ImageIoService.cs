@@ -33,12 +33,12 @@ namespace Ghost.Media
       return newSize;
     }
 
-    public static string GenerateFileName(string basePath, string name, string extension)
+    public static string GenerateFileName(string basePath, string extension)
     => basePath
         .Substring(
           0,
-          basePath.LastIndexOf(Path.DirectorySeparatorChar)
-        ) + Path.DirectorySeparatorChar + name + extension;
+          basePath.LastIndexOf('.')
+        ) + extension;
 
     public void GenerateImage(string videoPath, string outputPath, int captureTimeMillis = -1, int maxWidth = 720, int maxHeight = 480)
     {

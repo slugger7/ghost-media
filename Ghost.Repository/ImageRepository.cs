@@ -50,5 +50,20 @@ namespace Ghost.Repository
     {
       return context.Images.Find(id);
     }
+
+    public PageResult<Image> GetImages(int page = 0, int limit = 10)
+    {
+      var images = context.Images
+        .OrderBy(i => i.Name);
+
+      return new PageResult<Image>
+      {
+        Total = images.Count(),
+        Page = page,
+        Content = images
+          .Skip(limit * page)
+          .Take(limit)
+      };
+    }
   }
 }
