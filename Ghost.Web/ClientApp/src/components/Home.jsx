@@ -48,6 +48,8 @@ export const Home = () => {
       limit: limit || 48
     })
     setSearch(searchValue);
+    setPage(0);
+    setLimit(limit || 48);
   }
 
   return (<>

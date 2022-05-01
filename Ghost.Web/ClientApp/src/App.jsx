@@ -22,7 +22,7 @@ export const App = ({ baseUrl }) => {
           <Route exact path='/' element={<Home />} />
           <Route path='/libraries' element={<Libraries />} />
           <Route path='/libraries/add' element={<AddLibrary />} />
-          <Route path='/media/:id' element={<Media />} />
+          <Route path='/media/:id/:title' element={<Media />} />
           <Route path='/genres' element={<Genres />} />
           <Route path='/genres/:name' element={<Genre />} />
           <Route path='/actors/:id/:name' element={<Actor />} />
