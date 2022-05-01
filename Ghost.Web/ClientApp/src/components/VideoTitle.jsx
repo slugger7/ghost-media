@@ -21,7 +21,7 @@ export const VideoTitle = ({ video, updateTitle }) => {
     setTitle(video.title);
   }
 
-  return <Paper sx={{ p: 2 }}>
+  return <>
     <Stack directior="column">
       {!editing && <Typography variant="h3" gutterBottom component="h3">{video.title} <IconButton color="primary" onClick={() => { setEditing(true) }}>
         <EditIcon />
@@ -47,7 +47,7 @@ export const VideoTitle = ({ video, updateTitle }) => {
         </Stack>
       </>}
     </Stack>
-  </Paper>
+  </>
 }
 
 VideoTitle.propTypes = {
