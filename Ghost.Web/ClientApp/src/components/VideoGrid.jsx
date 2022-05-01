@@ -1,13 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Container, Grid, Pagination, Stack, Paper } from '@mui/material'
+import { Container, Grid, Pagination, Stack } from '@mui/material'
+import { remove } from 'ramda'
 
 import { VideoCard } from './VideoCard.jsx'
 import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 import { Search } from './Search';
 import { NothingHere } from './NothingHere.jsx'
 
+const removeVideo = ({ index, setVideos }) => () =>
+  setVideos(remove(index, 1))
+
 export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, search }) => {
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    if (videosPage && !videosPage.loading && videosPage.result) {
+      setVideos(videosPage.result.content);
+    }
+  }, [videosPage]);
+
   const paginationComponent = <>
     {count > 1 && page && <Pagination
       color="primary"
@@ -28,10 +40,10 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
     </Container>
     <Grid container spacing={2}>
       {videosPage.loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
-      {!videosPage.loading && videosPage.result?.content?.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
+      {!videosPage.loading && videos.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
 
-      {!videosPage.loading && videosPage.result?.content?.map(video => <Grid key={video._id} item xs={12} sm={6} md={4} lg={3} xl={2}>
-        <VideoCard video={video} remove={() => { }} />
+      {!videosPage.loading && videos.map((video, index) => <Grid key={video._id} item xs={12} sm={6} md={4} lg={3} xl={2}>
+        <VideoCard video={video} remove={removeVideo({ index, setVideos })} />
       </Grid>)}
     </Grid>
     <Container sx={{ p: 1 }}>
