@@ -164,7 +164,7 @@ namespace Ghost.Repository
       var videoEntity = context.Videos.Find(video.Id);
       if (videoEntity is null) throw new NullReferenceException("Video not found to update");
 
-      videoEntity.Title = video.Title;
+      videoEntity.Title = video.Title.Trim();
       video.DateAdded = video.DateAdded;
 
       await context.SaveChangesAsync();
