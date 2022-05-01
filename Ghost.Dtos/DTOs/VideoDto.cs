@@ -11,6 +11,8 @@ namespace Ghost.Dtos
     public string Type { get; set; } = string.Empty;
     public long Size { get; set; }
     public double Runtime { get; set; }
+    public int Height { get; set; }
+    public int Width { get; set; }
     public DateTime DateAdded { get; set; }
     public DateTime Created { get; set; }
     public DateTime LastNfoScan { get; set; }
@@ -29,6 +31,8 @@ namespace Ghost.Dtos
         this.FileName = video.FileName;
         this.Title = video.Title;
         this.Type = "video/mp4";
+        this.Height = video.Height;
+        this.Width = video.Width;
         this.Size = video.Size;
         this.Runtime = video.Runtime;
         this.Created = video.Created;

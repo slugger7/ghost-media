@@ -50,7 +50,7 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        var videoInfo = await videoService.UpsertMetaData(id);
+        var videoInfo = await videoService.UpdateMetadData(id);
         if (videoInfo == null) return NoContent();
         return videoInfo;
       }

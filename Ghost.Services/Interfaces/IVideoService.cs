@@ -8,7 +8,7 @@ namespace Ghost.Services
     VideoDto GetVideoById(int id);
     Task DeletePermanently(int id);
     string GenerateThumbnail(int id);
-    Task<VideoDto> UpsertMetaData(int id);
+    Task<VideoDto> UpdateMetadData(int id);
     VideoDto SetGenresByNameToVideo(int id, List<string> genres);
     PageResultDto<VideoDto> GetVideosForGenre(string genre, PageRequestDto pageRequest);
     VideoDto SetActorsByNameToVideo(int id, List<string> actors);

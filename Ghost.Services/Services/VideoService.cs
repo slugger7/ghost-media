@@ -72,7 +72,7 @@ namespace Ghost.Services
       return outputPath;
     }
 
-    public async Task<VideoDto> UpsertMetaData(int id)
+    public async Task<VideoDto> UpdateMetadData(int id)
     {
       var video = videoRepository.FindById(id);
 

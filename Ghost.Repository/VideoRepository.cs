@@ -161,7 +161,7 @@ namespace Ghost.Repository
 
     public async Task<Video> UpdateVideo(Video video)
     {
-      var videoEntity = context.Videos.Find(video.Id);
+      var videoEntity = this.FindById(video.Id);
       if (videoEntity is null) throw new NullReferenceException("Video not found to update");
 
       videoEntity.Title = video.Title.Trim();
