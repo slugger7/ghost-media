@@ -125,7 +125,7 @@ export const VideoCard = ({ video, remove }) => {
         <ListItemIcon>
           <DeleteForeverIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Delete</ListItemText>
+        <ListItemText>Delete permanently</ListItemText>
       </MenuItem>
     </Menu>
     <DeleteConfirmationModal
