@@ -9,6 +9,7 @@ import { Video } from './Video.jsx'
 import { VideoGenres } from './VideoGenres.jsx'
 import { VideoActors } from './VideoActors.jsx'
 import { VideoTitle } from './VideoTitle.jsx'
+import { VideoMetaData } from './VideoMetaData.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const updateGenres = async (id, genres) => (await axios.put(`/media/${id}/genres`, genres)).data
@@ -46,6 +47,9 @@ export const Media = () => {
             const video = await updateActors(params.id, actors)
             media.set(mergeDeepRight(media, { result: video }))
           }}
+        />
+        <VideoMetaData
+          video={media.result}
         />
       </Container>
     </>}
