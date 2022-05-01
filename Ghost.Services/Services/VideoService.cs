@@ -72,14 +72,26 @@ namespace Ghost.Services
       return outputPath;
     }
 
-    public VideoMetaDataDto? GetVideoMetaData(int id)
+    public async Task<VideoDto> UpsertMetaData(int id)
     {
-      var video = GetVideoById(id);
+      var video = videoRepository.FindById(id);
 
       if (video == null) throw new NullReferenceException("Video not found");
-      if (video.Path == null) return default;
+      if (video.Path == null) throw new NullReferenceException("Video has no path");
 
-      return VideoFns.GetVideoInformation(video.Path);
+      var metaData = VideoFns.GetVideoInformation(video.Path);
+      if (metaData is null) throw new NullReferenceException("Video meta data not found");
+      video.Created = metaData.Created;
+      video.Size = metaData.Size;
+      video.Height = metaData.Height;
+      video.Width = metaData.Width;
+      video.Runtime = metaData.Duration.TotalMilliseconds;
+      video.LastMetadataUpdate = DateTime.UtcNow;
+
+      video = await videoRepository.UpdateVideo(video);
+      if (video is null) throw new NullReferenceException("Video was not found after updating");
+
+      return new VideoDto(video);
     }
 
     public VideoDto SetGenresByNameToVideo(int id, List<string> genres)

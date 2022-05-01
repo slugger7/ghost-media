@@ -3,6 +3,7 @@ using System;
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ghost.Data.Migrations
 {
     [DbContext(typeof(GhostContext))]
-    partial class GhostContextModelSnapshot : ModelSnapshot
+    [Migration("20220501103847_VideoMetaData")]
+    partial class VideoMetaData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");

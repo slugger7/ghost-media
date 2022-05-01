@@ -45,12 +45,12 @@ namespace Ghost.Api.Controllers
       return video;
     }
 
-    [HttpGet("{id}/metadata")]
-    public ActionResult<VideoMetaDataDto> GetVideoMetaData(int id)
+    [HttpPut("{id}/metadata")]
+    public async Task<ActionResult<VideoDto>> GetVideoMetaData(int id)
     {
       try
       {
-        var videoInfo = videoService.GetVideoMetaData(id);
+        var videoInfo = await videoService.UpsertMetaData(id);
         if (videoInfo == null) return NoContent();
         return videoInfo;
       }

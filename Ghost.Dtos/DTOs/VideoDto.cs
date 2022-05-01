@@ -9,8 +9,13 @@ namespace Ghost.Dtos
     public string Title { get; set; } = string.Empty;
     public string FileName { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
+    public long Size { get; set; }
+    public double Runtime { get; set; }
     public DateTime DateAdded { get; set; }
-    public ImageDto Thumbnail { get; set; }
+    public DateTime Created { get; set; }
+    public DateTime LastNfoScan { get; set; }
+    public DateTime LastMetadataUpdate { get; set; }
+    public ImageDto? Thumbnail { get; set; }
     public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
     public List<ActorDto> Actors { get; set; } = new List<ActorDto>();
     public List<ImageDto> Images { get; set; } = new List<ImageDto>();
@@ -24,6 +29,11 @@ namespace Ghost.Dtos
         this.FileName = video.FileName;
         this.Title = video.Title;
         this.Type = "video/mp4";
+        this.Size = video.Size;
+        this.Runtime = video.Runtime;
+        this.Created = video.Created;
+        this.LastNfoScan = video.LastNfoScan;
+        this.LastMetadataUpdate = video.LastMetadataUpdate;
         this.DateAdded = video.DateAdded;
         var thumbnail = video.VideoImages.FirstOrDefault(vi => vi.Type.Equals("thumbnail"));
         if (thumbnail is not null)
