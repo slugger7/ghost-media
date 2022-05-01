@@ -31,7 +31,7 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
       {!videosPage.loading && videosPage.result?.content?.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
 
       {!videosPage.loading && videosPage.result?.content?.map(video => <Grid key={video._id} item xs={12} sm={6} md={4} lg={3} xl={2}>
-        <VideoCard video={video} />
+        <VideoCard video={video} remove={() => { }} />
       </Grid>)}
     </Grid>
     <Container sx={{ p: 1 }}>
