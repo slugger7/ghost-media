@@ -158,5 +158,18 @@ namespace Ghost.Repository
 
       return video;
     }
+
+    public async Task<Video> UpdateVideo(Video video)
+    {
+      var videoEntity = context.Videos.Find(video.Id);
+      if (videoEntity is null) throw new NullReferenceException("Video not found to update");
+
+      videoEntity.Title = video.Title;
+      video.DateAdded = video.DateAdded;
+
+      await context.SaveChangesAsync();
+
+      return video;
+    }
   }
 }

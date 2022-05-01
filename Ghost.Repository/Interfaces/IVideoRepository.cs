@@ -12,5 +12,6 @@ namespace Ghost.Repository
     Video SetGenres(int id, IEnumerable<Genre> genres);
     Task<Video> Delete(int id);
     Task<Video> UpdateTitle(int id, string title);
+    Task<Video> UpdateVideo(Video video);
   }
 }

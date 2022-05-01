@@ -141,16 +141,19 @@ namespace Ghost.Services
       var video = videoRepository.FindById(id);
       if (video == null) throw new NullReferenceException("Video not found");
 
-      var vdieoNfo = nfoService.HydrateVideo(video);
-      if (vdieoNfo != null)
+      var videoNfo = nfoService.HydrateVideo(video);
+      if (videoNfo != null)
       {
-        this.SetActorsByNameToVideo(id, vdieoNfo.actors.Select(a => a.name).ToList());
-        this.SetGenresByNameToVideo(id, vdieoNfo.genres);
-        await this.UpdateTitle(id, vdieoNfo.title);
-        video = videoRepository.FindById(id);
-        if (video == null) throw new NullReferenceException("Video not found");
+        video.Title = videoNfo.title;
+        DateTime DateAdded;
+        if (DateTime.TryParse(videoNfo.dateadded, out DateAdded))
+        {
+          video.DateAdded = DateAdded;
+        }
+        video = await videoRepository.UpdateVideo(video);
+        this.SetActorsByNameToVideo(id, videoNfo.actors.Select(a => a.name).ToList());
+        this.SetGenresByNameToVideo(id, videoNfo.genres);
       }
-
 
       return new VideoDto(video);
     }
