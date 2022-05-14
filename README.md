@@ -16,4 +16,4 @@
 
 `docker build -t ghost-media-react -f Ghost.Web.React/Dockerfile Ghost.Web.React`
 
-`docker run -d -p 3001:3000 --name ghost-media-web ghost-media-react`
+`docker run -d -p 3001:3000 -e REACT_APP_SERVER_URL=http://192.168.178.27:8080 --name ghost-media-web ghost-media-react`

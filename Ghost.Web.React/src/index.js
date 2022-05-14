@@ -9,10 +9,13 @@ const root = createRoot(container)
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href')
 const serverUrl = [
-  window.location.protocol,
-  '//',
-  head(window.location.host.split(':')),
-  ':8080',
+  process.env.REACT_APP_SERVER_URL ||
+    [
+      window.location.protocol,
+      '//',
+      head(window.location.host.split(':')),
+      ':5120',
+    ].join(''),
   '/api',
 ].join('')
 axios.defaults.baseURL = serverUrl
