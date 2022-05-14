@@ -4,3 +4,4 @@ assets
 */**/obj
 .git
 .vscode
+Ghost.Web.React
