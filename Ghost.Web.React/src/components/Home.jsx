@@ -5,8 +5,9 @@ import { useSearchParams } from 'react-router-dom';
 
 import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
+import { mergeDeepRight } from 'ramda';
 
-const fetchVideos = async (page, limit, search) => {
+const fetchVideos = async (page, limit, search, sortBy, ascending) => {
   const params = [];
   if (page) {
     params.push(`page=${page - 1}`)
@@ -17,6 +18,12 @@ const fetchVideos = async (page, limit, search) => {
   if (search) {
     params.push(`search=${encodeURIComponent(search)}`)
   }
+  if (sortBy) {
+    params.push(`sortBy=${encodeURIComponent(sortBy)}`)
+  }
+  if (ascending !== undefined) {
+    params.push(`ascending=${ascending}`)
+  }
   const videosResult = await axios.get(`media?${params.join('&')}`)
 
   return videosResult.data;
@@ -26,11 +33,11 @@ export const Home = () => {
   const [page, setPage] = useState()
   const [limit, setLimit] = useState()
   const [search, setSearch] = useState('');
-  const videosPage = useAsync(fetchVideos, [page, limit, search])
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams()
   const [sortBy, setSortBy] = useState('title');
-  const [sortDirection, setSortDirection] = useState(true);
+  const [sortAscending, setSortAscending] = useState();
+  const videosPage = useAsync(fetchVideos, [page, limit, search, sortBy, sortAscending])
 
   useEffect(() => {
     if (!videosPage.loading && !videosPage.error) {
@@ -42,6 +49,8 @@ export const Home = () => {
     setLimit(parseInt(searchParams.get("limit")) || limit || 48)
     setPage(parseInt(searchParams.get("page")) || page || 1)
     setSearch(decodeURIComponent(searchParams.get("search") || search || ''))
+    setSortBy(decodeURIComponent(searchParams.get("sortBy") || sortBy))
+    setSortAscending(searchParams.get("ascending") === "true")
   }, [searchParams])
 
   const handleSearchChange = (searchValue) => {
@@ -55,16 +64,22 @@ export const Home = () => {
     setLimit(limit || 48);
   }
 
+  const updateSearchParams = (newSearchParams) => setSearchParams(
+    mergeDeepRight(
+      { page, limit, search, sortBy, ascending: sortAscending },
+      newSearchParams
+    ))
+
   const sortComponent = <Sort
     sortBy={sortBy}
-    setSortBy={setSortBy}
-    sortDirection={sortDirection}
-    setSortDirection={setSortDirection} />
+    setSortBy={(sortByValue) => updateSearchParams({ sortBy: sortByValue })}
+    sortDirection={sortAscending}
+    setSortDirection={(sortAscendingValue) => updateSearchParams({ ascending: sortAscendingValue })} />
 
   return (<>
     <VideoGrid
       videosPage={videosPage}
-      onPageChange={(e, newPage) => setSearchParams({ page: newPage, limit, search })}
+      onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
       page={page}
       count={Math.ceil(total / limit) || 1}
       search={search}
