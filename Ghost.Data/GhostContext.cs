@@ -1,3 +1,4 @@
+using System;
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,8 @@ namespace Ghost.Data
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      optionsBuilder.UseSqlite($"Data Source=..{Path.DirectorySeparatorChar}Ghost.Web{Path.DirectorySeparatorChar}Ghost.db;");
+      var dbPath = Environment.GetEnvironmentVariable("DATABASE_PATH") ?? $"..{Path.DirectorySeparatorChar}data{Path.DirectorySeparatorChar}Ghost.db";
+      optionsBuilder.UseSqlite($"Data Source={dbPath}");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
