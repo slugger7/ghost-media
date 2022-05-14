@@ -41,7 +41,12 @@ namespace Ghost.Services
 
     public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest)
     {
-      var videosPage = videoRepository.SearchVideos(pageRequest.Page, pageRequest.Limit, pageRequest.Search);
+      var videosPage = videoRepository.SearchVideos(
+        pageRequest.Page,
+        pageRequest.Limit,
+        pageRequest.Search,
+        pageRequest.SortBy,
+        pageRequest.Ascending);
       return new PageResultDto<VideoDto>
       {
         Total = videosPage.Total,
@@ -108,7 +113,13 @@ namespace Ghost.Services
 
     public PageResultDto<VideoDto> GetVideosForGenre(string name, PageRequestDto pageRequest)
     {
-      var videosPage = videoRepository.GetForGenre(name, pageRequest.Page, pageRequest.Limit, pageRequest.Search);
+      var videosPage = videoRepository.GetForGenre(
+        name,
+        pageRequest.Page,
+        pageRequest.Limit,
+        pageRequest.Search,
+        pageRequest.SortBy,
+        pageRequest.Ascending);
       return new PageResultDto<VideoDto>
       {
         Total = videosPage.Total,
@@ -132,7 +143,13 @@ namespace Ghost.Services
 
     public PageResultDto<VideoDto> GetVideosForActor(int actorId, PageRequestDto pageRequest)
     {
-      var videosPage = videoRepository.GetForActor(actorId, pageRequest.Page, pageRequest.Limit, pageRequest.Search);
+      var videosPage = videoRepository.GetForActor(
+        actorId,
+        pageRequest.Page,
+        pageRequest.Limit,
+        pageRequest.Search,
+        pageRequest.SortBy,
+        pageRequest.Ascending);
       return new PageResultDto<VideoDto>
       {
         Total = videosPage.Total,

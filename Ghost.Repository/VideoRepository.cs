@@ -53,15 +53,30 @@ namespace Ghost.Repository
         .Include("VideoImages.Image")
         .FirstOrDefault(v => v.Id == id);
     }
-    public PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10, string search = "")
+    public static IEnumerable<Video> SortAndOrderVideos(IEnumerable<Video> videos, string sortBy, bool ascending)
+    {
+      var orderByPredicate = Video.SortByPredicate(sortBy);
+      if (ascending)
+      {
+        return videos.OrderBy(orderByPredicate);
+      }
+      else
+      {
+        return videos.OrderByDescending(orderByPredicate);
+      }
+    }
+
+    public PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
     {
       var genre = genreRepository.GetByName(name);
 
       if (genre == null) throw new NullReferenceException("Genre not found");
       var videos = genre.VideoGenres
-          .OrderBy(vg => vg.Video.Title)
           .Select(vg => vg.Video)
           .Where(videoSearch(search));
+
+      videos = SortAndOrderVideos(videos, sortBy, ascending);
+
       return new PageResult<Video>
       {
         Total = videos.Count(),
@@ -72,15 +87,16 @@ namespace Ghost.Repository
       };
     }
 
-    public PageResult<Video> GetForActor(int actorId, int page = 0, int limit = 10, string search = "")
+    public PageResult<Video> GetForActor(int actorId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
     {
       var actor = actorRepository.FindById(actorId);
 
       if (actor == null) throw new NullReferenceException("Actor not found");
       var videos = actor.VideoActors
-          .OrderBy(va => va.Video.Title)
           .Select(va => va.Video)
           .Where(videoSearch(search));
+
+      videos = SortAndOrderVideos(videos, sortBy, ascending);
       return new PageResult<Video>
       {
         Total = videos.Count(),
@@ -109,14 +125,16 @@ namespace Ghost.Repository
       return video;
     }
 
-    public PageResult<Video> SearchVideos(int page = 0, int limit = 10, string search = "")
+    public PageResult<Video> SearchVideos(int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
     {
       var videos = context.Videos
           .Include("VideoActors.Actor")
           .Include("VideoGenres.Genre")
           .Include("VideoImages.Image")
-          .Where(videoSearch(search))
-          .OrderBy(v => v.Title);
+          .Where(videoSearch(search));
+
+      videos = SortAndOrderVideos(videos, sortBy, ascending);
+
       return new PageResult<Video>
       {
         Total = videos.Count(),
