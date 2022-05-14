@@ -4,7 +4,7 @@ WORKDIR /app
 ENV DATABASE_PATH "/data/Ghost.db"
 RUN echo $DATABASE_PATH
 
-COPY ../ ./
+COPY . .
 
 RUN dotnet restore
 RUN dotnet publish -c Release -o out
