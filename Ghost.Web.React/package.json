@@ -1,5 +1,5 @@
 {
-  "name": "ghost.web",
+  "name": "ghost.web.react",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
