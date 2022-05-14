@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useSearchParams } from 'react-router-dom';
 
 import { VideoGrid } from './VideoGrid.jsx';
+import { Sort } from './Sort.jsx'
 
 const fetchVideos = async (page, limit, search) => {
   const params = [];
@@ -28,6 +29,8 @@ export const Home = () => {
   const videosPage = useAsync(fetchVideos, [page, limit, search])
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams()
+  const [sortBy, setSortBy] = useState('title');
+  const [sortDirection, setSortDirection] = useState(true);
 
   useEffect(() => {
     if (!videosPage.loading && !videosPage.error) {
@@ -52,6 +55,12 @@ export const Home = () => {
     setLimit(limit || 48);
   }
 
+  const sortComponent = <Sort
+    sortBy={sortBy}
+    setSortBy={setSortBy}
+    sortDirection={sortDirection}
+    setSortDirection={setSortDirection} />
+
   return (<>
     <VideoGrid
       videosPage={videosPage}
@@ -60,6 +69,7 @@ export const Home = () => {
       count={Math.ceil(total / limit) || 1}
       search={search}
       setSearch={handleSearchChange}
+      sortComponent={sortComponent}
     />
   </>)
 }

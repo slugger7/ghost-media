@@ -11,7 +11,15 @@ import { NothingHere } from './NothingHere.jsx'
 const removeVideo = ({ index, setVideos }) => () =>
   setVideos(remove(index, 1))
 
-export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, search }) => {
+export const VideoGrid = ({
+  videosPage,
+  page,
+  count,
+  onPageChange,
+  setSearch,
+  search,
+  sortComponent
+}) => {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
@@ -21,14 +29,16 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
   }, [videosPage]);
 
   const paginationComponent = <>
-    {count > 1 && page && <Pagination
-      color="primary"
-      page={page}
-      defaultPage={1}
-      count={count}
-      showFirstButton showLastButton
-      onChange={onPageChange}
-    />}
+    {count > 1 && page && <Grid item xs={12} md={6} lg={5}>
+      <Pagination
+        color="primary"
+        page={page}
+        defaultPage={1}
+        count={count}
+        showFirstButton showLastButton
+        onChange={onPageChange}
+      /></Grid>
+    }
   </>
 
   return <>
@@ -36,13 +46,15 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
       container
       alignItems="center"
       direction="row"
-      sx={{ my: 1 }}>
-      <Grid item xs={12} md={6}>
+      sx={{ my: 1 }}
+      spacing={1}>
+      <Grid item xs={12} md={6} lg={4}>
         <Search search={search} setSearch={setSearch} />
       </Grid>
-      <Grid item xs={12} md={6}>
-        {paginationComponent}
-      </Grid>
+      {paginationComponent}
+      {sortComponent && <Grid item xs={12} md={6} lg={3}>
+        {sortComponent}
+      </Grid>}
     </Grid>
     <Grid container spacing={2}>
       {videosPage.loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
@@ -70,5 +82,6 @@ VideoGrid.propTypes = {
   count: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
   search: PropTypes.string.isRequired,
-  setSearch: PropTypes.func.isRequired
+  setSearch: PropTypes.func.isRequired,
+  sortComponent: PropTypes.node
 }
