@@ -14,7 +14,7 @@ const serverUrl = [
   window.location.protocol,
   '//',
   head(window.location.host.split(':')),
-  ':7110',
+  ':8080',
   '/api',
 ].join('')
 axios.defaults.baseURL = serverUrl
