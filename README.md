@@ -4,7 +4,7 @@
 
 `docker build -t ghost-updater -f Ghost.Data/Dockerfile Ghost.Data`
 
-`docker run -d -v $(pwd)/data:/data -e DATABASE_PATH=/data/Ghost.db --name ghost-updater ghost-updater`
+`docker run -d -v $(pwd)/data:/data -e DATABASE_PATH=/data/Ghost.db --name ghost-updater ghost-updater --rm`
 
 # Ghost Web
 
