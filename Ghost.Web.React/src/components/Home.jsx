@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
-import { mergeDeepRight } from 'ramda';
+import { ascend, mergeDeepRight } from 'ramda';
 
 const fetchVideos = async (page, limit, search, sortBy, ascending) => {
   const params = [];
@@ -50,7 +50,8 @@ export const Home = () => {
     setPage(parseInt(searchParams.get("page")) || page || 1)
     setSearch(decodeURIComponent(searchParams.get("search") || search || ''))
     setSortBy(decodeURIComponent(searchParams.get("sortBy") || sortBy))
-    setSortAscending(searchParams.get("ascending") === "true")
+    const ascending = searchParams.get("ascending")
+    setSortAscending((ascending !== "false" && ascending !== "true") || ascending === "true")
   }, [searchParams])
 
   const handleSearchChange = (searchValue) => {
