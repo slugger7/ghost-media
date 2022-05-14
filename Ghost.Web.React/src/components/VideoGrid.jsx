@@ -32,12 +32,18 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
   </>
 
   return <>
-    <Container sx={{ p: 1 }}>
-      <Stack direction="row" spacing={1}>
+    <Grid
+      container
+      alignItems="center"
+      direction="row"
+      sx={{ my: 1 }}>
+      <Grid item xs={12} md={6}>
         <Search search={search} setSearch={setSearch} />
+      </Grid>
+      <Grid item xs={12} md={6}>
         {paginationComponent}
-      </Stack>
-    </Container>
+      </Grid>
+    </Grid>
     <Grid container spacing={2}>
       {videosPage.loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
       {!videosPage.loading && videos.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
@@ -46,9 +52,11 @@ export const VideoGrid = ({ videosPage, page, count, onPageChange, setSearch, se
         <VideoCard video={video} remove={removeVideo({ index, setVideos })} />
       </Grid>)}
     </Grid>
-    <Container sx={{ p: 1 }}>
-      {paginationComponent}
-    </Container>
+    <Grid container alignItems="center" direction="row" sx={{ my: 1 }}>
+      <Grid item md={12}>
+        {paginationComponent}
+      </Grid>
+    </Grid>
   </>
 }
 
