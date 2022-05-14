@@ -19,9 +19,9 @@ export const NavMenu = () => {
       <Box sx={{ width: '100%' }}>
         <Tabs value={value} onChange={handleTabChange} aria-label="nav tabs">
           <LinkTab to="/" label="Home" icon={<HomeIcon />} iconPosition="start" />
-          <LinkTab to="/libraries" label="Libraries" icon={<VideoLibraryIcon />} iconPosition="start" />
           <LinkTab to="/genres" label="Genres" icon={<TheaterComedyIcon />} iconPosition="start" />
           <LinkTab to="/actors" label="Actors" icon={<PeopleIcon />} iconPosition="start" />
+          <LinkTab to="/libraries" label="Libraries" icon={<VideoLibraryIcon />} iconPosition="start" />
         </Tabs>
       </Box>
     </header>
