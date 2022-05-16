@@ -12,6 +12,18 @@ In order to get the project running locally for development here are a few steps
 1. `cd Ghost.Web`
 1. `dotnet watch run --urls=http://localhost:5120`
 
+### API in docker container
+
+1. `docker build -t ghost-media-dev -f Dockerfile.dev .`
+1.
+
+```bash
+docker run -d \
+  -v $(pwd):/app \
+  -e DATABASE_PATH=/app/data/Ghost.db \
+  --name ghost-media-dev ghost-media-dev
+```
+
 ## Web
 
 1. `cd Ghost.Web.React`
