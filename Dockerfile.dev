@@ -6,4 +6,4 @@ COPY . .
 RUN dotnet restore
 WORKDIR /app/Ghost.Web
 RUN dotnet dev-certs https --trust
-ENTRYPOINT ["dotnet", "watch", "run", "Ghost.Web/Ghost.Web.csproj"]
+ENTRYPOINT ["dotnet", "watch", "run", "--urls=http://0.0.0.0:5120", "Ghost.Web/Ghost.Web.csproj"]

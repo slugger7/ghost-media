@@ -19,7 +19,9 @@ In order to get the project running locally for development here are a few steps
 
 ```bash
 docker run -d \
+  -p 5120:5120
   -v $(pwd):/app \
+  -v $(pwd)/assets:/media/assets \
   -e DATABASE_PATH=/app/data/Ghost.db \
   --name ghost-media-dev ghost-media-dev
 ```
@@ -29,6 +31,21 @@ docker run -d \
 1. `cd Ghost.Web.React`
 1. `npm i`
 1. `npm start`
+
+### Web in docker container
+
+1. `cd Ghost.Web.React
+1. `docker build -t ghost-media-react -f Dockerfile .` same as production build
+1. `npm i`
+1.
+
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -v $(pwd):/app
+  -e REACT_APP_SERVER_URL=http://192.168.178.27:5120 \
+  --name ghost-media-react-dev ghost-media-react
+```
 
 # Building
 
