@@ -6,4 +6,5 @@ COPY . .
 RUN dotnet restore
 WORKDIR /app/Ghost.Web
 RUN dotnet dev-certs https --trust
-ENTRYPOINT ["dotnet", "watch", "run", "--urls=http://0.0.0.0:5120", "Ghost.Web/Ghost.Web.csproj"]
+RUN apt-get update && apt-get install -y ffmpeg
+ENTRYPOINT ["dotnet", "watch", "run", "--urls=http://0.0.0.0:5120", "/app/Ghost.Web/Ghost.Web.csproj"]
