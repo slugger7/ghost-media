@@ -198,7 +198,6 @@ namespace Ghost.Services
     public async Task BatchSyncNfos(List<Video> videos)
     {
       var newVideos = videos
-        //.Where(v => v.Title.ToLower().Contains("kali"))
         .Select(video =>
       {
         logger.LogDebug("Video: {0}", video.Title);
