@@ -60,6 +60,7 @@ namespace Ghost.Services
 
     public Task Sync(int id)
     {
+      var batchSize = 100;
       var library = libraryRepository.FindById(id);
       if (library == null) throw new NullReferenceException("Library not found");
 
@@ -114,16 +115,15 @@ namespace Ghost.Services
           }
           videoBatch.Add(video);
 
-          if (i % 100 == 0)
+          if (i % batchSize == 0)
           {
-            logger.LogInformation("Writing batch {0} of {1}", i / 10, videoEntities.Count() / 100);
+            logger.LogInformation("Writing batch {0} of {1}", i / batchSize, videoEntities.Count() / batchSize);
             libraryRepository.AddVideosToPath(path.Id, videoBatch);
             videoBatch = new List<Video>();
           }
         }
         libraryRepository.AddVideosToPath(path.Id, videoBatch);
         logger.LogInformation("Synced {0} new videos", videoEntities.Count());
-        //libraryRepository.AddVideosToPath(path.Id, videoEntities);
       }
 
       return Task.CompletedTask;
@@ -155,13 +155,6 @@ namespace Ghost.Services
       var videoCount = videos.Count();
 
       await videoService.BatchSyncNfos(videos);
-
-      // for (int i = 0; i < videoCount; i++)
-      // {
-      //   var video = videos.ElementAt(i);
-      //   await videoService.SyncWithNFO(video.Id);
-      //   logger.LogInformation("Video: {0} of {1} - {2}", i + 1, videoCount, video.Title);
-      // }
     }
   }
 }
