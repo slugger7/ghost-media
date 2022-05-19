@@ -277,7 +277,6 @@ namespace Ghost.Repository
           {
             logger.LogDebug("Video actor existed");
             videoActor.Id = videoActorEntity.Id;
-            videoActor.Actor = actor;
           }
           videoActor.Actor = actor;
           logger.LogDebug("Adding video actor to new video actors");

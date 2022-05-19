@@ -221,7 +221,7 @@ namespace Ghost.Services
           .ToList();
           video.VideoGenres = videoNfo.genres.Select(genre => new VideoGenre
           {
-            Genre = new Genre { Name = genre },
+            Genre = new Genre { Name = genre.Trim() },
             Video = video
           })
           .ToList();

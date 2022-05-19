@@ -86,18 +86,44 @@ namespace Ghost.Services
             var videoSplit = v.Split(Path.DirectorySeparatorChar);
             var fileName = videoSplit[videoSplit.Length - 1];
             var initialTitle = fileName.Substring(0, fileName.LastIndexOf('.'));
+            logger.LogInformation("Adding video: {0}", initialTitle);
             var video = new Video
             {
               Path = v,
               FileName = fileName,
               Title = initialTitle.Trim()
             };
+
             return video;
           })
           .ToList();
 
+        var videoBatch = new List<Video>();
+        for (var i = 0; i <= videoEntities.Count(); i++)
+        {
+          var video = videoEntities.ElementAt(i);
+          var metaData = VideoFns.GetVideoInformation(video.Path);
+          if (metaData != null)
+          {
+            video.Created = metaData.Created;
+            video.Size = metaData.Size;
+            video.Height = metaData.Height;
+            video.Width = metaData.Width;
+            video.Runtime = metaData.Duration.TotalMilliseconds;
+            video.LastMetadataUpdate = DateTime.UtcNow;
+          }
+          videoBatch.Add(video);
+
+          if (i % 100 == 0)
+          {
+            logger.LogInformation("Writing batch {0} of {1}", i / 10, videoEntities.Count() / 100);
+            libraryRepository.AddVideosToPath(path.Id, videoBatch);
+            videoBatch = new List<Video>();
+          }
+        }
+        libraryRepository.AddVideosToPath(path.Id, videoBatch);
         logger.LogInformation("Synced {0} new videos", videoEntities.Count());
-        libraryRepository.AddVideosToPath(path.Id, videoEntities);
+        //libraryRepository.AddVideosToPath(path.Id, videoEntities);
       }
 
       return Task.CompletedTask;
