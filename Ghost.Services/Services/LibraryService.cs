@@ -128,12 +128,14 @@ namespace Ghost.Services
 
       var videoCount = videos.Count();
 
-      for (int i = 0; i < videoCount; i++)
-      {
-        var video = videos.ElementAt(i);
-        await videoService.SyncWithNFO(video.Id);
-        logger.LogInformation("Video: {0} of {1} - {2}", i, videoCount, video.Title);
-      }
+      await videoService.BatchSyncNfos(videos);
+
+      // for (int i = 0; i < videoCount; i++)
+      // {
+      //   var video = videos.ElementAt(i);
+      //   await videoService.SyncWithNFO(video.Id);
+      //   logger.LogInformation("Video: {0} of {1} - {2}", i + 1, videoCount, video.Title);
+      // }
     }
   }
 }

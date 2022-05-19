@@ -1,3 +1,4 @@
+using Ghost.Data;
 using Ghost.Dtos;
 using Ghost.Media;
 using Ghost.Repository;
@@ -192,6 +193,44 @@ namespace Ghost.Services
     {
       var video = await videoRepository.Delete(id);
       File.Delete(video.Path);
+    }
+
+    public async Task BatchSyncNfos(List<Video> videos)
+    {
+      var newVideos = videos
+        //.Where(v => v.Title.ToLower().Contains("kali"))
+        .Select(video =>
+      {
+        logger.LogDebug("Video: {0}", video.Title);
+        var videoNfo = nfoService.HydrateVideo(video);
+        if (videoNfo != null)
+        {
+          logger.LogDebug("Video NFO: {0}", videoNfo.title);
+          video.Title = videoNfo.title.Trim();
+          video.LastNfoScan = DateTime.UtcNow;
+          DateTime DateAdded;
+          if (DateTime.TryParse(videoNfo.dateadded, out DateAdded))
+          {
+            video.DateAdded = DateAdded;
+          }
+          video.VideoActors = videoNfo.actors.Select(actor => new VideoActor
+          {
+            Actor = new Actor { Name = actor.name.Trim() },
+            Video = video
+          })
+          .ToList();
+          video.VideoGenres = videoNfo.genres.Select(genre => new VideoGenre
+          {
+            Genre = new Genre { Name = genre },
+            Video = video
+          })
+          .ToList();
+        }
+        return video;
+      });
+
+      logger.LogDebug("Done batch sync");
+      await videoRepository.BatchUpdate(newVideos);
     }
   }
 }

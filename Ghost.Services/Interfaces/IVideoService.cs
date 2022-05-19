@@ -1,3 +1,4 @@
+using Ghost.Data;
 using Ghost.Dtos;
 
 namespace Ghost.Services
@@ -15,5 +16,6 @@ namespace Ghost.Services
     PageResultDto<VideoDto> GetVideosForActor(int actorId, PageRequestDto pageRequest);
     Task<VideoDto> UpdateTitle(int id, string title);
     Task<VideoDto> SyncWithNFO(int id);
+    Task BatchSyncNfos(List<Video> videos);
   }
 }

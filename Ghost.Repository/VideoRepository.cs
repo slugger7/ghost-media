@@ -196,5 +196,123 @@ namespace Ghost.Repository
 
       return video;
     }
+
+    private async Task BatchHydrateGenres(Video video)
+    {
+      logger.LogDebug("Batch updating genres");
+      var newVideoGenres = new List<VideoGenre>();
+      foreach (var videoGenre in video.VideoGenres)
+      {
+        logger.LogDebug("Video genre loop");
+        var genre = context.Genres.FirstOrDefault(
+          a => a.Name.Trim().ToLower().Equals(videoGenre.Genre.Name.ToLower().Trim())
+        );
+        logger.LogDebug("Serach for genre done");
+        if (genre == null)
+        {
+          logger.LogDebug("Creating genre: {0}", videoGenre.Genre.Name);
+          newVideoGenres.Add(new VideoGenre
+          {
+            Video = videoGenre.Video,
+            Genre = videoGenre.Genre
+          });
+          logger.LogDebug("New genre added");
+          continue;
+        }
+        else
+        {
+          logger.LogDebug("Genre existed: {0}", genre.Name);
+          var videoGenreEntity = context.VideoGenres.FirstOrDefault(va => va.Genre.Id == genre.Id && va.Video.Id == video.Id);
+          if (videoGenreEntity != null)
+          {
+            logger.LogDebug("Video genre existed");
+            videoGenre.Id = videoGenreEntity.Id;
+          }
+          videoGenre.Genre = genre;
+          logger.LogDebug("Adding video genre to new video genres");
+          newVideoGenres.Add(new VideoGenre
+          {
+            Genre = videoGenre.Genre,
+            Video = video,
+            Id = videoGenre.Id
+          });
+          logger.LogDebug("Added it");
+          continue;
+        }
+      }
+      logger.LogDebug("Setting video genres");
+      video.VideoGenres = newVideoGenres;
+      logger.LogDebug("Saving");
+      await context.SaveChangesAsync();
+      logger.LogDebug("Done with genres");
+    }
+
+    private async Task BatchHydrateActors(Video video)
+    {
+      logger.LogDebug("Batch updating actors");
+      var newVideoActors = new List<VideoActor>();
+      foreach (var videoActor in video.VideoActors)
+      {
+        logger.LogDebug("Video actor loop");
+        var actor = context.Actors.FirstOrDefault(
+          a => a.Name.Trim().ToLower().Equals(videoActor.Actor.Name.ToLower().Trim())
+        );
+        logger.LogDebug("Serach for actor done");
+        if (actor == null)
+        {
+          logger.LogDebug("Creating actor: {0}", videoActor.Actor.Name);
+          newVideoActors.Add(new VideoActor
+          {
+            Video = videoActor.Video,
+            Actor = videoActor.Actor
+          });
+          logger.LogDebug("New actor added");
+          continue;
+        }
+        else
+        {
+          logger.LogDebug("Actor existed: {0}", actor.Name);
+          var videoActorEntity = context.VideoActors.FirstOrDefault(va => va.Actor.Id == actor.Id && va.Video.Id == video.Id);
+          if (videoActorEntity != null)
+          {
+            logger.LogDebug("Video actor existed");
+            videoActor.Id = videoActorEntity.Id;
+            videoActor.Actor = actor;
+          }
+          videoActor.Actor = actor;
+          logger.LogDebug("Adding video actor to new video actors");
+          newVideoActors.Add(new VideoActor
+          {
+            Actor = videoActor.Actor,
+            Video = video,
+            Id = videoActor.Id
+          });
+          logger.LogDebug("Added it");
+          continue;
+        }
+      }
+      logger.LogDebug("Setting video actors");
+      video.VideoActors = newVideoActors;
+      logger.LogDebug("Saving");
+      await context.SaveChangesAsync();
+      logger.LogDebug("Done with actors");
+    }
+
+    public async Task BatchUpdate(IEnumerable<Video> videos)
+    {
+      logger.LogDebug("Batch sync updating");
+      foreach (var video in videos)
+      {
+        logger.LogDebug("Finding Video: {0}", video.Id);
+        logger.LogDebug("Updating information for video");
+
+        await BatchHydrateActors(video);
+        await BatchHydrateGenres(video);
+      }
+      logger.LogDebug("Updating the range");
+
+      await context.SaveChangesAsync();
+      logger.LogDebug("Batch sync updated done");
+    }
   }
 }
