@@ -197,15 +197,15 @@ namespace Ghost.Repository
       return video;
     }
 
-    private async Task BatchHydrateGenres(Video video)
+    private async Task BatchHydrateGenres(Video video, List<VideoGenre> videoGenres)
     {
       logger.LogDebug("Batch updating genres");
       var newVideoGenres = new List<VideoGenre>();
-      foreach (var videoGenre in video.VideoGenres)
+      foreach (var videoGenre in videoGenres)
       {
         logger.LogDebug("Video genre loop");
         var genre = context.Genres.FirstOrDefault(
-          a => a.Name.Trim().ToLower().Equals(videoGenre.Genre.Name.ToLower().Trim())
+          g => g.Name.Trim().ToLower().Equals(videoGenre.Genre.Name.ToLower().Trim())
         );
         logger.LogDebug("Serach for genre done");
         if (genre == null)
@@ -222,7 +222,7 @@ namespace Ghost.Repository
         else
         {
           logger.LogDebug("Genre existed: {0}", genre.Name);
-          var videoGenreEntity = context.VideoGenres.FirstOrDefault(va => va.Genre.Id == genre.Id && va.Video.Id == video.Id);
+          var videoGenreEntity = context.VideoGenres.FirstOrDefault(vg => vg.Genre.Id == genre.Id && vg.Video.Id == video.Id);
           if (videoGenreEntity != null)
           {
             logger.LogDebug("Video genre existed");
@@ -247,11 +247,11 @@ namespace Ghost.Repository
       logger.LogDebug("Done with genres");
     }
 
-    private async Task BatchHydrateActors(Video video)
+    private async Task BatchHydrateActors(Video video, List<VideoActor> videoActors)
     {
       logger.LogDebug("Batch updating actors");
       var newVideoActors = new List<VideoActor>();
-      foreach (var videoActor in video.VideoActors)
+      foreach (var videoActor in videoActors)
       {
         logger.LogDebug("Video actor loop");
         var actor = context.Actors.FirstOrDefault(
@@ -297,16 +297,23 @@ namespace Ghost.Repository
       logger.LogDebug("Done with actors");
     }
 
-    public async Task BatchUpdate(IEnumerable<Video> videos)
+    public async Task BatchUpdate(IEnumerable<Video> videos, Dictionary<int, List<VideoGenre>> videoGenreDictionary, Dictionary<int, List<VideoActor>> videoActorDictionary)
     {
       logger.LogDebug("Batch sync updating");
       foreach (var video in videos)
       {
         logger.LogDebug("Finding Video: {0}", video.Id);
         logger.LogDebug("Updating information for video");
-
-        await BatchHydrateActors(video);
-        await BatchHydrateGenres(video);
+        var videoActors = videoActorDictionary.GetValueOrDefault(video.Id);
+        if (videoActors != null)
+        {
+          await BatchHydrateActors(video, videoActors);
+        }
+        var videoGenres = videoGenreDictionary.GetValueOrDefault(video.Id);
+        if (videoGenres != null)
+        {
+          await BatchHydrateGenres(video, videoGenres);
+        }
       }
       logger.LogDebug("Updating the range");
 

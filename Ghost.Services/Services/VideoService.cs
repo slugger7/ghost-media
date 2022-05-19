@@ -197,6 +197,8 @@ namespace Ghost.Services
 
     public async Task BatchSyncNfos(List<Video> videos)
     {
+      var videoGenreDictionary = new Dictionary<int, List<VideoGenre>>();
+      var videoActorDictionary = new Dictionary<int, List<VideoActor>>();
       var newVideos = videos
         .Select(video =>
       {
@@ -212,24 +214,24 @@ namespace Ghost.Services
           {
             video.DateAdded = DateAdded;
           }
-          video.VideoActors = videoNfo.actors.Select(actor => new VideoActor
+          videoActorDictionary.Add(video.Id, videoNfo.actors.Select(actor => new VideoActor
           {
             Actor = new Actor { Name = actor.name.Trim() },
             Video = video
           })
-          .ToList();
-          video.VideoGenres = videoNfo.genres.Select(genre => new VideoGenre
+          .ToList());
+          videoGenreDictionary.Add(video.Id, videoNfo.genres.Select(genre => new VideoGenre
           {
             Genre = new Genre { Name = genre.Trim() },
             Video = video
           })
-          .ToList();
+          .ToList());
         }
         return video;
       });
 
       logger.LogDebug("Done batch sync");
-      await videoRepository.BatchUpdate(newVideos);
+      await videoRepository.BatchUpdate(newVideos, videoGenreDictionary, videoActorDictionary);
     }
   }
 }

@@ -13,6 +13,6 @@ namespace Ghost.Repository
     Task<Video> Delete(int id);
     Task<Video> UpdateTitle(int id, string title);
     Task<Video> UpdateVideo(Video video);
-    Task BatchUpdate(IEnumerable<Video> videos);
+    Task BatchUpdate(IEnumerable<Video> videos, Dictionary<int, List<VideoGenre>> videoGenreDictionary, Dictionary<int, List<VideoActor>> videoActorDictionary);
   }
 }
