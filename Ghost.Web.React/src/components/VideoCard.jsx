@@ -7,6 +7,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { VideoMenu } from './VideoMenu.jsx'
 
 const generateThumbnail = async ({ videoId, setVideoThumbnail }) => {
+  //TODO Deprecate this
   const videoThumbnail = await axios.put(`/image/video/${videoId}`);
   setVideoThumbnail(videoThumbnail.data);
 }
@@ -14,7 +15,6 @@ const generateThumbnail = async ({ videoId, setVideoThumbnail }) => {
 export const VideoCard = ({ video, remove }) => {
   const [localVideo, setLocalVideo] = useState(video);
   const [anchorEl, setAnchorEl] = useState(null)
-  const [videoThumbnail, setVideoThumbnail] = useState();
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -24,24 +24,15 @@ export const VideoCard = ({ video, remove }) => {
     setAnchorEl(null)
   }
 
-
-  useEffect(() => {
-    if (localVideo.thumbnail) {
-      setVideoThumbnail(video.thumbnail);
-    } else {
-      generateThumbnail({ videoId: localVideo._id, setVideoThumbnail });
-    }
-  }, [video]);
-
   const urlToMedia = `/media/${localVideo._id}/${localVideo.title}`;
   return (<Card sx={{ maxHeight: '400px' }}>
     <CardActionArea LinkComponent={Link} to={urlToMedia}>
-      {videoThumbnail && <CardMedia
+      {localVideo.thumbnail && <CardMedia
         component="img"
-        image={`${axios.defaults.baseURL}/image/${videoThumbnail.id}`}
+        image={`${axios.defaults.baseURL}/image/${localVideo.thumbnail.id}`}
         alt={localVideo.title}
       />}
-      {!videoThumbnail && <Skeleton variant="rectangle" height="150px" />}
+      {!localVideo.thumbnail && <Skeleton animation="static" variant="rectangle" height="150px" />}
     </CardActionArea>
     <CardHeader
       className="ghost-video-card-header"

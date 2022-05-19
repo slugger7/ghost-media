@@ -8,10 +8,12 @@ namespace Ghost.Api.Controllers
   [Route("api/[controller]")]
   public class LibraryController : Controller
   {
+    private readonly ILogger<LibraryController> logger;
     private readonly ILibraryService libraryService;
 
-    public LibraryController(ILibraryService libraryService)
+    public LibraryController(ILibraryService libraryService, ILogger<LibraryController> logger)
     {
+      this.logger = logger;
       this.libraryService = libraryService;
     }
 
@@ -78,6 +80,21 @@ namespace Ghost.Api.Controllers
       }
       catch (NullReferenceException)
       {
+        return NotFound();
+      }
+    }
+
+    [HttpPut("{id}/generate-thumbnails")]
+    public ActionResult GenerateThumbnails(int id, bool overwrite = false)
+    {
+      try
+      {
+        libraryService.GenerateThumbnails(id, overwrite);
+        return Ok();
+      }
+      catch (NullReferenceException)
+      {
+        logger.LogWarning("Library not found: {0}", id);
         return NotFound();
       }
     }

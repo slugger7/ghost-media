@@ -11,5 +11,6 @@ namespace Ghost.Services
     Task Sync(int id);
     Task Delete(int id);
     Task SyncNfos(int id);
+    Task GenerateThumbnails(int id, bool overwrite);
   }
 }

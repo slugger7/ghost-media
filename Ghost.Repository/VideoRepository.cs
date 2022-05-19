@@ -297,7 +297,7 @@ namespace Ghost.Repository
       logger.LogDebug("Done with actors");
     }
 
-    public async Task BatchUpdate(IEnumerable<Video> videos, Dictionary<int, List<VideoGenre>> videoGenreDictionary, Dictionary<int, List<VideoActor>> videoActorDictionary)
+    public async Task BatchUpdateFromNFO(IEnumerable<Video> videos, Dictionary<int, List<VideoGenre>> videoGenreDictionary, Dictionary<int, List<VideoActor>> videoActorDictionary)
     {
       logger.LogDebug("Batch sync updating");
       foreach (var video in videos)
@@ -319,6 +319,13 @@ namespace Ghost.Repository
 
       await context.SaveChangesAsync();
       logger.LogDebug("Batch sync updated done");
+    }
+
+    public async Task BatchUpdate(IEnumerable<Video> videos)
+    {
+      logger.LogDebug("Batch updating {0} videos", videos.Count());
+      context.UpdateRange(videos);
+      await context.SaveChangesAsync();
     }
   }
 }

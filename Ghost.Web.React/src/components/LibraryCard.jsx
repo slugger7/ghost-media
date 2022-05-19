@@ -6,6 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
+import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import axios from 'axios';
 
 export const LibraryCard = ({ library, refresh }) => {
@@ -13,6 +14,7 @@ export const LibraryCard = ({ library, refresh }) => {
   const [loadingSync, setLoadingSync] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false);
+  const [loadingGenerateAllThumbnails, setLoadingGenerateAllThumbnails] = useState(false);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -53,6 +55,17 @@ export const LibraryCard = ({ library, refresh }) => {
     } finally {
       setLoadingSyncNfo(false)
       handleMenuClose()
+    }
+  }
+
+  const generateAllThumbnails = async () => {
+    if (loadingGenerateAllThumbnails) return;
+    setLoadingGenerateAllThumbnails(true);
+    try {
+      await axios.put(`/library/${library._id}/generate-thumbnails`);
+    } finally {
+      setLoadingGenerateAllThumbnails(false);
+      handleMenuClose();
     }
   }
 
@@ -99,6 +112,13 @@ export const LibraryCard = ({ library, refresh }) => {
           {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
         </ListItemIcon>
         <ListItemText>Sync all NFOs</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={generateAllThumbnails}>
+        <ListItemIcon>
+          {loadingGenerateAllThumbnails && <CircularProgress sx={{ mr: 1 }} fontSize="small" />}
+          {!loadingGenerateAllThumbnails && <ImageSearchIcon fontSize="small" />}
+        </ListItemIcon>
+        <ListItemText>Generate all thumbnails</ListItemText>
       </MenuItem>
       <MenuItem onClick={deleteLibrary}>
         <ListItemIcon>

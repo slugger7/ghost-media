@@ -231,7 +231,7 @@ namespace Ghost.Services
       });
 
       logger.LogDebug("Done batch sync");
-      await videoRepository.BatchUpdate(newVideos, videoGenreDictionary, videoActorDictionary);
+      await videoRepository.BatchUpdateFromNFO(newVideos, videoGenreDictionary, videoActorDictionary);
     }
   }
 }
