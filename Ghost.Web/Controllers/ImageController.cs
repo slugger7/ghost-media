@@ -40,7 +40,7 @@ namespace Ghost.Api.Controllers
       }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}/{title}")]
     public ActionResult GetImageFile(int id)
     {
       logger.LogDebug("Getting image {0}", id);

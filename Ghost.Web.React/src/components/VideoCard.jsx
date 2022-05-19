@@ -29,7 +29,7 @@ export const VideoCard = ({ video, remove }) => {
     <CardActionArea LinkComponent={Link} to={urlToMedia}>
       {localVideo.thumbnail && <CardMedia
         component="img"
-        image={`${axios.defaults.baseURL}/image/${localVideo.thumbnail.id}`}
+        image={`${axios.defaults.baseURL}/image/${localVideo.thumbnail.id}/${localVideo.title}`}
         alt={localVideo.title}
       />}
       {!localVideo.thumbnail && <Skeleton animation="static" variant="rectangle" height="150px" />}
