@@ -44,17 +44,26 @@ namespace Ghost.Dtos
         {
           this.Thumbnail = new ImageDto(thumbnail.Image);
         }
-        this.Genres = video.VideoGenres
-          .OrderBy(vg => vg.Genre.Name)
-          .Select(vg => new GenreDto(vg.Genre))
-          .ToList();
-        this.Actors = video.VideoActors
-          .OrderBy(va => va.Actor.Name)
-          .Select(va => new ActorDto(va.Actor))
-          .ToList();
-        this.Images = video.VideoImages
-          .Select(vi => new ImageDto(vi.Image))
-          .ToList();
+        if (video.VideoGenres != null)
+        {
+          this.Genres = video.VideoGenres
+            .OrderBy(vg => vg.Genre.Name)
+            .Select(vg => new GenreDto(vg.Genre))
+            .ToList();
+        }
+        if (video.VideoActors != null)
+        {
+          this.Actors = video.VideoActors
+            .OrderBy(va => va.Actor.Name)
+            .Select(va => new ActorDto(va.Actor))
+            .ToList();
+        }
+        if (video.VideoImages != null)
+        {
+          this.Images = video.VideoImages
+            .Select(vi => new ImageDto(vi.Image))
+            .ToList();
+        }
       }
     }
   }

@@ -146,10 +146,8 @@ namespace Ghost.Repository
     public PageResult<Video> SearchVideos(int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
     {
       var videos = context.Videos
-          .Include("VideoActors.Actor")
-          .Include("VideoGenres.Genre")
-          .Include("VideoImages.Image")
-          .Where(videoSearch(search));
+        .Include("VideoImages.Image")
+        .Where(videoSearch(search));
 
       videos = SortAndOrderVideos(videos, sortBy, ascending);
 
