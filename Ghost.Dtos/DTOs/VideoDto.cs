@@ -21,6 +21,7 @@ namespace Ghost.Dtos
     public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
     public List<ActorDto> Actors { get; set; } = new List<ActorDto>();
     public List<ImageDto> Images { get; set; } = new List<ImageDto>();
+    public List<ChapterDto> Chapters { get; set; } = new List<ChapterDto>();
 
     public VideoDto(Video video)
     {
@@ -39,6 +40,7 @@ namespace Ghost.Dtos
         this.LastNfoScan = video.LastNfoScan;
         this.LastMetadataUpdate = video.LastMetadataUpdate;
         this.DateAdded = video.DateAdded;
+
         var thumbnail = video.VideoImages.FirstOrDefault(vi => vi.Type.Equals("thumbnail"));
         if (thumbnail is not null)
         {
@@ -62,6 +64,12 @@ namespace Ghost.Dtos
         {
           this.Images = video.VideoImages
             .Select(vi => new ImageDto(vi.Image))
+            .ToList();
+        }
+        if (video.Chapters != null)
+        {
+          this.Chapters = video.Chapters
+            .Select(c => new ChapterDto(c))
             .ToList();
         }
       }

@@ -40,7 +40,7 @@ namespace Ghost.Api.Controllers
     [HttpGet("{id}/info")]
     public ActionResult<VideoDto> GetVideoInfo(int id)
     {
-      var video = videoService.GetVideoById(id, new List<string> { "VideoImages.Image" });
+      var video = videoService.GetVideoById(id, new List<string> { "VideoImages.Image", "Chapters.Image" });
 
       return video;
     }
@@ -141,7 +141,29 @@ namespace Ghost.Api.Controllers
     [HttpPut("{id}/nfo")]
     public async Task<ActionResult<VideoDto>> UpdateFromNFO(int id)
     {
-      return await videoService.SyncWithNFO(id);
+      try
+      {
+        return await videoService.SyncWithNFO(id);
+      }
+      catch (NullReferenceException)
+      {
+        logger.LogWarning("Video was not found when updating from NFO {0}", id);
+        return NotFound();
+      }
+    }
+
+    [HttpPut("{id}/chapters")]
+    public async Task<ActionResult<VideoDto>> GenerateChapters(int id)
+    {
+      try
+      {
+        return await videoService.GenerateChapters(id);
+      }
+      catch (NullReferenceException)
+      {
+        logger.LogWarning("Video was not found when generating chapters {0}", id);
+        return NotFound();
+      }
     }
   }
 }

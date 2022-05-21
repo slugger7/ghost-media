@@ -241,5 +241,56 @@ namespace Ghost.Services
       logger.LogDebug("Done batch sync");
       await videoRepository.BatchUpdateFromNFO(newVideos, videoGenreDictionary, videoActorDictionary);
     }
+
+    public async Task<VideoDto> GenerateChapters(int id, bool overwrite = true)
+    {
+      logger.LogDebug("Generating chapters for {0}", id);
+      var video = videoRepository.FindById(id, new List<string> { "Chapters.Image" });
+      if (video == null) throw new NullReferenceException("Video not found");
+
+      var assetsPath = Environment.GetEnvironmentVariable("ASSETS_PATH") ?? $"/home/slugger/dev/ghost-media/{Path.DirectorySeparatorChar}assets";
+      var chapterLength = Int32.Parse(Environment.GetEnvironmentVariable("CHAPTER_LENGTH") ?? "300000");
+      var directoryName = video.Id.ToString();
+      var videoAssets = $"{assetsPath}{Path.DirectorySeparatorChar}{directoryName}";
+      var directoryExists = Directory.Exists(videoAssets);
+      if (overwrite || !directoryExists)
+      {
+        if (overwrite && directoryExists)
+        {
+          Directory.Delete(videoAssets);
+        }
+        Directory.CreateDirectory(videoAssets);
+        var chapterMarks = new List<int>();
+        var currentChapter = chapterLength;
+        while (currentChapter <= video.Runtime)
+        {
+          chapterMarks.Add(currentChapter);
+          currentChapter = currentChapter + chapterLength;
+        }
+        logger.LogDebug("Creating {0} chapter images", chapterMarks.Count());
+        var chapterImageTuples = imageIoService.CreateChapterImages(video.Path, video.Id.ToString(), videoAssets, chapterMarks);
+        var chapters = chapterImageTuples.Select(chapterTuple => new Chapter
+        {
+          Description = "",
+          Image = new Image
+          {
+            Name = $"{video.Title}-{chapterTuple.Item1}",
+            Path = $"{videoAssets}{Path.DirectorySeparatorChar}{chapterTuple.Item2}"
+          },
+          Timestamp = chapterTuple.Item1
+        });
+
+        video.Chapters = chapters.ToList();
+        video = await videoRepository.UpdateVideo(video, new List<string> { "VideoImages.Image" });
+        logger.LogInformation("Chapter images created for {0}", video.FileName);
+      }
+      else
+      {
+        // TODO: Add chapter images into database
+        throw new NotImplementedException();
+      }
+
+      return new VideoDto(video);
+    }
   }
 }

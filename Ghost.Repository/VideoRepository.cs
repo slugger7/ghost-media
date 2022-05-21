@@ -195,7 +195,12 @@ namespace Ghost.Repository
 
     public async Task<Video> UpdateVideo(Video video)
     {
-      var videoEntity = this.FindById(video.Id, null);
+      return await this.UpdateVideo(video, null);
+    }
+
+    public async Task<Video> UpdateVideo(Video video, List<string>? includes)
+    {
+      var videoEntity = this.FindById(video.Id, includes);
       if (videoEntity is null) throw new NullReferenceException("Video not found to update");
 
       videoEntity.Title = video.Title.Trim();
@@ -207,6 +212,7 @@ namespace Ghost.Repository
       videoEntity.Width = video.Width;
       videoEntity.LastMetadataUpdate = video.LastMetadataUpdate;
       videoEntity.LastNfoScan = video.LastNfoScan;
+      videoEntity.Chapters = video.Chapters;
 
       await context.SaveChangesAsync();
 

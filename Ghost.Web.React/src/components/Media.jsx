@@ -13,6 +13,7 @@ import { VideoTitle } from './VideoTitle.jsx'
 import { VideoMetaData } from './VideoMetaData.jsx'
 import { VideoMenu } from './VideoMenu.jsx'
 import { ChipSkeleton } from './ChipSkeleton.jsx'
+import { Chapters } from './Chapters.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -28,6 +29,7 @@ export const Media = () => {
   const genresPage = useAsync(fetchGenres, [params.id])
   const actorsPage = useAsync(fetchActors, [params.id])
   const [menuAnchorEl, setMenuAnchorEl] = useState();
+  const [chapter, setChapter] = useState();
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
   const handleMenuClose = () => setMenuAnchorEl(null);
@@ -36,6 +38,7 @@ export const Media = () => {
     {media.loading && <Skeleton height="200px" width="100%" />}
     {!media.loading &&
       <Video
+        chapter={chapter}
         source={`${axios.defaults.baseURL}/media/${params.id}`}
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}/${media.result.title}`}
@@ -61,27 +64,36 @@ export const Media = () => {
           </IconButton>
           </Grid>
         </Grid>
+        {genresPage.loading && <ChipSkeleton />}
+        {!genresPage.loading && <VideoGenres genres={genresPage.result} videoId={params.id}
+          updateGenres={async (genres) => {
+            const video = await updateGenres(params.id, genres)
+            genresPage.set(mergeDeepRight(genres, { result: video.genres }));
+          }}
+        />}
+        {actorsPage.loading && <ChipSkeleton />}
+        {!actorsPage.loading && <VideoActors
+          actors={actorsPage.result}
+          videoId={params.id}
+          updateActors={async (actors) => {
+            const video = await updateActors(params.id, actors)
+            actorsPage.set(mergeDeepRight(media, { result: video.actors }))
+          }}
+        />}
+        {!media.loading && <Chapters
+          chapters={media.result.chapters}
+          setChapter={setChapter}
+        />}
+        {media.loading && <>
+          <Skeleton heigh="400px" width="400px" />
+          <Skeleton heigh="400px" width="400px" />
+          <Skeleton heigh="400px" width="400px" />
+        </>}
+        {!media.loading && <VideoMetaData
+          video={media.result}
+        />}
+        {media.loading && <Skeleton height="20px" width="100%" />}
       </Paper>
-      {genresPage.loading && <ChipSkeleton />}
-      {!genresPage.loading && <VideoGenres genres={genresPage.result} videoId={params.id}
-        updateGenres={async (genres) => {
-          const video = await updateGenres(params.id, genres)
-          genresPage.set(mergeDeepRight(genres, { result: video.genres }));
-        }}
-      />}
-      {actorsPage.loading && <ChipSkeleton />}
-      {!actorsPage.loading && <VideoActors
-        actors={actorsPage.result}
-        videoId={params.id}
-        updateActors={async (actors) => {
-          const video = await updateActors(params.id, actors)
-          actorsPage.set(mergeDeepRight(media, { result: video.actors }))
-        }}
-      />}
-      {!media.loading && <VideoMetaData
-        video={media.result}
-      />}
-      {media.loading && <Skeleton height="20px" width="100%" />}
     </Container>
 
     {!media.loading && <VideoMenu

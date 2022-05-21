@@ -4,20 +4,21 @@ import { Menu, MenuItem, ListItemIcon, CircularProgress, ListItemText } from '@m
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import SyncIcon from '@mui/icons-material/Sync';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import BurstModeIcon from '@mui/icons-material/BurstMode';
 import axios from 'axios'
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
 
-const syncFromNfo = async (videoId) => (await axios.put(`/media/${videoId}/nfo`)).data;
-
+const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
+const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadata`)).data
+const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
-
-const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadata`)).data;
 
 export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, setVideo }) => {
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
+  const [loadingGeneratChapter, setLoadingGeneratChapter] = useState(false)
   const [deleteModalOpen, setDeletModalOpen] = useState(false);
 
   const handleModalClose = () => {
@@ -67,6 +68,18 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, 
     }
   }
 
+  const handleGenerateChapters = async () => {
+    if (loadingGeneratChapter) return;
+    setLoadingGeneratChapter(true)
+    try {
+      const video = await generateChapters(videoId)
+      setVideo(video)
+    } finally {
+      setLoadingGeneratChapter(false)
+      handleClose();
+    }
+  }
+
   return <>
     <Menu
       id={`${videoId}-video-card-menu`}
@@ -88,6 +101,13 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, 
           {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
         </ListItemIcon>
         <ListItemText>Sync from NFO</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={handleGenerateChapters}>
+        <ListItemIcon>
+          {!loadingGeneratChapter && <BurstModeIcon fontSize="small" />}
+          {loadingGeneratChapter && <CircularProgress sx={{ mr: 1 }} />}
+        </ListItemIcon>
+        <ListItemText>Generate Chapters</ListItemText>
       </MenuItem>
       <MenuItem onClick={handleDeleteMenuClick}>
         <ListItemIcon>
