@@ -21,8 +21,8 @@ namespace Ghost.Data
 
     public static Func<string, Func<Video, string>> SortByPredicate = sortBy => video =>
       sortBy.ToLower().Equals("title") ? video.Title
-        : sortBy.ToLower().Equals("date-added") ? video.DateAdded.ToString()
-        : sortBy.ToLower().Equals("date-created") ? video.Created.ToString()
+        : sortBy.ToLower().Equals("date-added") ? video.DateAdded.Ticks.ToString()
+        : sortBy.ToLower().Equals("date-created") ? video.Created.Ticks.ToString()
         : sortBy.ToLower().Equals("size") ? video.Size.ToString()
         : sortBy.ToLower().Equals("runtime") ? video.Runtime.ToString() : video.Title;
   }
