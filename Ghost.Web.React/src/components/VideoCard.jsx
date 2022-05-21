@@ -37,7 +37,7 @@ export const VideoCard = ({ video, remove }) => {
     <CardHeader
       className="ghost-video-card-header"
       title={<Tooltip title={localVideo.title}><Typography variant="h6" noWrap={true}>
-        <Link to={urlToMedia}>{localVideo.title}</Link>
+        <Typography component={Link} to={urlToMedia} color="white">{localVideo.title}</Typography>
       </Typography></Tooltip>}
       disableTypography={true}
       action={<IconButton

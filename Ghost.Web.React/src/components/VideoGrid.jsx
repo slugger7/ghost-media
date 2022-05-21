@@ -31,6 +31,7 @@ export const VideoGrid = ({
   const paginationComponent = <>
     {count > 1 && page && <Grid item xs={12} md={6} lg={5}>
       <Pagination
+        size="small"
         color="primary"
         page={page}
         defaultPage={1}
