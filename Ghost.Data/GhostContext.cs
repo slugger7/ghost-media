@@ -15,6 +15,7 @@ namespace Ghost.Data
     public DbSet<VideoImage> VideoImages { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Actor> Actors { get; set; }
+    public DbSet<Chapter> Chapters { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -51,6 +52,12 @@ namespace Ghost.Data
         .WithMany(x => x.VideoImages);
       modelBuilder.Entity<Genre>().ToTable("Genres");
       modelBuilder.Entity<Actor>().ToTable("Actors");
+      var chapter = modelBuilder.Entity<Chapter>().ToTable("Chapters");
+      chapter
+        .HasOne<Image>(x => x.Image);
+      chapter
+        .HasOne<Video>(x => x.Video)
+        .WithMany(x => x.Chapters);
     }
   }
 }
