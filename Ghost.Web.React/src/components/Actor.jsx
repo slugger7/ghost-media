@@ -40,13 +40,14 @@ export const Actor = () => {
     setSortAscending(params.ascending)
   }, [searchParams])
 
-  const handleSearchChange = (searchValue) => setSearchParams({
-    search: encodeURIComponent(searchValue),
-    page: 0,
-    limit: limit || 48
-  })
-
   const updateSearchParams = updateSearchParamsService(setSearchParams, { page, limit, search, sortBy, ascending: sortAscending })
+
+  const handleSearchChange = (searchValue) => {
+    updateSearchParams({
+      search: encodeURIComponent(searchValue),
+      page: 0
+    })
+  }
 
   const sortComponent = <Sort
     sortBy={sortBy}

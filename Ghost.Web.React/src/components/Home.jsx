@@ -33,18 +33,17 @@ export const Home = () => {
     setSortAscending(params.ascending)
   }, [searchParams])
 
+  const updateSearchParams = updateSearchParamsService(
+    setSearchParams,
+    { page, limit, search, sortBy, ascending: sortAscending }
+  );
+
   const handleSearchChange = (searchValue) => {
-    setSearchParams({
+    updateSearchParams({
       search: encodeURIComponent(searchValue),
       page: 0,
-      limit: limit || 48
     })
-    setSearch(searchValue);
-    setPage(0);
-    setLimit(limit || 48);
   }
-
-  const updateSearchParams = updateSearchParamsService(setSearchParams, { page, limit, search, sortBy, ascending: sortAscending });
 
   const sortComponent = <Sort
     sortBy={sortBy}
