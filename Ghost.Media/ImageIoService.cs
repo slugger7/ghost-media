@@ -55,5 +55,16 @@ namespace Ghost.Media
 
       FFMpeg.Snapshot(videoPath, outputPath, scaledSize, captureTime: captureTime);
     }
+
+    public IEnumerable<Tuple<int, string>> CreateChapterImages(string videoPath, string filename, string outputDirectory, List<int> chapterMarks)
+    {
+      var images = chapterMarks.Select(chapter =>
+      {
+        var fileName = $"{filename}-{chapter.ToString()}.png";
+        this.GenerateImage(videoPath, $"{outputDirectory}{Path.DirectorySeparatorChar}{fileName}", chapter);
+        return new Tuple<int, string>(chapter, fileName);
+      });
+      return images;
+    }
   }
 }

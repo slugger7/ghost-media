@@ -18,5 +18,6 @@ namespace Ghost.Services
     Task<VideoDto> UpdateTitle(int id, string title);
     Task<VideoDto> SyncWithNFO(int id);
     Task BatchSyncNfos(List<Video> videos);
+    Task<VideoDto> GenerateChapters(int id, bool overwrite = false);
   }
 }

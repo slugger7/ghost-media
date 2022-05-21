@@ -207,6 +207,7 @@ namespace Ghost.Repository
       videoEntity.Width = video.Width;
       videoEntity.LastMetadataUpdate = video.LastMetadataUpdate;
       videoEntity.LastNfoScan = video.LastNfoScan;
+      videoEntity.Chapters = video.Chapters;
 
       await context.SaveChangesAsync();
 
