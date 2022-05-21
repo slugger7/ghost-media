@@ -32,7 +32,6 @@ namespace Ghost.Repository
     public IEnumerable<Genre> GetGenresForVideo(int videoId)
     {
       return context.VideoGenres
-      .Include("Genre")
       .Include("Genre.VideoGenres")
       .Where(vg => vg.Video.Id == videoId)
       .Select(vg => vg.Genre);
