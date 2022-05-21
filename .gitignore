@@ -235,4 +235,5 @@ _Pvt_Extensions
 */**/*.db-shm
 */**/*.db-wal
 assets
+media
 */**/node_modules
