@@ -99,6 +99,21 @@ namespace Ghost.Api.Controllers
       }
     }
 
+    [HttpPut("{id}/generate-chapters")]
+    public ActionResult GenerateChapters(int id, bool overwrite = false)
+    {
+      try
+      {
+        libraryService.GenerateChapters(id, overwrite);
+        return Ok();
+      }
+      catch (NullReferenceException)
+      {
+        logger.LogWarning("Library not found: {0}", id);
+        return NotFound();
+      }
+    }
+
     [HttpDelete("{id}")]
     public ActionResult DeleteLibrary(int id)
     {
