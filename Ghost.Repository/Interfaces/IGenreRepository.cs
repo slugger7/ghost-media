@@ -9,5 +9,6 @@ namespace Ghost.Repository
     Genre? GetByName(string name);
     IEnumerable<Genre> Search(string search, int limit = 10);
     Genre Upsert(string name);
+    IEnumerable<Genre> GetGenresForVideo(int videoId);
   }
 }

@@ -12,7 +12,10 @@ namespace Ghost.Dtos
     {
       this._id = genre.Id.ToString();
       this.Name = genre.Name;
-      this.VideoCount = genre.VideoGenres.Count();
+      if (genre.VideoGenres != null)
+      {
+        this.VideoCount = genre.VideoGenres.Count();
+      }
     }
   }
 }

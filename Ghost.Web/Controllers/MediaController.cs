@@ -40,7 +40,7 @@ namespace Ghost.Api.Controllers
     [HttpGet("{id}/info")]
     public ActionResult<VideoDto> GetVideoInfo(int id)
     {
-      var video = videoService.GetVideoById(id);
+      var video = videoService.GetVideoById(id, new List<string> { "VideoImages.Image" });
 
       return video;
     }

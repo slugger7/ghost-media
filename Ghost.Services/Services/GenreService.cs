@@ -26,6 +26,14 @@ namespace Ghost.Services
 
       return genres.Select(g => new GenreDto(g)).ToList();
     }
+
+    public List<GenreDto> GetGenresForVideo(int videoId)
+    {
+      var genres = genreRepository.GetGenresForVideo(videoId);
+
+      return genres.Select(g => new GenreDto(g)).ToList();
+    }
+
     public List<GenreDto> SearchTopGenres(string search, int limit = 10)
     {
       return genreRepository.Search(search, limit)

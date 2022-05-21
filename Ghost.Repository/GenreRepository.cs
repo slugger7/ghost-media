@@ -29,6 +29,15 @@ namespace Ghost.Repository
       return context.Genres.Include("VideoGenres").OrderByDescending(g => g.VideoGenres.Count());
     }
 
+    public IEnumerable<Genre> GetGenresForVideo(int videoId)
+    {
+      return context.VideoGenres
+      .Include("Genre")
+      .Include("Genre.VideoGenres")
+      .Where(vg => vg.Video.Id == videoId)
+      .Select(vg => vg.Genre);
+    }
+
     public IEnumerable<Genre> Search(string search, int limit = 10)
     {
       return context.Genres

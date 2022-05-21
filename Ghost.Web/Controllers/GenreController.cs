@@ -9,10 +9,12 @@ namespace Ghost.Api.Controllers
   public class GenreController : Controller
   {
     private readonly IGenreService genreService;
+    private readonly ILogger<GenreController> logger;
 
-    public GenreController(IGenreService genreService)
+    public GenreController(IGenreService genreService, ILogger<GenreController> logger)
     {
       this.genreService = genreService;
+      this.logger = logger;
     }
 
     [HttpGet("{name}")]
@@ -38,6 +40,20 @@ namespace Ghost.Api.Controllers
     public ActionResult<List<GenreDto>> GetTopGenres(int limit = 5, string search = "")
     {
       return genreService.SearchTopGenres(search, limit);
+    }
+
+    [HttpGet("video/{videoId}")]
+    public ActionResult<List<GenreDto>> GetGenresForVideo(int videoId)
+    {
+      try
+      {
+        return genreService.GetGenresForVideo(videoId);
+      }
+      catch (NullReferenceException ex)
+      {
+        logger.LogWarning("Genre for video failed", ex);
+        return NotFound();
+      }
     }
   }
 }
