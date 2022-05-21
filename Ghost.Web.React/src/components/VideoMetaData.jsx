@@ -1,9 +1,9 @@
-import { Typography } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import React from 'react'
 import PropTypes from 'prop-types'
 import { fileSize, milliseconds } from '../services/formatters'
 
-export const VideoMetaData = ({ video }) => <>
+export const VideoMetaData = ({ video }) => <Box sx={{ py: 1 }}>
   <Typography variant="h5" component="h5">Metadata</Typography>
   <Typography>Path: {video.path}</Typography>
   <Typography>Runtime: {milliseconds(video.runtime)}min</Typography>
@@ -13,7 +13,7 @@ export const VideoMetaData = ({ video }) => <>
   <Typography>Added: {video.dateAdded}</Typography>
   <Typography>Meta data updated: {video.lastMetadataUpdate}</Typography>
   <Typography>NFO updated: {video.lastNfoScan}</Typography>
-</>
+</Box>
 
 VideoMetaData.propTypes = {
   video: PropTypes.shape({

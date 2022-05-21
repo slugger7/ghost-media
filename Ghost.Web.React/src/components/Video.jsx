@@ -9,13 +9,14 @@ export const Video = ({ source, type, poster, chapter }) => {
 
   return (<video
     className="ghost-video"
+    autoPlay={!!chapter}
     controls={true}
     ref={videoRef}
     poster={chapter
       ? `${axios.defaults.baseURL}/image/${chapter.image.id}/${chapter.image.name}`
       : poster}
     playsInline={true}
-    src={`${source}#t=${chapter?.timestamp / 1000 || 0}`}
+    src={`${source}${chapter ? `#t=${chapter?.timestamp / 1000}` : ''}`}
     type={type}>
   </video>)
 }
