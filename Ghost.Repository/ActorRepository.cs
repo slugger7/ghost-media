@@ -37,7 +37,8 @@ namespace Ghost.Repository
       return context.VideoActors
         .Include("Actor.VideoActors")
         .Where(va => va.Video.Id == videoId)
-        .Select(va => va.Actor);
+        .Select(va => va.Actor)
+        .OrderByDescending(a => a.VideoActors.Count());
     }
 
     public Actor UpsertActor(string name)

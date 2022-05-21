@@ -34,7 +34,8 @@ namespace Ghost.Repository
       return context.VideoGenres
       .Include("Genre.VideoGenres")
       .Where(vg => vg.Video.Id == videoId)
-      .Select(vg => vg.Genre);
+      .Select(vg => vg.Genre)
+      .OrderByDescending(g => g.VideoGenres.Count());
     }
 
     public IEnumerable<Genre> Search(string search, int limit = 10)
