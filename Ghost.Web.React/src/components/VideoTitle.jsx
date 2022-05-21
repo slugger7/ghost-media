@@ -23,7 +23,7 @@ export const VideoTitle = ({ video, updateTitle }) => {
 
   return <>
     <Stack directior="column">
-      {!editing && <Typography variant="h3" gutterBottom component="h3">{video.title} <IconButton color="primary" onClick={() => { setEditing(true) }}>
+      {!editing && <Typography variant="h4" gutterBottom component="h4">{video.title} <IconButton color="primary" onClick={() => { setEditing(true) }}>
         <EditIcon />
       </IconButton>
       </Typography>}

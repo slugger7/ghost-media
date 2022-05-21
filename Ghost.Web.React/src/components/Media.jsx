@@ -25,8 +25,8 @@ export const Media = () => {
   const params = useParams()
   const navigate = useNavigate();
   const media = useAsync(fetchMedia, [params.id])
-  const genres = useAsync(fetchGenres, [params.id])
-  const actors = useAsync(fetchActors, [params.id])
+  const genresPage = useAsync(fetchGenres, [params.id])
+  const actorsPage = useAsync(fetchActors, [params.id])
   const [menuAnchorEl, setMenuAnchorEl] = useState();
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
@@ -40,8 +40,7 @@ export const Media = () => {
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}/${media.result.title}`}
       />}
-    <Container>
-
+    <Container sx={{ paddingX: 0 }}>
       <Paper sx={{ p: 2 }}>
         <Grid container spacing={1}>
           <Grid item xs={10} sm={11}>
@@ -63,20 +62,20 @@ export const Media = () => {
           </Grid>
         </Grid>
       </Paper>
-      {genres.loading && <ChipSkeleton />}
-      {!genres.loading && <VideoGenres genres={genres.result} videoId={params.id}
+      {genresPage.loading && <ChipSkeleton />}
+      {!genresPage.loading && <VideoGenres genres={genresPage.result} videoId={params.id}
         updateGenres={async (genres) => {
           const video = await updateGenres(params.id, genres)
-          genres.set(mergeDeepRight(genres, { result: video.genres }));
+          genresPage.set(mergeDeepRight(genres, { result: video.genres }));
         }}
       />}
-      {actors.loading && <ChipSkeleton />}
-      {!actors.loading && <VideoActors
-        actors={actors.result}
+      {actorsPage.loading && <ChipSkeleton />}
+      {!actorsPage.loading && <VideoActors
+        actors={actorsPage.result}
         videoId={params.id}
         updateActors={async (actors) => {
           const video = await updateActors(params.id, actors)
-          actors.set(mergeDeepRight(media, { result: video.actors }))
+          actorsPage.set(mergeDeepRight(media, { result: video.actors }))
         }}
       />}
       {!media.loading && <VideoMetaData
