@@ -111,7 +111,7 @@ namespace Ghost.Services
     public VideoDto SetGenresByNameToVideo(int id, List<string> genres)
     {
       if (genres == null) throw new NullReferenceException("Genres not provided");
-      var videoEntity = videoRepository.FindById(id);
+      var videoEntity = videoRepository.FindById(id, new List<string> { "VideoGenres" });
 
       if (videoEntity == null) throw new NullReferenceException("Video not found");
       var genreEntities = genres.Select(g => genreRepository.Upsert(g));
@@ -140,7 +140,7 @@ namespace Ghost.Services
     public VideoDto SetActorsByNameToVideo(int id, List<string> actors)
     {
       if (actors == null) throw new NullReferenceException("Actors not provided");
-      var videoEntity = videoRepository.FindById(id);
+      var videoEntity = videoRepository.FindById(id, new List<string> { "VideoActors" });
 
       if (videoEntity == null) throw new NullReferenceException("Video not found");
       var actorEntities = actors.Select(a => actorRepository.UpsertActor(a));

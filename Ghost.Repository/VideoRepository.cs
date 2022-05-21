@@ -32,13 +32,12 @@ namespace Ghost.Repository
       var video = context.Videos.Find(id);
       if (video == null) throw new NullReferenceException("Video was null");
 
+      context.VideoActors.RemoveRange(video.VideoActors);
       var videoActors = actors.Select(a => new VideoActor
       {
         Actor = a,
         Video = video
       });
-
-      context.VideoActors.RemoveRange(video.VideoActors);
       video.VideoActors = videoActors.ToList();
       context.SaveChanges();
 
@@ -130,13 +129,14 @@ namespace Ghost.Repository
       var video = context.Videos.Find(id);
       if (video == null) throw new NullReferenceException("Video was null");
 
+      context.VideoGenres.RemoveRange(video.VideoGenres);
+
       var videoGenres = genres.Select(g => new VideoGenre
       {
         Genre = g,
         Video = video
       });
 
-      context.VideoGenres.RemoveRange(video.VideoGenres);
       video.VideoGenres = videoGenres.ToList();
       context.SaveChanges();
 
@@ -183,7 +183,7 @@ namespace Ghost.Repository
 
     public async Task<Video> UpdateTitle(int id, string title)
     {
-      var video = this.FindById(id);
+      var video = this.FindById(id, new List<string> { "VideoImages.Image" });
       if (video == null) throw new NullReferenceException("Video not fonud");
 
       video.Title = title.Trim();
@@ -195,7 +195,7 @@ namespace Ghost.Repository
 
     public async Task<Video> UpdateVideo(Video video)
     {
-      var videoEntity = this.FindById(video.Id);
+      var videoEntity = this.FindById(video.Id, null);
       if (videoEntity is null) throw new NullReferenceException("Video not found to update");
 
       videoEntity.Title = video.Title.Trim();
