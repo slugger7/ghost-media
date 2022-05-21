@@ -249,7 +249,9 @@ namespace Ghost.Services
       var chapterImages = files.Select(file =>
       {
         logger.LogDebug("Chapter image: {0}", file);
-        var timestamp = Int32.Parse(file.Substring(file.LastIndexOf('-'), file.LastIndexOf('.') - file.LastIndexOf('-')));
+        var subStr = file.Substring(file.LastIndexOf('-') + 1, file.LastIndexOf('.') - file.LastIndexOf('-') - 1);
+        logger.LogDebug("SubStr: {0}", subStr);
+        var timestamp = Int32.Parse(subStr);
         return new Tuple<int, string>(timestamp, file);
       });
 
