@@ -288,7 +288,7 @@ namespace Ghost.Services
         });
 
         video.Chapters = chapters.ToList();
-        video = await videoRepository.UpdateVideo(video);
+        video = await videoRepository.UpdateVideo(video, new List<string> { "VideoImages.Image" });
         logger.LogInformation("Chapter images created for {0}", video.FileName);
       }
 
