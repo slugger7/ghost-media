@@ -153,11 +153,11 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpPut("{id}/chapters")]
-    public async Task<ActionResult<VideoDto>> GenerateChapters(int id)
+    public async Task<ActionResult<VideoDto>> GenerateChapters(int id, bool overwrite = false)
     {
       try
       {
-        return await videoService.GenerateChapters(id);
+        return await videoService.GenerateChapters(id, overwrite);
       }
       catch (NullReferenceException)
       {

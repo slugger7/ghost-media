@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import BurstModeIcon from '@mui/icons-material/BurstMode';
 import axios from 'axios';
 
 export const LibraryCard = ({ library, refresh }) => {
@@ -15,6 +16,7 @@ export const LibraryCard = ({ library, refresh }) => {
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false);
   const [loadingGenerateAllThumbnails, setLoadingGenerateAllThumbnails] = useState(false);
+  const [loadingChapters, setLoadingChapters] = useState(false);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -69,6 +71,17 @@ export const LibraryCard = ({ library, refresh }) => {
     }
   }
 
+  const generateChapters = async () => {
+    if (loadingChapters) return;
+    setLoadingChapters(true);
+    try {
+      await axios.put(`/library/${library._id}/generate-chapters`);
+    } finally {
+      setLoadingChapters(false);
+      handleMenuClose();
+    }
+  }
+
   return <>
     <Card>
       <CardHeader
@@ -119,6 +132,13 @@ export const LibraryCard = ({ library, refresh }) => {
           {!loadingGenerateAllThumbnails && <ImageSearchIcon fontSize="small" />}
         </ListItemIcon>
         <ListItemText>Generate all thumbnails</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={generateChapters}>
+        <ListItemIcon>
+          {loadingChapters && <CircularProgress sx={{ mr: 1 }} fontSize="small" />}
+          {!loadingChapters && <BurstModeIcon fontSize="small" />}
+        </ListItemIcon>
+        <ListItemText>Generate all chapters</ListItemText>
       </MenuItem>
       <MenuItem onClick={deleteLibrary}>
         <ListItemIcon>

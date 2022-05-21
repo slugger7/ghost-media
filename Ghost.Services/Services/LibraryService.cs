@@ -163,9 +163,8 @@ namespace Ghost.Services
       await videoService.BatchSyncNfos(videos);
     }
 
-    public async Task GenerateThumbnails(int id, bool overwrite)
+    private IEnumerable<Video> GetVideos(int id)
     {
-      var batchSize = 10;
       var library = libraryRepository.FindById(id);
       if (library == null) throw new NullReferenceException("Library not found");
 
@@ -177,6 +176,15 @@ namespace Ghost.Services
         logger.LogDebug("Path has {0} videos", path.Videos.Count());
         videos = videos.Concat(path.Videos).ToList();
       }
+
+      return videos;
+    }
+
+    public async Task GenerateThumbnails(int id, bool overwrite)
+    {
+      var batchSize = 10;
+
+      var videos = GetVideos(id);
 
       var videoBatch = new List<Video>();
       for (int i = 0; i < videos.Count(); i++)
@@ -209,6 +217,20 @@ namespace Ghost.Services
       }
 
       await videoRepository.BatchUpdate(videoBatch);
+    }
+
+    public async Task GenerateChapters(int id, bool overwrite)
+    {
+      var videos = GetVideos(id);
+
+      for (int i = 0; i < videos.Count(); i++)
+      {
+        var video = videos.ElementAt(i);
+        await this.videoService.GenerateChapters(video.Id, overwrite);
+        logger.LogInformation("Generating chapters {0} of {1}", i + 1, videos.Count());
+      }
+
+      logger.LogInformation("Done generating chapter images");
     }
   }
 }
