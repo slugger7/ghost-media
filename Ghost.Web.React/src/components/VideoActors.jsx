@@ -24,7 +24,7 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
     setEditing(false)
   }
 
-  return <Paper sx={{ p: 2 }}>
+  return <>
     <Typography variant="h5" component="h5">Actors {!editing && <IconButton color="primary" onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
       <Box>
@@ -66,7 +66,7 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
         </Stack>
       </>}
     </Stack>
-  </Paper>
+  </>
 }
 
 VideoActors.propTypes = {

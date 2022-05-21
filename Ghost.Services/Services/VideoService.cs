@@ -242,33 +242,26 @@ namespace Ghost.Services
       await videoRepository.BatchUpdateFromNFO(newVideos, videoGenreDictionary, videoActorDictionary);
     }
 
-    public async Task<VideoDto> GenerateChapters(int id, bool overwrite = false)
+    public async Task<VideoDto> GenerateChapters(int id, bool overwrite = true)
     {
       logger.LogDebug("Generating chapters for {0}", id);
       var video = videoRepository.FindById(id, new List<string> { "Chapters.Image" });
       if (video == null) throw new NullReferenceException("Video not found");
 
-      var assetsPath = Environment.GetEnvironmentVariable("ASSETS_PATH") ?? $"..{Path.DirectorySeparatorChar}assets";
+      var assetsPath = Environment.GetEnvironmentVariable("ASSETS_PATH") ?? $"/home/slugger/dev/ghost-media/{Path.DirectorySeparatorChar}assets";
       var chapterLength = Int32.Parse(Environment.GetEnvironmentVariable("CHAPTER_LENGTH") ?? "300000");
-      var videoAssets = $"{assetsPath}{Path.DirectorySeparatorChar}{video.Id}";
+      var directoryName = video.Id.ToString();
+      var videoAssets = $"{assetsPath}{Path.DirectorySeparatorChar}{directoryName}";
       var directoryExists = Directory.Exists(videoAssets);
-      if (directoryExists)
+      if (overwrite || !directoryExists)
       {
-        throw new NotImplementedException();
-        // if (overwrite)
-        // {
-        //   Directory.Delete(videoAssets);
-        // }
-        // else
-        // {
-        //   var chapterImages = Directory.GetFiles(videoAssets, "*.png");
-        // }
-      }
-      else
-      {
+        if (overwrite && directoryExists)
+        {
+          Directory.Delete(videoAssets);
+        }
         Directory.CreateDirectory(videoAssets);
         var chapterMarks = new List<int>();
-        var currentChapter = 0;
+        var currentChapter = chapterLength;
         while (currentChapter <= video.Runtime)
         {
           chapterMarks.Add(currentChapter);
@@ -282,7 +275,7 @@ namespace Ghost.Services
           Image = new Image
           {
             Name = $"{video.Title}-{chapterTuple.Item1}",
-            Path = chapterTuple.Item2
+            Path = $"{videoAssets}{Path.DirectorySeparatorChar}{chapterTuple.Item2}"
           },
           Timestamp = chapterTuple.Item1
         });
@@ -290,6 +283,11 @@ namespace Ghost.Services
         video.Chapters = chapters.ToList();
         video = await videoRepository.UpdateVideo(video, new List<string> { "VideoImages.Image" });
         logger.LogInformation("Chapter images created for {0}", video.FileName);
+      }
+      else
+      {
+        // TODO: Add chapter images into database
+        throw new NotImplementedException();
       }
 
       return new VideoDto(video);
