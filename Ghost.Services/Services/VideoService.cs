@@ -242,6 +242,20 @@ namespace Ghost.Services
       await videoRepository.BatchUpdateFromNFO(newVideos, videoGenreDictionary, videoActorDictionary);
     }
 
+    private IEnumerable<Tuple<int, string>> CreateChaptersFromExistingImages(string directory)
+    {
+      logger.LogDebug("Creating chapters from existing images {0}", directory);
+      var files = Directory.GetFiles(directory, "*.png");
+      var chapterImages = files.Select(file =>
+      {
+        logger.LogDebug("Chapter image: {0}", file);
+        var timestamp = Int32.Parse(file.Substring(file.LastIndexOf('-'), file.LastIndexOf('.') - file.LastIndexOf('-')));
+        return new Tuple<int, string>(timestamp, file);
+      });
+
+      return chapterImages;
+    }
+
     public async Task<VideoDto> GenerateChapters(int id, bool overwrite = true)
     {
       logger.LogDebug("Generating chapters for {0}", id);
@@ -253,10 +267,13 @@ namespace Ghost.Services
       var directoryName = video.Id.ToString();
       var videoAssets = $"{assetsPath}{Path.DirectorySeparatorChar}{directoryName}";
       var directoryExists = Directory.Exists(videoAssets);
+
+      IEnumerable<Tuple<int, string>> chapterImageTuples;
       if (overwrite || !directoryExists)
       {
         if (overwrite && directoryExists)
         {
+          logger.LogInformation("Deleting directory: {0}", videoAssets);
           Directory.Delete(videoAssets);
         }
         Directory.CreateDirectory(videoAssets);
@@ -268,27 +285,27 @@ namespace Ghost.Services
           currentChapter = currentChapter + chapterLength;
         }
         logger.LogDebug("Creating {0} chapter images", chapterMarks.Count());
-        var chapterImageTuples = imageIoService.CreateChapterImages(video.Path, video.Id.ToString(), videoAssets, chapterMarks);
-        var chapters = chapterImageTuples.Select(chapterTuple => new Chapter
-        {
-          Description = "",
-          Image = new Image
-          {
-            Name = $"{video.Title}-{chapterTuple.Item1}",
-            Path = $"{videoAssets}{Path.DirectorySeparatorChar}{chapterTuple.Item2}"
-          },
-          Timestamp = chapterTuple.Item1
-        });
-
-        video.Chapters = chapters.ToList();
-        video = await videoRepository.UpdateVideo(video, new List<string> { "VideoImages.Image" });
-        logger.LogInformation("Chapter images created for {0}", video.FileName);
+        chapterImageTuples = imageIoService.CreateChapterImages(video.Path, video.Id.ToString(), videoAssets, chapterMarks);
       }
       else
       {
-        // TODO: Add chapter images into database
-        throw new NotImplementedException();
+        chapterImageTuples = CreateChaptersFromExistingImages(videoAssets);
       }
+
+      var chapters = chapterImageTuples.Select(chapterTuple => new Chapter
+      {
+        Description = "",
+        Image = new Image
+        {
+          Name = $"{video.Title}-{chapterTuple.Item1}",
+          Path = $"{chapterTuple.Item2}"
+        },
+        Timestamp = chapterTuple.Item1
+      });
+
+      video.Chapters = chapters.ToList();
+      video = await videoRepository.UpdateVideo(video, new List<string> { "VideoImages.Image" });
+      logger.LogInformation("Chapter images created for {0}", video.FileName);
 
       return new VideoDto(video);
     }

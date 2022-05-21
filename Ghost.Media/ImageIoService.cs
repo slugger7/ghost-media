@@ -61,8 +61,10 @@ namespace Ghost.Media
       var images = chapterMarks.Select(chapter =>
       {
         var fileName = $"{filename}-{chapter.ToString()}.png";
-        this.GenerateImage(videoPath, $"{outputDirectory}{Path.DirectorySeparatorChar}{fileName}", chapter);
-        return new Tuple<int, string>(chapter, fileName);
+        var filePath = $"{outputDirectory}{Path.DirectorySeparatorChar}{fileName}";
+        logger.LogDebug("Creating image for file {0}", filePath);
+        this.GenerateImage(videoPath, filePath, chapter);
+        return new Tuple<int, string>(chapter, filePath);
       });
       return images;
     }
