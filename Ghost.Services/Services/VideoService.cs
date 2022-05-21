@@ -64,6 +64,14 @@ namespace Ghost.Services
       return new VideoDto(video);
     }
 
+    public VideoDto GetVideoById(int id, List<string>? includes)
+    {
+      var video = videoRepository.FindById(id, includes);
+      if (video == null) throw new NullReferenceException("Video not found");
+
+      return new VideoDto(video);
+    }
+
     public string GenerateThumbnail(int id)
     {
       var video = videoRepository.FindById(id);

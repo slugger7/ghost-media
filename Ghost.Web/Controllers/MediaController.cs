@@ -65,7 +65,7 @@ namespace Ghost.Api.Controllers
     {
       try
       {
-        var video = videoService.GetVideoById(id);
+        var video = videoService.GetVideoById(id, null);
         if (video != null)
         {
           return PhysicalFile(video.Path ?? "", "video/mp4", true);

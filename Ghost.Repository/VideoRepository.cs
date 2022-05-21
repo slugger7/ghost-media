@@ -47,12 +47,30 @@ namespace Ghost.Repository
 
     public Video? FindById(int id)
     {
-      return context.Videos
-        .Include("VideoGenres.Genre.VideoGenres")
-        .Include("VideoActors.Actor.VideoActors")
-        .Include("VideoImages.Image")
-        .FirstOrDefault(v => v.Id == id);
+      return this.FindById(id, new List<string>
+      {
+        "VideoGenres.Genre.VideoGenres",
+        "VideoActors.Actor.VideoActors",
+        "VideoImages.Image"
+      });
     }
+
+    public Video? FindById(int id, List<string>? includes)
+    {
+      var videos = context.Videos;
+      if (includes != null && includes.Count() > 0)
+      {
+        var videoQueryable = videos.Include(includes.ElementAt(0));
+        for (int i = 1; i < includes.Count(); i++)
+        {
+          videoQueryable = videoQueryable.Include(includes.ElementAt(i));
+        }
+        return videoQueryable.FirstOrDefault(v => v.Id == id);
+      }
+
+      return videos.FirstOrDefault(v => v.Id == id);
+    }
+
     public static IEnumerable<Video> SortAndOrderVideos(IEnumerable<Video> videos, string sortBy, bool ascending)
     {
       var orderByPredicate = Video.SortByPredicate(sortBy);

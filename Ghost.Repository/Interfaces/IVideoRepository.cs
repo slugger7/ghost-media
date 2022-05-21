@@ -8,6 +8,7 @@ namespace Ghost.Repository
     PageResult<Video> GetForActor(int actorId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
     PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
     Video? FindById(int id);
+    Video? FindById(int id, List<string>? includes);
     Video SetActors(int id, IEnumerable<Actor> actors);
     Video SetGenres(int id, IEnumerable<Genre> genres);
     Task<Video> Delete(int id);
