@@ -1,33 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-async-hook'
-import axios from 'axios'
 import { useSearchParams } from 'react-router-dom';
 
 import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
-import { ascend, mergeDeepRight } from 'ramda';
+import { fetchVideos } from '../services/video.service'
+import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
 
-const fetchVideos = async (page, limit, search, sortBy, ascending) => {
-  const params = [];
-  if (page) {
-    params.push(`page=${page - 1}`)
-  }
-  if (limit) {
-    params.push(`limit=${limit}`)
-  }
-  if (search) {
-    params.push(`search=${encodeURIComponent(search)}`)
-  }
-  if (sortBy) {
-    params.push(`sortBy=${encodeURIComponent(sortBy)}`)
-  }
-  if (ascending !== undefined) {
-    params.push(`ascending=${ascending}`)
-  }
-  const videosResult = await axios.get(`media?${params.join('&')}`)
-
-  return videosResult.data;
-}
 
 export const Home = () => {
   const [page, setPage] = useState()
@@ -46,12 +25,12 @@ export const Home = () => {
   }, [videosPage])
 
   useEffect(() => {
-    setLimit(parseInt(searchParams.get("limit")) || limit || 48)
-    setPage(parseInt(searchParams.get("page")) || page || 1)
-    setSearch(decodeURIComponent(searchParams.get("search") || search || ''))
-    setSortBy(decodeURIComponent(searchParams.get("sortBy") || sortBy))
-    const ascending = searchParams.get("ascending")
-    setSortAscending((ascending !== "false" && ascending !== "true") || ascending === "true")
+    const params = getSearchParamsObject(searchParams);
+    setLimit(params.limit || limit || 48)
+    setPage(params.page || page || 1)
+    setSearch(params.search || search)
+    setSortBy(params.sortBy || sortBy)
+    setSortAscending(params.ascending)
   }, [searchParams])
 
   const handleSearchChange = (searchValue) => {
@@ -65,11 +44,7 @@ export const Home = () => {
     setLimit(limit || 48);
   }
 
-  const updateSearchParams = (newSearchParams) => setSearchParams(
-    mergeDeepRight(
-      { page, limit, search, sortBy, ascending: sortAscending },
-      newSearchParams
-    ))
+  const updateSearchParams = updateSearchParamsService(setSearchParams, { page, limit, search, sortBy, ascending: sortAscending });
 
   const sortComponent = <Sort
     sortBy={sortBy}
