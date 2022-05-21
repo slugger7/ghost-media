@@ -9,10 +9,12 @@ namespace Ghost.Api.Controllers
   public class ActorController : Controller
   {
     private readonly IActorService actorService;
+    private readonly ILogger<ActorController> logger;
 
-    public ActorController(IActorService actorService)
+    public ActorController(IActorService actorService, ILogger<ActorController> logger)
     {
       this.actorService = actorService;
+      this.logger = logger;
     }
 
     [HttpGet("{name}")]
@@ -32,6 +34,20 @@ namespace Ghost.Api.Controllers
     public ActionResult<List<ActorDto>> GetActors()
     {
       return actorService.GetActors();
+    }
+
+    [HttpGet("video/{videoId}")]
+    public ActionResult<List<ActorDto>> GetActorsForVideo(int videoId)
+    {
+      try
+      {
+        return actorService.GetActorsForVideo(videoId);
+      }
+      catch (NullReferenceException ex)
+      {
+        logger.LogWarning("Actor for video failed", ex);
+        return NotFound();
+      }
     }
   }
 }

@@ -12,9 +12,11 @@ import { VideoActors } from './VideoActors.jsx'
 import { VideoTitle } from './VideoTitle.jsx'
 import { VideoMetaData } from './VideoMetaData.jsx'
 import { VideoMenu } from './VideoMenu.jsx'
+import { ChipSkeleton } from './ChipSkeleton.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
+const fetchActors = async (id) => (await axios.get(`/actor/video/${id}`)).data
 const updateGenres = async (id, genres) => (await axios.put(`/media/${id}/genres`, genres)).data
 const updateActors = async (id, actors) => (await axios.put(`/media/${id}/actors`, actors)).data
 const updateTitle = async (id, title) => (await axios.put(`/media/${id}/title`, { title })).data
@@ -24,6 +26,7 @@ export const Media = () => {
   const navigate = useNavigate();
   const media = useAsync(fetchMedia, [params.id])
   const genres = useAsync(fetchGenres, [params.id])
+  const actors = useAsync(fetchActors, [params.id])
   const [menuAnchorEl, setMenuAnchorEl] = useState();
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
@@ -60,20 +63,22 @@ export const Media = () => {
           </Grid>
         </Grid>
       </Paper>
+      {genres.loading && <ChipSkeleton />}
       {!genres.loading && <VideoGenres genres={genres.result} videoId={params.id}
         updateGenres={async (genres) => {
           const video = await updateGenres(params.id, genres)
-          genres.set(video.genres);
+          genres.set(mergeDeepRight(genres, { result: video.genres }));
         }}
       />}
-      {/* <VideoActors
-          actors={media.result.actors}
-          videoId={params.id}
-          updateActors={async (actors) => {
-            const video = await updateActors(params.id, actors)
-            media.set(mergeDeepRight(media, { result: video }))
-          }}
-        /> */}
+      {actors.loading && <ChipSkeleton />}
+      {!actors.loading && <VideoActors
+        actors={actors.result}
+        videoId={params.id}
+        updateActors={async (actors) => {
+          const video = await updateActors(params.id, actors)
+          actors.set(mergeDeepRight(media, { result: video.actors }))
+        }}
+      />}
       {!media.loading && <VideoMetaData
         video={media.result}
       />}

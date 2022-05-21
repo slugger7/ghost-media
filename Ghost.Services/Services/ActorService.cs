@@ -27,5 +27,12 @@ namespace Ghost.Services
 
       return new ActorDto(actor);
     }
+
+    public List<ActorDto> GetActorsForVideo(int videoId)
+    {
+      var actors = actorRepository.GetActorsForVideo(videoId);
+
+      return actors.Select(a => new ActorDto(a)).ToList();
+    }
   }
 }

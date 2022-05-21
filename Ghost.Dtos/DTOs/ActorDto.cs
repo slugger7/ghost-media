@@ -12,7 +12,10 @@ namespace Ghost.Dtos
     {
       this._id = actor.Id.ToString();
       this.Name = actor.Name;
-      this.VideoCount = actor.VideoActors.Count();
+      if (actor.VideoActors != null)
+      {
+        this.VideoCount = actor.VideoActors.Count();
+      }
     }
   }
 

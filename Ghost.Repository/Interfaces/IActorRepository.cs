@@ -8,5 +8,6 @@ namespace Ghost.Repository
     Actor? FindById(int id);
     Actor? GetActorByName(string name);
     Actor UpsertActor(string name);
+    IEnumerable<Actor> GetActorsForVideo(int videoId);
   }
 }
