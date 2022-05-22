@@ -69,6 +69,7 @@ namespace Ghost.Dtos
         if (video.Chapters != null)
         {
           this.Chapters = video.Chapters
+            .OrderBy(c => c.Timestamp)
             .Select(c => new ChapterDto(c))
             .ToList();
         }
