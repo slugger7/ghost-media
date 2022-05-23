@@ -14,8 +14,8 @@ export const Home = () => {
   const [search, setSearch] = useState('');
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams()
-  const [sortBy, setSortBy] = useState('title');
-  const [sortAscending, setSortAscending] = useState();
+  const [sortBy, setSortBy] = useState('date-added');
+  const [sortAscending, setSortAscending] = useState(true);
   const videosPage = useAsync(fetchVideos, [page, limit, search, sortBy, sortAscending])
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export const Home = () => {
     setPage(params.page || page || 1)
     setSearch(params.search || search)
     setSortBy(params.sortBy || sortBy)
-    setSortAscending(params.ascending)
+    setSortAscending(params.ascending === undefined ? sortBy : params.ascending)
   }, [searchParams])
 
   const updateSearchParams = updateSearchParamsService(
