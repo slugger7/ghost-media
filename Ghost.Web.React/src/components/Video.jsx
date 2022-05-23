@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 
 const keyFunctions = {
-  "l": (currentTime) => currentTime + 30,
-  "j": (currentTime) => currentTime - 30
+  "KeyL": (currentTime) => currentTime + 30,
+  "KeyJ": (currentTime) => currentTime - 30
 }
 
 export const Video = ({ source, type, poster, chapter }) => {
@@ -18,7 +18,7 @@ export const Video = ({ source, type, poster, chapter }) => {
   }, [chapter])
 
   const handleKeystroke = (event) => {
-    const fn = keyFunctions[event.key];
+    const fn = keyFunctions[event.code];
     if (fn) {
       videoRef.current.currentTime = fn(videoRef.current.currentTime);
     }
