@@ -28,14 +28,14 @@ export const DeleteConfirmationModal = ({ title, open, onClose, onConfirm, loadi
     <Typography id="ghost-delete-confirmation-modal-description" sx={{ my: 2 }}>
       You are about to permanently delete <strong>{title}</strong> from the library and your hard drive.
     </Typography>
-    <Stack direction="row-reverse" spacing={1} >
+    <Stack direction="row" justifyContent="flex-end" spacing={1} >
+      <Button variant="contained" color="primary" onClick={onClose} disabled={loadingConfirm}>Cancel</Button>
       <LoadingButton
         variant="contained"
         color="error"
         onClick={onConfirm}
         loading={loadingConfirm}
         startIcon={<DeleteForeverIcon />}>Delete</LoadingButton>
-      <Button variant="contained" color="primary" onClick={onClose} disabled={loadingConfirm}>Cancel</Button>
     </Stack>
   </Paper>
 </Modal>
