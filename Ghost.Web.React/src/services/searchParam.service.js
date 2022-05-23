@@ -14,7 +14,7 @@ export const getSearchParamsObject = (searchParams) => ({
     ? decodeURIComponent(searchParams.get('sortBy'))
     : null,
   ascending:
-    (searchParams.get('ascending') !== 'false' &&
-      searchParams.get('ascending') !== 'true') ||
-    searchParams.get('ascending') === 'true',
+    searchParams.get('ascending') === undefined
+      ? undefined
+      : searchParams.get('ascending') === 'true',
 })
