@@ -41,6 +41,9 @@ namespace Ghost.Repository
       video.VideoActors = videoActors.ToList();
       context.SaveChanges();
 
+      video = FindById(id, new List<String> { "VideoActors.Actor" });
+      if (video == null) throw new NullReferenceException("Video was null");
+
       return video;
     }
 
@@ -140,6 +143,8 @@ namespace Ghost.Repository
       video.VideoGenres = videoGenres.ToList();
       context.SaveChanges();
 
+      video = FindById(id, new List<String> { "VideoGenres.Genre" });
+      if (video == null) throw new NullReferenceException("Video was null");
       return video;
     }
 

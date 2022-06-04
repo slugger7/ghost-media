@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { IconButton, Typography, Paper, TextField, Stack, Button } from "@mui/material"
+import React, { useRef, useState, useEffect } from 'react'
+import { IconButton, Typography, TextField, Stack, Button } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import PropTypes from 'prop-types'
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -9,6 +9,13 @@ export const VideoTitle = ({ video, updateTitle }) => {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(video.title)
   const [submitting, setSubmitting] = useState(false);
+  const inputRef = useRef()
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current.focus()
+    }
+  }, [editing])
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -29,6 +36,7 @@ export const VideoTitle = ({ video, updateTitle }) => {
       </Typography>}
       {editing && <>
         <TextField
+          inputRef={inputRef}
           sx={{ mb: 1 }}
           id="ghost-edit-title-field"
           label="Title"
