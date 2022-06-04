@@ -50,7 +50,7 @@ export const Media = () => {
             {media.loading && <Skeleton height="50px" width="100%" />}
             {!media.loading && <VideoTitle video={media.result} updateTitle={async (title) => {
               const video = await updateTitle(params.id, title)
-              media.set(mergeDeepRight(media, { result: video }))
+              media.set(mergeDeepRight(media, { result: { title: video.title } }))
             }} />}
           </Grid>
           <Grid item xs={2} sm={1}><IconButton
