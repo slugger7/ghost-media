@@ -33,9 +33,10 @@ export const Video = ({ source, type, poster, chapter }) => {
     poster={chapter
       ? `${axios.defaults.baseURL}/image/${chapter.image.id}/${chapter.image.name}`
       : poster}
-    playsInline={true}
+    playsInline={false}
     src={source}
-    type={type} >
+    type={type}
+    onPlay={() => videoRef.current.focus()}>
   </video >)
 }
 
