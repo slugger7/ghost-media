@@ -34,5 +34,12 @@ namespace Ghost.Services
 
       return actors.Select(a => new ActorDto(a)).ToList();
     }
+
+    public async Task<ActorDto> UpdateName(int id, string name)
+    {
+      var actor = await actorRepository.UpdateName(id, name);
+
+      return new ActorDto(actor);
+    }
   }
 }

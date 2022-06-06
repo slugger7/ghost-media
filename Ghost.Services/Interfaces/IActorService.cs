@@ -7,5 +7,6 @@ namespace Ghost.Services
     List<ActorDto> GetActors();
     ActorDto GetActorByName(string name);
     List<ActorDto> GetActorsForVideo(int videoId);
+    Task<ActorDto> UpdateName(int id, string name);
   }
 }
