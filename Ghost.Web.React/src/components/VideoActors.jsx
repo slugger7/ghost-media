@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, Box } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -15,6 +15,13 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
   const allActors = useAsync(fetchActors, []);
   const [selectedActors, setSelectedActors] = useState([...actors]);
   const [submitting, setSubmitting] = useState(false)
+  const autocompleteRef = useRef()
+
+  useEffect(() => {
+    if (editing) {
+      autocompleteRef.current.focus();
+    }
+  }, [editing])
 
   const handleCancel = () => { setEditing(false) }
   const handleSubmit = async () => {
@@ -49,6 +56,7 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
           defaultValue={actors.map(prop('name'))}
           loading={allActors.loading}
           renderInput={(params) => <TextField
+            inputRef={autocompleteRef}
             {...params}
           />}
         />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, Box } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -15,6 +15,13 @@ export const VideoGenres = ({ genres, videoId, updateGenres }) => {
   const allGenres = useAsync(fetchGenres, []);
   const [selectedGenres, setSelectedGenres] = useState([...genres.map(prop("name"))]);
   const [submitting, setSubmitting] = useState(false)
+  const autocompleteRef = useRef()
+
+  useEffect(() => {
+    if (editing) {
+      autocompleteRef.current.focus()
+    }
+  }, [editing])
 
   const handleCancel = () => { setEditing(false) }
   const handleSubmit = async () => {
@@ -48,7 +55,8 @@ export const VideoGenres = ({ genres, videoId, updateGenres }) => {
           options={allGenres?.result?.map(prop('name')) || []}
           defaultValue={selectedGenres}
           loading={allGenres.loading}
-          renderInput={(params) => <TextField
+          renderInput={(params) => <TextField id='genre-text-box'
+            inputRef={autocompleteRef}
             {...params}
           />}
         />
