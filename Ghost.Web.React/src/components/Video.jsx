@@ -4,13 +4,16 @@ import axios from 'axios'
 
 const keyFunctions = {
   "KeyL": (currentTime) => currentTime + 30,
-  "KeyJ": (currentTime) => currentTime - 30
+  "KeyJ": (currentTime) => currentTime - 10
 }
 
 export const Video = ({ source, type, poster, chapter }) => {
   const videoRef = useRef()
 
-  useEffect(() => videoRef.current?.load(), [source])
+  useEffect(() => {
+    videoRef.current?.load()
+    videoRef.current?.focus()
+  }, [source])
   useEffect(() => {
     if (chapter) {
       videoRef.current.currentTime = chapter.timestamp / 1000;
