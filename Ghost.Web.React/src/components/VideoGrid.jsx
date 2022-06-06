@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Container, Grid, Pagination, Stack } from '@mui/material'
+import { Grid, Pagination } from '@mui/material'
 import { remove } from 'ramda'
 
 import { VideoCard } from './VideoCard.jsx'
