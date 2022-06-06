@@ -46,6 +46,18 @@ namespace Ghost.Repository
         .Take(limit);
     }
 
+    public async Task<Genre> UpdateGenre(int id, string name)
+    {
+      var genre = this.FindById(id);
+      if (genre == null) throw new NullReferenceException("Genre was not found");
+
+      genre.Name = name;
+
+      await context.SaveChangesAsync();
+
+      return genre;
+    }
+
     public Genre Upsert(string name)
     {
       var genre = context.Genres

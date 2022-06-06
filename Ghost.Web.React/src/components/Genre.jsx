@@ -1,12 +1,13 @@
-import { Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-async-hook';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { mergeDeepRight } from 'ramda';
 import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
 import { VideoGrid } from './VideoGrid.jsx';
 import { constructVideoParams } from '../services/video.service.js'
 import { Sort } from './Sort.jsx'
+import { TextEdit } from './TextEdit.jsx'
 
 const fetchGenre = async (name) => (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
 const fetchVideos = async (genre, page, limit, search, sortBy, ascending) => {
@@ -14,6 +15,7 @@ const fetchVideos = async (genre, page, limit, search, sortBy, ascending) => {
 
   return videosResult.data;
 }
+const updateGenreName = async (id, name) => (await axios.put(`/genre/${id}`, { name })).data
 
 export const Genre = () => {
   const params = useParams()
@@ -54,6 +56,11 @@ export const Genre = () => {
     })
   }
 
+  const handleGenreUpdate = async (genre) => {
+    const newGenre = await updateGenreName(genreResult.result._id, genre)
+    genreResult.set(mergeDeepRight(genreResult, { result: { name: newGenre.name } }))
+  }
+
   const sortComponent = <Sort
     sortBy={sortBy}
     setSortBy={(sortByValue) => updateSearchParams({ sortBy: sortByValue })}
@@ -61,7 +68,7 @@ export const Genre = () => {
     setSortDirection={(sortAscendingValue) => updateSearchParams({ ascending: sortAscendingValue })} />
 
   return <>
-    {!genreResult.loading && <Typography variant="h4" component="h4">{genreResult.result.name}</Typography>}
+    {!genreResult.loading && <TextEdit text={genreResult.result.name} update={handleGenreUpdate} />}
     <VideoGrid
       videosPage={videosPage}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}

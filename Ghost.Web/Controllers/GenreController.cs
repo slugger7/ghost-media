@@ -55,5 +55,18 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<GenreViewDto>> UpdateGenreName(int id, [FromBody] GenreUpdateDto genreUpdate)
+    {
+      try
+      {
+        return await genreService.UpdateGenre(id, genreUpdate.Name);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
   }
 }
