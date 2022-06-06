@@ -5,9 +5,9 @@ import PropTypes from 'prop-types'
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
-export const VideoTitle = ({ video, updateTitle }) => {
+export const TextEdit = ({ text, update }) => {
   const [editing, setEditing] = useState(false);
-  const [title, setTitle] = useState(video.title)
+  const [localText, setText] = useState(text)
   const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef()
 
@@ -19,18 +19,18 @@ export const VideoTitle = ({ video, updateTitle }) => {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    await updateTitle(title)
+    await update(localText)
     setSubmitting(false)
     setEditing(false)
   }
   const handleCancel = () => {
     setEditing(false);
-    setTitle(video.title);
+    setText(text);
   }
 
   return <>
     <Stack directior="column">
-      {!editing && <Typography variant="h4" gutterBottom component="h4">{video.title} <IconButton color="primary" onClick={() => { setEditing(true) }}>
+      {!editing && <Typography variant="h4" gutterBottom component="h4">{localText} <IconButton color="primary" onClick={() => { setEditing(true) }}>
         <EditIcon />
       </IconButton>
       </Typography>}
@@ -38,11 +38,10 @@ export const VideoTitle = ({ video, updateTitle }) => {
         <TextField
           inputRef={inputRef}
           sx={{ mb: 1 }}
-          id="ghost-edit-title-field"
-          label="Title"
+          id="ghost-edit-field"
           variant="outlined"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)} />
+          value={localText}
+          onChange={(event) => setText(event.target.value)} />
         <Stack direction="row" spacing={2}>
           <LoadingButton
             onClick={handleSubmit}
@@ -58,10 +57,7 @@ export const VideoTitle = ({ video, updateTitle }) => {
   </>
 }
 
-VideoTitle.propTypes = {
-  video: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired
-  }).isRequired,
-  updateTitle: PropTypes.func.isRequired
+TextEdit.propTypes = {
+  text: PropTypes.string.isRequired,
+  update: PropTypes.func.isRequired
 }

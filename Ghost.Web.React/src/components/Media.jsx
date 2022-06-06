@@ -9,7 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Video } from './Video.jsx'
 import { VideoGenres } from './VideoGenres.jsx'
 import { VideoActors } from './VideoActors.jsx'
-import { VideoTitle } from './VideoTitle.jsx'
+import { TextEdit } from './TextEdit.jsx'
 import { VideoMetaData } from './VideoMetaData.jsx'
 import { VideoMenu } from './VideoMenu.jsx'
 import { ChipSkeleton } from './ChipSkeleton.jsx'
@@ -48,7 +48,7 @@ export const Media = () => {
         <Grid container spacing={1}>
           <Grid item xs={10} sm={11}>
             {media.loading && <Skeleton height="50px" width="100%" />}
-            {!media.loading && <VideoTitle video={media.result} updateTitle={async (title) => {
+            {!media.loading && <TextEdit text={media.result.title} update={async (title) => {
               const video = await updateTitle(params.id, title)
               media.set(mergeDeepRight(media, { result: { title: video.title } }))
             }} />}
