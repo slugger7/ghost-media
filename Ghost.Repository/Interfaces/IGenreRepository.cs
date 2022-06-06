@@ -10,5 +10,6 @@ namespace Ghost.Repository
     IEnumerable<Genre> Search(string search, int limit = 10);
     Genre Upsert(string name);
     IEnumerable<Genre> GetGenresForVideo(int videoId);
+    Task<Genre> UpdateGenre(int id, string name);
   }
 }

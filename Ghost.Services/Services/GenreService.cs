@@ -40,5 +40,12 @@ namespace Ghost.Services
         .Select(g => new GenreDto(g))
         .ToList();
     }
+
+    public async Task<GenreViewDto> UpdateGenre(int id, string name)
+    {
+      var genre = await genreRepository.UpdateGenre(id, name);
+
+      return new GenreViewDto(genre);
+    }
   }
 }
