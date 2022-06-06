@@ -7,12 +7,16 @@ import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
 import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
 import { constructVideoParams } from '../services/video.service.js';
+import { TextEdit } from './TextEdit.jsx'
+import { mergeDeepRight } from 'ramda'
 
 const fetchActor = async (name) => (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
 const fetchVideos = async (id, page, limit, search, sortBy, ascending) => {
   const videosResult = await axios.get(`/media/actor/${encodeURIComponent(id)}?${constructVideoParams({ page, limit, search, sortBy, ascending })}`)
   return videosResult.data;
 }
+const updateActorName = async (id, name) => (await axios.put(`/actor/${id}`, { name })).data
+
 export const Actor = () => {
   const params = useParams()
   const actorResult = useAsync(fetchActor, [params.name])
@@ -49,6 +53,11 @@ export const Actor = () => {
     })
   }
 
+  const handleUpdateActorName = async (name) => {
+    const newActor = await updateActorName(actorResult.result._id, name);
+    actorResult.set(mergeDeepRight(actorResult, { result: { name: newActor.name } }))
+  }
+
   const sortComponent = <Sort
     sortBy={sortBy}
     setSortBy={(sortByValue) => updateSearchParams({ sortBy: sortByValue })}
@@ -56,7 +65,7 @@ export const Actor = () => {
     setSortDirection={(sortAscendingValue) => updateSearchParams({ ascending: sortAscendingValue })} />
 
   return <>
-    {!actorResult.loading && <Typography variant="h4" component="h4">{actorResult.result.name}</Typography>}
+    {!actorResult.loading && <TextEdit text={actorResult.result.name} update={handleUpdateActorName} />}
     <VideoGrid
       videosPage={videosPage}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}

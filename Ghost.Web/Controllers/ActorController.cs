@@ -49,5 +49,18 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ActorDto>> UpdateName(int id, [FromBody] ActorNameUpdateDto actorNameUpdateDto)
+    {
+      try
+      {
+        return await this.actorService.UpdateName(id, actorNameUpdateDto.Name);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
   }
 }

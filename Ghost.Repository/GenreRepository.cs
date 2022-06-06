@@ -51,6 +51,7 @@ namespace Ghost.Repository
       var genre = this.FindById(id);
       if (genre == null) throw new NullReferenceException("Genre was not found");
 
+      // What happens when the new genre name is equal to an existing genre name
       genre.Name = name;
 
       await context.SaveChangesAsync();
