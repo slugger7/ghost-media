@@ -20,19 +20,24 @@ builder.Services.AddCors(options =>
   });
 });
 builder.Services.AddControllers();
+// Services
 builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 builder.Services.AddScoped<IDirectoryService, DirectoryService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IActorService, ActorService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IImageIoService, ImageIoService>();
+builder.Services.AddScoped<INfoService, NfoService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+// Repositories
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IActorRepository, ActorRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddScoped<IImageIoService, ImageIoService>();
-builder.Services.AddScoped<INfoService, NfoService>();
 builder.Services.AddDbContext<GhostContext>();
 var app = builder.Build();
 
