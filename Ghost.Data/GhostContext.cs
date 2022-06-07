@@ -16,6 +16,9 @@ namespace Ghost.Data
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Actor> Actors { get; set; }
     public DbSet<Chapter> Chapters { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<FavouriteActor> FavouriteActors { get; set; }
+    public DbSet<FavouriteVideo> FavouriteVideos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -58,6 +61,17 @@ namespace Ghost.Data
       chapter
         .HasOne<Video>(x => x.Video)
         .WithMany(x => x.Chapters);
+      modelBuilder.Entity<User>().ToTable("Users");
+      var favouriteVideo = modelBuilder.Entity<FavouriteVideo>().ToTable("FavouriteVideos");
+      favouriteVideo
+        .HasOne<User>(x => x.User)
+        .WithMany(x => x.FavouriteVideos);
+      favouriteVideo
+        .HasOne<Video>(x => x.Video);
+      var favouriteActor = modelBuilder.Entity<FavouriteActor>().ToTable("FavouriteActors");
+      favouriteActor
+        .HasOne<User>(x => x.User)
+        .WithMany(x => x.FavouriteActors);
     }
   }
 }
