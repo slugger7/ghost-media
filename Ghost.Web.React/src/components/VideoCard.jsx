@@ -5,6 +5,7 @@ import axios from 'axios'
 import { Card, CardActionArea, CardHeader, CardMedia, Typography, IconButton, Tooltip, Skeleton } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { VideoMenu } from './VideoMenu.jsx'
+import { generateVideoUrl } from '../services/video.service.js'
 
 const generateThumbnail = async ({ videoId, setVideoThumbnail }) => {
   //TODO Deprecate this
@@ -51,6 +52,7 @@ export const VideoCard = ({ video, remove }) => {
       </IconButton>}
     />
     <VideoMenu
+      source={generateVideoUrl(localVideo._id)}
       videoId={localVideo._id}
       anchorEl={anchorEl}
       handleClose={handleMenuClose}

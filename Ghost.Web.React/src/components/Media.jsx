@@ -14,6 +14,7 @@ import { VideoMetaData } from './VideoMetaData.jsx'
 import { VideoMenu } from './VideoMenu.jsx'
 import { ChipSkeleton } from './ChipSkeleton.jsx'
 import { Chapters } from './Chapters.jsx'
+import { generateVideoUrl } from '../services/video.service';
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -30,6 +31,7 @@ export const Media = () => {
   const actorsPage = useAsync(fetchActors, [params.id])
   const [menuAnchorEl, setMenuAnchorEl] = useState();
   const [chapter, setChapter] = useState();
+  const videoSource = generateVideoUrl(params.id);
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
   const handleMenuClose = () => setMenuAnchorEl(null);
@@ -39,7 +41,7 @@ export const Media = () => {
     {!media.loading &&
       <Video
         chapter={chapter}
-        source={`${axios.defaults.baseURL}/media/${params.id}`}
+        source={videoSource}
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}/${media.result.title}`}
       />}
@@ -97,6 +99,7 @@ export const Media = () => {
     </Container>
 
     {!media.loading && <VideoMenu
+      source={videoSource}
       anchorEl={menuAnchorEl}
       handleClose={handleMenuClose}
       videoId={+params.id}

@@ -5,7 +5,9 @@ import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import SyncIcon from '@mui/icons-material/Sync';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import BurstModeIcon from '@mui/icons-material/BurstMode';
+import OfflineShareIcon from '@mui/icons-material/OfflineShare';
 import axios from 'axios'
+import copy from 'copy-to-clipboard';
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
 
@@ -14,7 +16,7 @@ const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadat
 const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
 
-export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, setVideo }) => {
+export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, setVideo, source }) => {
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
@@ -80,6 +82,11 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, 
     }
   }
 
+  const handleCopyStreamUrl = async () => {
+    copy(source);
+    handleClose();
+  }
+
   return <>
     <Menu
       id={`${videoId}-video-card-menu`}
@@ -109,6 +116,12 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, 
         </ListItemIcon>
         <ListItemText>Generate Chapters</ListItemText>
       </MenuItem>
+      <MenuItem onClick={handleCopyStreamUrl}>
+        <ListItemIcon>
+          <OfflineShareIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Copy stream URL</ListItemText>
+      </MenuItem>
       <MenuItem onClick={handleDeleteMenuClick}>
         <ListItemIcon>
           <DeleteForeverIcon fontSize="small" />
@@ -132,5 +145,6 @@ VideoMenu.propTypes = {
   videoId: PropTypes.number.isRequired,
   removeVideo: PropTypes.func.isRequired,
   setVideo: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  source: PropTypes.string.isRequired
 }
