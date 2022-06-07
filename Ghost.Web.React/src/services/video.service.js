@@ -33,3 +33,5 @@ export const constructVideoParams = ({
   }
   return params.join('&')
 }
+
+export const generateVideoUrl = (id) => `${axios.defaults.baseURL}/media/${id}`
