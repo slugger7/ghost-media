@@ -1,14 +1,17 @@
 using Ghost.Data;
 using Ghost.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ghost.Repository
 {
   public class UserRepository : IUserRepository
   {
     private readonly GhostContext context;
-    public UserRepository(GhostContext context)
+    private readonly IVideoRepository videoRepository;
+    public UserRepository(GhostContext context, IVideoRepository videoRepository)
     {
       this.context = context;
+      this.videoRepository = videoRepository;
     }
 
     public async Task<User> Create(User user)
@@ -42,6 +45,40 @@ namespace Ghost.Repository
     public IEnumerable<User> GetUsers()
     {
       return context.Users;
+    }
+
+    public async Task<bool> ToggleFavouriteVideo(int id, int videoId)
+    {
+      var user = context.Users
+        .Include("FavouriteVideos.Video")
+        .FirstOrDefault(u => u.Id == id);
+      if (user == null) throw new NullReferenceException("User not found");
+      var video = videoRepository.FindById(videoId, null);
+      if (video == null) throw new NullReferenceException("Video not found");
+
+      var favourite = user.FavouriteVideos.FirstOrDefault(fv => fv.Video.Id == videoId);
+      if (favourite == null)
+      {
+        favourite = new FavouriteVideo
+        {
+          User = user,
+          Video = video
+        };
+
+        context.FavouriteVideos.Add(favourite);
+
+        await context.SaveChangesAsync();
+
+        return true;
+      }
+      else
+      {
+        context.FavouriteVideos.Remove(favourite);
+
+        await context.SaveChangesAsync();
+
+        return false;
+      }
     }
   }
 }
