@@ -5,7 +5,7 @@ import { fileSize, milliseconds } from '../services/formatters'
 
 export const VideoMetaData = ({ video }) => <Box sx={{ py: 1 }}>
   <Typography variant="h5" component="h5">Metadata</Typography>
-  <Typography overflow="scroll">Path: {video.path}</Typography>
+  <Typography overflow="auto">Path: {video.path}</Typography>
   <Typography>Runtime: {milliseconds(video.runtime)}min</Typography>
   <Typography>Resolution: {video.width}x{video.height}</Typography>
   <Typography>Size: {fileSize(video.size)}</Typography>
