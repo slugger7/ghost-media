@@ -30,10 +30,12 @@ export const TextEdit = ({ text, update }) => {
 
   return <>
     <Stack directior="column">
-      {!editing && <Typography variant="h4" gutterBottom component="h4">{localText} <IconButton color="primary" onClick={() => { setEditing(true) }}>
-        <EditIcon />
-      </IconButton>
-      </Typography>}
+      {!editing && <Stack direction="row" spacing={1}>
+        <Typography variant="h4" gutterBottom component="h4" overflow="hidden" textOverflow="ellipsis">{localText}</Typography>
+        <IconButton color="primary" onClick={() => { setEditing(true) }}>
+          <EditIcon />
+        </IconButton>
+      </Stack>}
       {editing && <>
         <TextField
           inputRef={inputRef}
