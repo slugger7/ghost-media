@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Layout } from './components/Layout.jsx';
 import { Home } from './components/Home.jsx';
-import { Libraries } from './components/Libraries.jsx';
+import { Settings } from './components/Settings.jsx'
 import { AddLibrary } from './components/AddLibrary.jsx';
 import { Media } from './components/Media.jsx'
 import { Genre } from './components/Genre.jsx'
@@ -20,7 +20,7 @@ export const App = ({ baseUrl }) => {
       <Layout>
         <Routes>
           <Route exact path='/' element={<Home />} />
-          <Route path='/libraries' element={<Libraries />} />
+          <Route path='/settings' element={<Settings />} />
           <Route path='/libraries/add' element={<AddLibrary />} />
           <Route path='/media/:id/:title' element={<Media />} />
           <Route path='/genres' element={<Genres />} />
