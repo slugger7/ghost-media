@@ -25,7 +25,7 @@ export const VideoCard = ({ video, remove }) => {
     setAnchorEl(null)
   }
 
-  const urlToMedia = `/media/${localVideo._id}/${localVideo.title}`;
+  const urlToMedia = `/media/${localVideo.id}/${localVideo.title}`;
   return (<Card sx={{ maxHeight: '400px' }}>
     <CardActionArea LinkComponent={Link} to={urlToMedia}>
       {localVideo.thumbnail && <CardMedia
@@ -43,7 +43,7 @@ export const VideoCard = ({ video, remove }) => {
       disableTypography={true}
       action={<IconButton
         onClick={handleMenuClick}
-        id={`${localVideo._id}-video-card-menu-button`}
+        id={`${localVideo.id}-video-card-menu-button`}
         aria-controls={!!anchorEl ? 'video-card-menu' : undefined}
         aria-haspopup={true}
         aria-expanded={!!anchorEl}
@@ -52,8 +52,8 @@ export const VideoCard = ({ video, remove }) => {
       </IconButton>}
     />
     <VideoMenu
-      source={generateVideoUrl(localVideo._id)}
-      videoId={localVideo._id}
+      source={generateVideoUrl(localVideo.id)}
+      videoId={localVideo.id}
       anchorEl={anchorEl}
       handleClose={handleMenuClose}
       removeVideo={remove}
@@ -65,7 +65,7 @@ export const VideoCard = ({ video, remove }) => {
 
 VideoCard.propTypes = {
   video: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
+    id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     thumbnail: PropTypes.shape({
       id: PropTypes.number.isRequired

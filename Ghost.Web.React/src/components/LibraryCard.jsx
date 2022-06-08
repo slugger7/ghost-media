@@ -30,7 +30,7 @@ export const LibraryCard = ({ library, refresh }) => {
     if (loadingSync) return;
     setLoadingSync(true);
     try {
-      await axios.put(`/library/${library._id}/sync`)
+      await axios.put(`/library/${library.id}/sync`)
     } finally {
       setLoadingSync(false)
       handleMenuClose()
@@ -41,7 +41,7 @@ export const LibraryCard = ({ library, refresh }) => {
     if (loadingDelete) return;
     setLoadingDelete(true);
     try {
-      await axios.delete(`/library/${library._id}`)
+      await axios.delete(`/library/${library.id}`)
     } finally {
       refresh()
       setLoadingDelete(false);
@@ -53,7 +53,7 @@ export const LibraryCard = ({ library, refresh }) => {
     if (loadingSyncNfo) return;
     setLoadingSyncNfo(true)
     try {
-      await axios.put(`/library/${library._id}/sync-nfo`);
+      await axios.put(`/library/${library.id}/sync-nfo`);
     } finally {
       setLoadingSyncNfo(false)
       handleMenuClose()
@@ -64,7 +64,7 @@ export const LibraryCard = ({ library, refresh }) => {
     if (loadingGenerateAllThumbnails) return;
     setLoadingGenerateAllThumbnails(true);
     try {
-      await axios.put(`/library/${library._id}/generate-thumbnails`);
+      await axios.put(`/library/${library.id}/generate-thumbnails`);
     } finally {
       setLoadingGenerateAllThumbnails(false);
       handleMenuClose();
@@ -75,7 +75,7 @@ export const LibraryCard = ({ library, refresh }) => {
     if (loadingChapters) return;
     setLoadingChapters(true);
     try {
-      await axios.put(`/library/${library._id}/generate-chapters`);
+      await axios.put(`/library/${library.id}/generate-chapters`);
     } finally {
       setLoadingChapters(false);
       handleMenuClose();
@@ -92,7 +92,7 @@ export const LibraryCard = ({ library, refresh }) => {
         }
         action={
           <IconButton
-            id={`${library._id}-menu-button`}
+            id={`${library.id}-menu-button`}
             onClick={handleMenuClick}
             aria-controls={!!anchorEl ? 'library-menu' : undefined}
             aria-haspopup={true}
@@ -105,12 +105,12 @@ export const LibraryCard = ({ library, refresh }) => {
       />
     </Card>
     <Menu
-      id={`${library._id}-menu`}
+      id={`${library.id}-menu`}
       anchorEl={anchorEl}
       open={!!anchorEl}
       onClose={handleMenuClose}
       MenuListProps={{
-        'aria-labelledby': `${library._id}-menu-button`
+        'aria-labelledby': `${library.id}-menu-button`
       }}>
       <MenuItem onClick={sync}>
         <ListItemIcon>
@@ -153,10 +153,10 @@ export const LibraryCard = ({ library, refresh }) => {
 
 LibraryCard.propTypes = {
   library: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     paths: PropTypes.arrayOf(PropTypes.shape({
-      _id: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
       path: PropTypes.string.isRequired
     }))
   }).isRequired,
