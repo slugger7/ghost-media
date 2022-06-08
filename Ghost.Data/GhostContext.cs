@@ -67,7 +67,8 @@ namespace Ghost.Data
         .HasOne<User>(x => x.User)
         .WithMany(x => x.FavouriteVideos);
       favouriteVideo
-        .HasOne<Video>(x => x.Video);
+        .HasOne<Video>(x => x.Video)
+        .WithMany(x => x.FavouritedBy);
       var favouriteActor = modelBuilder.Entity<FavouriteActor>().ToTable("FavouriteActors");
       favouriteActor
         .HasOne<User>(x => x.User)

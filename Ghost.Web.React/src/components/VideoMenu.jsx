@@ -67,7 +67,10 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
     setLoadingFavourite(true);
     try {
       const favourite = await toggleFavourite(videoId)
-      setVideo({ favourite });
+      setVideo(vid => {
+        vid.favourite = favourite
+        return vid
+      });
     } finally {
       setLoadingFavourite(false);
       handleClose()

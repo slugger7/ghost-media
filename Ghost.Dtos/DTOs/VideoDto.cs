@@ -18,12 +18,24 @@ namespace Ghost.Dtos
     public DateTime LastNfoScan { get; set; }
     public DateTime LastMetadataUpdate { get; set; }
     public ImageDto? Thumbnail { get; set; }
+    public bool Favourite { get; set; }
     public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
     public List<ActorDto> Actors { get; set; } = new List<ActorDto>();
     public List<ImageDto> Images { get; set; } = new List<ImageDto>();
     public List<ChapterDto> Chapters { get; set; } = new List<ChapterDto>();
 
     public VideoDto(Video video)
+    {
+      initialize(video);
+    }
+
+    public VideoDto(Video video, int userId)
+    {
+      initialize(video);
+      this.Favourite = video.FavouritedBy.Any(f => f.User.Id == userId);
+    }
+
+    private void initialize(Video video)
     {
       if (video != null)
       {
