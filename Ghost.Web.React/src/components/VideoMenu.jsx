@@ -6,6 +6,8 @@ import SyncIcon from '@mui/icons-material/Sync';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import BurstModeIcon from '@mui/icons-material/BurstMode';
 import OfflineShareIcon from '@mui/icons-material/OfflineShare';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import axios from 'axios'
 import copy from 'copy-to-clipboard';
 
@@ -15,13 +17,15 @@ const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadata`)).data
 const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
+const toggleFavourite = async (videoId) => await axios.put(`/user/${localStorage.getItem('userId')}/video/${videoId}`)
 
-export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, setVideo, source }) => {
+export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, removeVideo, setVideo, source }) => {
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
   const [loadingGeneratChapter, setLoadingGeneratChapter] = useState(false)
   const [deleteModalOpen, setDeletModalOpen] = useState(false);
+  const [loadingFavourite, setLoadingFavourite] = useState(false);
 
   const handleModalClose = () => {
     if (!loadingDelete) {
@@ -54,6 +58,18 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, 
     } finally {
       setLoadingDelete(false)
       handleModalClose()
+      handleClose()
+    }
+  }
+
+  const handleFavourite = async () => {
+    if (loadingFavourite) return;
+    setLoadingFavourite(true);
+    try {
+      const favourite = await toggleFavourite(videoId)
+      setVideo({ favourite });
+    } finally {
+      setLoadingFavourite(false);
       handleClose()
     }
   }
@@ -102,6 +118,13 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, title, removeVideo, 
         </ListItemIcon>
         <ListItemText>Sync metadata</ListItemText>
       </MenuItem>
+      <MenuItem onClick={handleFavourite}>
+        <ListItemIcon>
+          {!loadingFavourite && favourite ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+          {loadingFavourite && <CircularProgress sx={{ mr: 1 }} />}
+        </ListItemIcon>
+        <ListItemText>Favourite</ListItemText>
+      </MenuItem>
       <MenuItem onClick={handleSyncFromNfo}>
         <ListItemIcon>
           {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
@@ -146,5 +169,6 @@ VideoMenu.propTypes = {
   removeVideo: PropTypes.func.isRequired,
   setVideo: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  source: PropTypes.string.isRequired
+  source: PropTypes.string.isRequired,
+  favourite: PropTypes.bool.isRequired
 }

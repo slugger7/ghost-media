@@ -108,6 +108,7 @@ export const Media = () => {
       title={media.result.title}
       removeVideo={() => navigate(-1)}
       setVideo={(video) => media.set(mergeDeepRight(media, { result: video }))}
+      favourite={!!media.result.favourite}
     />}
   </>
 }
