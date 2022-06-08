@@ -86,11 +86,12 @@ export const Media = () => {
           chapters={media.result.chapters}
           setChapter={setChapter}
         />}
-        {media.loading && <>
-          <Skeleton heigh="400px" width="400px" />
-          <Skeleton heigh="400px" width="400px" />
-          <Skeleton heigh="400px" width="400px" />
-        </>}
+        {true && <Grid container spacing={1} sx={{ py: 1 }}>
+          <Grid item xs={12} sm={6} md={4} lg={3}><Skeleton height="400px" /></Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}><Skeleton height="400px" /></Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}><Skeleton height="400px" /></Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}><Skeleton height="400px" /></Grid>
+        </Grid>}
         {!media.loading && <VideoMetaData
           video={media.result}
         />}
