@@ -92,7 +92,7 @@ export const LibraryCard = ({ library, refresh }) => {
         }
         action={
           <IconButton
-            id={`${library.id}-menu-button`}
+            id={`${library.id}-library-menu-button`}
             onClick={handleMenuClick}
             aria-controls={!!anchorEl ? 'library-menu' : undefined}
             aria-haspopup={true}
@@ -105,13 +105,10 @@ export const LibraryCard = ({ library, refresh }) => {
       />
     </Card>
     <Menu
-      id={`${library.id}-menu`}
+      id={`${library.id}-library-menu`}
       anchorEl={anchorEl}
       open={!!anchorEl}
-      onClose={handleMenuClose}
-      MenuListProps={{
-        'aria-labelledby': `${library.id}-menu-button`
-      }}>
+      onClose={handleMenuClose}>
       <MenuItem onClick={sync}>
         <ListItemIcon>
           {loadingSync && <CircularProgress sx={{ mr: 1 }} fontSize="small" />}
