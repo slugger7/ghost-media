@@ -7,5 +7,6 @@ namespace Ghost.Repository
     User? FindById(int id);
     IEnumerable<User> GetUsers();
     Task<User> Create(User user);
+    Task<User> Delete(int id);
   }
 }

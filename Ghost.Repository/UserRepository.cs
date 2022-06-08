@@ -22,6 +22,18 @@ namespace Ghost.Repository
       return user;
     }
 
+    public async Task<User> Delete(int id)
+    {
+      var user = context.Users.Find(id);
+      if (user == null) throw new NullReferenceException("User was not found");
+
+      context.Users.Remove(user);
+
+      await context.SaveChangesAsync();
+
+      return user;
+    }
+
     public User? FindById(int id)
     {
       return context.Users.Find(id);
