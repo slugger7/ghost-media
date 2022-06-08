@@ -44,6 +44,7 @@ export const Media = () => {
         source={videoSource}
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}/${media.result.title}`}
+        duration={media.result.runtime / 1000}
       />}
     <Container sx={{ paddingX: 0 }}>
       <Paper sx={{ p: 2 }}>
