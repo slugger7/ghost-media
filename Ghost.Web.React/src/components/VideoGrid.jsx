@@ -61,7 +61,7 @@ export const VideoGrid = ({
       {videosPage.loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
       {!videosPage.loading && videos.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
 
-      {!videosPage.loading && videos.map((video, index) => <Grid key={video._id} item xs={12} sm={6} md={4} lg={3} xl={2}>
+      {!videosPage.loading && videos.map((video, index) => <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
         <VideoCard video={video} remove={removeVideo({ index, setVideos })} />
       </Grid>)}
     </Grid>

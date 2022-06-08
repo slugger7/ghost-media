@@ -21,7 +21,7 @@ import { AddPathModal } from './AddPathModal.jsx'
 import { useNavigate } from 'react-router-dom'
 
 const createLibrary = async (name) => (await axios.post('library', { name })).data
-const createPaths = async ({ _id, paths }) => (await axios.put(`library/${_id}/add-paths`, { paths }))
+const createPaths = async ({ id, paths }) => (await axios.put(`library/${id}/add-paths`, { paths }))
 
 export const AddLibrary = () => {
   const navigate = useNavigate()
@@ -42,7 +42,7 @@ export const AddLibrary = () => {
     setSubmitting(true)
     try {
       const newLibrary = await createLibrary(libraryName)
-      await createPaths({ _id: newLibrary._id, paths: chosenPaths })
+      await createPaths({ id: newLibrary.id, paths: chosenPaths })
       navigate('/libraries')
     } finally {
       setSubmitting(false)

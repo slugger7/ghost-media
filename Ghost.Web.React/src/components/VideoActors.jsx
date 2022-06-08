@@ -35,14 +35,14 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
     <Typography variant="h5" component="h5">Actors {!editing && <IconButton color="primary" onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
       <Box>
-        {!editing && actors.map(({ name, videoCount, _id }, index) => <Chip
+        {!editing && actors.map(({ name, videoCount, id }, index) => <Chip
           sx={{ m: 0.5 }}
           variant="outlined"
           color="primary"
           key={index}
           label={`${name} ${videoCount}`}
           component={Link}
-          to={`/actors/${_id}/${encodeURIComponent(name.toLowerCase())}`}
+          to={`/actors/${id}/${encodeURIComponent(name.toLowerCase())}`}
           clickable
         />)}
         {!editing && actors.length === 0 && <Chip variant="outlined" label="None"></Chip>}
@@ -79,7 +79,7 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
 
 VideoActors.propTypes = {
   actors: PropTypes.arrayOf(PropTypes.shape({
-    _id: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired
   })).isRequired,
   videoId: PropTypes.string.isRequired,

@@ -14,12 +14,12 @@ export const Actors = () => {
     {!actorsResult.loading && <>
       {actorsResult.result.map(actor => <Chip
         sx={{ m: 0.5 }}
-        key={actor._id}
+        key={actor.id}
         label={`${actor.name} ${actor.videoCount}`}
         variant="outlined"
         color="primary"
         component={Link}
-        to={`/actors/${actor._id}/${encodeURIComponent(actor.name.toLowerCase())}`}
+        to={`/actors/${actor.id}/${encodeURIComponent(actor.name.toLowerCase())}`}
         clickable
       />)}
       {actorsResult.result.length === 0 && <NothingHere>Nothing here. Add some actors to videos.</NothingHere>}

@@ -4,13 +4,13 @@ namespace Ghost.Dtos
 {
   public class LibraryDto
   {
-    public string? _id { get; set; }
+    public string? Id { get; set; }
     public string? Name { get; set; }
     public List<LibraryPathDto> Paths { get; set; } = new List<LibraryPathDto>();
 
     public LibraryDto(Library library)
     {
-      this._id = library.Id.ToString();
+      this.Id = library.Id.ToString();
       this.Name = library.Name;
       if (library.Paths != null)
       {

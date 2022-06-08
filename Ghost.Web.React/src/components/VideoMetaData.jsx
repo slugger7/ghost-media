@@ -17,7 +17,7 @@ export const VideoMetaData = ({ video }) => <Box sx={{ py: 1 }}>
 
 VideoMetaData.propTypes = {
   video: PropTypes.shape({
-    _id: PropTypes.number.isRequired,
+    id: PropTypes.number.isRequired,
     dateAdded: PropTypes.string.isRequired,
     path: PropTypes.string.isRequired,
     size: PropTypes.number.isRequired,

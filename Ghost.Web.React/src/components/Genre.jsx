@@ -57,7 +57,7 @@ export const Genre = () => {
   }
 
   const handleGenreUpdate = async (genre) => {
-    const newGenre = await updateGenreName(genreResult.result._id, genre)
+    const newGenre = await updateGenreName(genreResult.result.id, genre)
     genreResult.set(mergeDeepRight(genreResult, { result: { name: newGenre.name } }))
   }
 

@@ -54,7 +54,7 @@ export const Actor = () => {
   }
 
   const handleUpdateActorName = async (name) => {
-    const newActor = await updateActorName(actorResult.result._id, name);
+    const newActor = await updateActorName(actorResult.result.id, name);
     actorResult.set(mergeDeepRight(actorResult, { result: { name: newActor.name } }))
   }
 
