@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
+import { Box, LinearProgress } from '@mui/material'
 import axios from 'axios'
 
 const keyFunctions = {
@@ -7,18 +8,28 @@ const keyFunctions = {
   "KeyJ": (currentTime) => currentTime - 10
 }
 
-export const Video = ({ source, type, poster, chapter }) => {
+export const Video = ({ source, type, poster, chapter, duration }) => {
   const videoRef = useRef()
+  const [currentTime, setCurrentTime] = useState();
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     videoRef.current?.load()
     videoRef.current?.focus()
+    videoRef.current.ontimeupdate = () => {
+      setCurrentTime(videoRef.current.currentTime);
+    }
   }, [source])
+
   useEffect(() => {
     if (chapter) {
       videoRef.current.currentTime = chapter.timestamp / 1000;
     }
   }, [chapter])
+
+  useEffect(() => {
+    setProgress(currentTime / duration * 100)
+  }, [currentTime]);
 
   const handleKeystroke = (event) => {
     const fn = keyFunctions[event.code];
@@ -27,20 +38,23 @@ export const Video = ({ source, type, poster, chapter }) => {
     }
   }
 
-  return (<video
-    onKeyUp={handleKeystroke}
-    className="ghost-video"
-    autoPlay={!!chapter}
-    controls={true}
-    ref={videoRef}
-    poster={chapter
-      ? `${axios.defaults.baseURL}/image/${chapter.image.id}/${chapter.image.name}`
-      : poster}
-    playsInline={false}
-    src={source}
-    type={type}
-    onPlay={() => videoRef.current.focus()}>
-  </video >)
+  return (<Box>
+    <video
+      onKeyUp={handleKeystroke}
+      className="ghost-video"
+      autoPlay={!!chapter}
+      controls={true}
+      ref={videoRef}
+      poster={chapter
+        ? `${axios.defaults.baseURL}/image/${chapter.image.id}/${chapter.image.name}`
+        : poster}
+      playsInline={false}
+      src={source}
+      type={type}
+      onPlay={() => videoRef.current.focus()}>
+    </video >
+    <LinearProgress value={progress} variant="determinate" />
+  </Box>)
 }
 
 Video.propTypes = {
@@ -53,5 +67,6 @@ Video.propTypes = {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired
     }).isRequired
-  })
+  }),
+  duration: PropTypes.number.isRequired
 }
