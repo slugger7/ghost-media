@@ -48,5 +48,10 @@ namespace Ghost.Services
         Content = users.Select(u => new UserDto(u)).ToList()
       };
     }
+
+    public async Task<bool> ToggleFavouriteVideo(int id, int videoId)
+    {
+      return await userRepository.ToggleFavouriteVideo(id, videoId);
+    }
   }
 }

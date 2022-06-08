@@ -8,5 +8,6 @@ namespace Ghost.Repository
     IEnumerable<User> GetUsers();
     Task<User> Create(User user);
     Task<User> Delete(int id);
+    Task<bool> ToggleFavouriteVideo(int id, int videoId);
   }
 }

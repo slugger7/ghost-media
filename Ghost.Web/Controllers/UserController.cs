@@ -62,5 +62,11 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
+
+    [HttpPut("{id}/video/{videoId}")]
+    public async Task<ActionResult<bool>> ToggleFavouriteVideo(int id, int videoId)
+    {
+      return await userService.ToggleFavouriteVideo(id, videoId);
+    }
   }
 }
