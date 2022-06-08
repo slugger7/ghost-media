@@ -59,6 +59,7 @@ export const VideoCard = ({ video, remove }) => {
       removeVideo={remove}
       setVideo={setLocalVideo}
       title={localVideo.title}
+      favourite={!!localVideo.favourite}
     />
   </Card>)
 }
