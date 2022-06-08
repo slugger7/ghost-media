@@ -1,4 +1,5 @@
 using Ghost.Data;
+using Ghost.Exceptions;
 
 namespace Ghost.Repository
 {
@@ -12,6 +13,9 @@ namespace Ghost.Repository
 
     public async Task<User> Create(User user)
     {
+      var userEntity = context.Users
+        .FirstOrDefault(u => u.Username.ToLower().Equals(user.Username.Trim().ToLower()));
+      if (userEntity != null) throw new UserExisistException();
       context.Users.Add(user);
       await context.SaveChangesAsync();
 
