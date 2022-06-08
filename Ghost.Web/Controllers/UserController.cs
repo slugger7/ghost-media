@@ -1,6 +1,7 @@
 using Ghost.Services;
 using Ghost.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Ghost.Exceptions;
 
 namespace Ghost.Api.Controllers
 {
@@ -39,7 +40,14 @@ namespace Ghost.Api.Controllers
     [HttpPost]
     public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUser)
     {
-      return await this.userService.Create(createUser);
+      try
+      {
+        return await this.userService.Create(createUser);
+      }
+      catch (UserExisistException ex)
+      {
+        return BadRequest(ex.Message);
+      }
     }
   }
 }
