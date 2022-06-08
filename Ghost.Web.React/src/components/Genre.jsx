@@ -10,8 +10,8 @@ import { Sort } from './Sort.jsx'
 import { TextEdit } from './TextEdit.jsx'
 
 const fetchGenre = async (name) => (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
-const fetchVideos = async (genre, page, limit, search, sortBy, ascending) => {
-  const videosResult = await axios.get(`/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({ page, limit, search, sortBy, ascending })}`)
+const fetchVideos = async (genre, page, limit, search, sortBy, ascending, userId) => {
+  const videosResult = await axios.get(`/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({ page, limit, search, sortBy, ascending, userId })}`)
 
   return videosResult.data;
 }
@@ -26,7 +26,8 @@ export const Genre = () => {
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useState('title')
   const [sortAscending, setSortAscending] = useState()
-  const videosPage = useAsync(fetchVideos, [params.name, page, limit, search, sortBy, sortAscending])
+  const userId = localStorage.getItem('userId')
+  const videosPage = useAsync(fetchVideos, [params.name, page, limit, search, sortBy, sortAscending, userId])
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {

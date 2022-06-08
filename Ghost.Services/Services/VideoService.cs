@@ -52,7 +52,7 @@ namespace Ghost.Services
       {
         Total = videosPage.Total,
         Page = videosPage.Page,
-        Content = videosPage.Content.Select(v => new VideoDto(v)).ToList()
+        Content = videosPage.Content.Select(v => new VideoDto(v, pageRequest.UserId)).ToList()
       };
     }
 
