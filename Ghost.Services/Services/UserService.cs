@@ -25,6 +25,12 @@ namespace Ghost.Services
       return new UserDto(user);
     }
 
+    public async Task<UserDto> Delete(int id)
+    {
+      var user = await userRepository.Delete(id);
+      return new UserDto(user);
+    }
+
     public UserDto FindById(int id)
     {
       var user = userRepository.FindById(id);

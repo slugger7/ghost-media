@@ -38,7 +38,7 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUser)
+    public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserDto createUser)
     {
       try
       {
@@ -47,6 +47,19 @@ namespace Ghost.Api.Controllers
       catch (UserExisistException ex)
       {
         return BadRequest(ex.Message);
+      }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<UserDto>> Delete(int id)
+    {
+      try
+      {
+        return await this.userService.Delete(id);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
       }
     }
   }
