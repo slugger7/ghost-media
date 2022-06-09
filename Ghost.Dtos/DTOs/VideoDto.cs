@@ -19,6 +19,7 @@ namespace Ghost.Dtos
     public DateTime LastMetadataUpdate { get; set; }
     public ImageDto? Thumbnail { get; set; }
     public bool Favourite { get; set; }
+    public double Progress { get; set; }
     public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
     public List<ActorDto> Actors { get; set; } = new List<ActorDto>();
     public List<ImageDto> Images { get; set; } = new List<ImageDto>();
@@ -33,6 +34,8 @@ namespace Ghost.Dtos
     {
       initialize(video);
       this.Favourite = video.FavouritedBy.Any(f => f.User.Id == userId);
+      var progress = video.WatchedBy.FirstOrDefault(w => w.User.Id == userId);
+      this.Progress = progress != null ? progress.Timestamp : 0;
     }
 
     private void initialize(Video video)

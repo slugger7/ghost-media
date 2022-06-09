@@ -22,6 +22,11 @@ const fetchActors = async (id) => (await axios.get(`/actor/video/${id}`)).data
 const updateGenres = async (id, genres) => (await axios.put(`/media/${id}/genres`, genres)).data
 const updateActors = async (id, actors) => (await axios.put(`/media/${id}/actors`, actors)).data
 const updateTitle = async (id, title) => (await axios.put(`/media/${id}/title`, { title })).data
+const updateProgress = async (id, progress) => {
+  if (progress !== null && !isNaN(progress)) {
+    (await axios.put(`/media/${id}/progress`, { progress }))
+  }
+}
 
 export const Media = () => {
   const params = useParams()
@@ -45,6 +50,8 @@ export const Media = () => {
         type={media.result.type}
         poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}/${media.result.title}`}
         duration={media.result.runtime / 1000}
+        watched={media.result.progress}
+        progressUpdate={(progress) => updateProgress(params.id, progress)}
       />}
     <Container sx={{ paddingX: 0 }}>
       <Paper sx={{ p: 2 }}>

@@ -19,6 +19,7 @@ namespace Ghost.Data
     public DbSet<User> Users { get; set; }
     public DbSet<FavouriteActor> FavouriteActors { get; set; }
     public DbSet<FavouriteVideo> FavouriteVideos { get; set; }
+    public DbSet<Progress> Progress { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -73,6 +74,13 @@ namespace Ghost.Data
       favouriteActor
         .HasOne<User>(x => x.User)
         .WithMany(x => x.FavouriteActors);
+      var progress = modelBuilder.Entity<Progress>().ToTable("Progress");
+      progress
+        .HasOne<User>(x => x.User)
+        .WithMany(x => x.VideoProgress);
+      progress
+        .HasOne<Video>(x => x.Video)
+        .WithMany(x => x.WatchedBy);
     }
   }
 }

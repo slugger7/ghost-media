@@ -9,481 +9,530 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ghost.Data.Migrations
 {
-    [DbContext(typeof(GhostContext))]
-    partial class GhostContextModelSnapshot : ModelSnapshot
+  [DbContext(typeof(GhostContext))]
+  partial class GhostContextModelSnapshot : ModelSnapshot
+  {
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
+      modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
 
-            modelBuilder.Entity("Ghost.Data.Actor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.Actor", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.ToTable("Actors", (string)null);
-                });
+            b.ToTable("Actors", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.Chapter", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.Chapter", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("Description")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("ImageId")
+                      .HasColumnType("INTEGER");
 
-                    b.Property<long>("Timestamp")
-                        .HasColumnType("INTEGER");
+            b.Property<long>("Timestamp")
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("VideoId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("VideoId")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("ImageId");
+            b.HasIndex("ImageId");
 
-                    b.HasIndex("VideoId");
+            b.HasIndex("VideoId");
 
-                    b.ToTable("Chapters", (string)null);
-                });
+            b.ToTable("Chapters", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.FavouriteActor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.FavouriteActor", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("ActorId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("ActorId")
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("UserId")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("ActorId");
+            b.HasIndex("ActorId");
 
-                    b.HasIndex("UserId");
+            b.HasIndex("UserId");
 
-                    b.ToTable("FavouriteActors", (string)null);
-                });
+            b.ToTable("FavouriteActors", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.FavouriteVideo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.FavouriteVideo", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("UserId")
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("VideoId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("VideoId")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+            b.HasIndex("UserId");
 
-                    b.HasIndex("VideoId");
+            b.HasIndex("VideoId");
 
-                    b.ToTable("FavouriteVideos", (string)null);
-                });
+            b.ToTable("FavouriteVideos", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.Genre", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.Genre", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.ToTable("Genres", (string)null);
-                });
+            b.ToTable("Genres", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.Image", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("Path")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.ToTable("Images", (string)null);
-                });
+            b.ToTable("Images", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.Library", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.Library", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("Name")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.ToTable("Libraries", (string)null);
-                });
+            b.ToTable("Libraries", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.LibraryPath", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.LibraryPath", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int?>("LibraryId")
-                        .HasColumnType("INTEGER");
+            b.Property<int?>("LibraryId")
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("Path")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("LibraryId");
+            b.HasIndex("LibraryId");
 
-                    b.ToTable("LibraryPaths", (string)null);
-                });
+            b.ToTable("LibraryPaths", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.Progress", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<double>("Timestamp")
+                      .HasColumnType("REAL");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<int>("UserId")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.Property<int>("VideoId")
+                      .HasColumnType("INTEGER");
 
-                    b.ToTable("Users", (string)null);
-                });
+            b.HasKey("Id");
 
-            modelBuilder.Entity("Ghost.Data.Video", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+            b.HasIndex("UserId");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
+            b.HasIndex("VideoId");
 
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("TEXT");
+            b.ToTable("Progress", (string)null);
+          });
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+      modelBuilder.Entity("Ghost.Data.User", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("Height")
-                        .HasColumnType("INTEGER");
+            b.Property<string>("Password")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("LastMetadataUpdate")
-                        .HasColumnType("TEXT");
+            b.Property<string>("Username")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("LastNfoScan")
-                        .HasColumnType("TEXT");
+            b.HasKey("Id");
 
-                    b.Property<int>("LibraryPathId")
-                        .HasColumnType("INTEGER");
+            b.ToTable("Users", (string)null);
+          });
 
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+      modelBuilder.Entity("Ghost.Data.Video", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<double>("Runtime")
-                        .HasColumnType("REAL");
+            b.Property<DateTime>("Created")
+                      .HasColumnType("TEXT");
 
-                    b.Property<long>("Size")
-                        .HasColumnType("INTEGER");
+            b.Property<DateTime>("DateAdded")
+                      .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<string>("FileName")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.Property<int>("Width")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("Height")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.Property<DateTime>("LastMetadataUpdate")
+                      .HasColumnType("TEXT");
 
-                    b.HasIndex("LibraryPathId");
+            b.Property<DateTime>("LastNfoScan")
+                      .HasColumnType("TEXT");
 
-                    b.ToTable("Videos", (string)null);
-                });
+            b.Property<int>("LibraryPathId")
+                      .HasColumnType("INTEGER");
 
-            modelBuilder.Entity("Ghost.Data.VideoActor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+            b.Property<string>("Path")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.Property<int>("ActorId")
-                        .HasColumnType("INTEGER");
+            b.Property<double>("Runtime")
+                      .HasColumnType("REAL");
 
-                    b.Property<int>("VideoId")
-                        .HasColumnType("INTEGER");
+            b.Property<long>("Size")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.Property<string>("Title")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.HasIndex("ActorId");
+            b.Property<int>("Width")
+                      .HasColumnType("INTEGER");
 
-                    b.HasIndex("VideoId");
+            b.HasKey("Id");
 
-                    b.ToTable("VideoActors", (string)null);
-                });
+            b.HasIndex("LibraryPathId");
 
-            modelBuilder.Entity("Ghost.Data.VideoGenre", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+            b.ToTable("Videos", (string)null);
+          });
 
-                    b.Property<int>("GenreId")
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.VideoActor", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("VideoId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("ActorId")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.Property<int>("VideoId")
+                      .HasColumnType("INTEGER");
 
-                    b.HasIndex("GenreId");
+            b.HasKey("Id");
 
-                    b.HasIndex("VideoId");
+            b.HasIndex("ActorId");
 
-                    b.ToTable("VideoGenres", (string)null);
-                });
+            b.HasIndex("VideoId");
 
-            modelBuilder.Entity("Ghost.Data.VideoImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+            b.ToTable("VideoActors", (string)null);
+          });
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("INTEGER");
+      modelBuilder.Entity("Ghost.Data.VideoGenre", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+            b.Property<int>("GenreId")
+                      .HasColumnType("INTEGER");
 
-                    b.Property<int>("VideoId")
-                        .HasColumnType("INTEGER");
+            b.Property<int>("VideoId")
+                      .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("ImageId");
+            b.HasIndex("GenreId");
 
-                    b.HasIndex("VideoId");
+            b.HasIndex("VideoId");
 
-                    b.ToTable("VideoImages", (string)null);
-                });
+            b.ToTable("VideoGenres", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.Chapter", b =>
-                {
-                    b.HasOne("Ghost.Data.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Ghost.Data.VideoImage", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("INTEGER");
 
-                    b.HasOne("Ghost.Data.Video", "Video")
-                        .WithMany("Chapters")
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.Property<int>("ImageId")
+                      .HasColumnType("INTEGER");
 
-                    b.Navigation("Image");
+            b.Property<string>("Type")
+                      .IsRequired()
+                      .HasColumnType("TEXT");
 
-                    b.Navigation("Video");
-                });
+            b.Property<int>("VideoId")
+                      .HasColumnType("INTEGER");
 
-            modelBuilder.Entity("Ghost.Data.FavouriteActor", b =>
-                {
-                    b.HasOne("Ghost.Data.Actor", "Actor")
-                        .WithMany()
-                        .HasForeignKey("ActorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.HasKey("Id");
 
-                    b.HasOne("Ghost.Data.User", "User")
-                        .WithMany("FavouriteActors")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.HasIndex("ImageId");
 
-                    b.Navigation("Actor");
+            b.HasIndex("VideoId");
 
-                    b.Navigation("User");
-                });
+            b.ToTable("VideoImages", (string)null);
+          });
 
-            modelBuilder.Entity("Ghost.Data.FavouriteVideo", b =>
-                {
-                    b.HasOne("Ghost.Data.User", "User")
-                        .WithMany("FavouriteVideos")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Ghost.Data.Chapter", b =>
+          {
+            b.HasOne("Ghost.Data.Image", "Image")
+                      .WithMany()
+                      .HasForeignKey("ImageId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.HasOne("Ghost.Data.Video", "Video")
-                        .WithMany()
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.HasOne("Ghost.Data.Video", "Video")
+                      .WithMany("Chapters")
+                      .HasForeignKey("VideoId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("User");
+            b.Navigation("Image");
 
-                    b.Navigation("Video");
-                });
+            b.Navigation("Video");
+          });
 
-            modelBuilder.Entity("Ghost.Data.LibraryPath", b =>
-                {
-                    b.HasOne("Ghost.Data.Library", null)
-                        .WithMany("Paths")
-                        .HasForeignKey("LibraryId");
-                });
+      modelBuilder.Entity("Ghost.Data.FavouriteActor", b =>
+          {
+            b.HasOne("Ghost.Data.Actor", "Actor")
+                      .WithMany()
+                      .HasForeignKey("ActorId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-            modelBuilder.Entity("Ghost.Data.Video", b =>
-                {
-                    b.HasOne("Ghost.Data.LibraryPath", "LibraryPath")
-                        .WithMany("Videos")
-                        .HasForeignKey("LibraryPathId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.HasOne("Ghost.Data.User", "User")
+                      .WithMany("FavouriteActors")
+                      .HasForeignKey("UserId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("LibraryPath");
-                });
+            b.Navigation("Actor");
 
-            modelBuilder.Entity("Ghost.Data.VideoActor", b =>
-                {
-                    b.HasOne("Ghost.Data.Actor", "Actor")
-                        .WithMany("VideoActors")
-                        .HasForeignKey("ActorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.Navigation("User");
+          });
 
-                    b.HasOne("Ghost.Data.Video", "Video")
-                        .WithMany("VideoActors")
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Ghost.Data.FavouriteVideo", b =>
+          {
+            b.HasOne("Ghost.Data.User", "User")
+                      .WithMany("FavouriteVideos")
+                      .HasForeignKey("UserId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Actor");
+            b.HasOne("Ghost.Data.Video", "Video")
+                      .WithMany("FavouritedBy")
+                      .HasForeignKey("VideoId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Video");
-                });
+            b.Navigation("User");
 
-            modelBuilder.Entity("Ghost.Data.VideoGenre", b =>
-                {
-                    b.HasOne("Ghost.Data.Genre", "Genre")
-                        .WithMany("VideoGenres")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.Navigation("Video");
+          });
 
-                    b.HasOne("Ghost.Data.Video", "Video")
-                        .WithMany("VideoGenres")
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+      modelBuilder.Entity("Ghost.Data.LibraryPath", b =>
+          {
+            b.HasOne("Ghost.Data.Library", null)
+                      .WithMany("Paths")
+                      .HasForeignKey("LibraryId");
+          });
 
-                    b.Navigation("Genre");
+      modelBuilder.Entity("Ghost.Data.Progress", b =>
+          {
+            b.HasOne("Ghost.Data.User", "User")
+                      .WithMany("VideoProgress")
+                      .HasForeignKey("UserId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Video");
-                });
+            b.HasOne("Ghost.Data.Video", "Video")
+                      .WithMany("WatchedBy")
+                      .HasForeignKey("VideoId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-            modelBuilder.Entity("Ghost.Data.VideoImage", b =>
-                {
-                    b.HasOne("Ghost.Data.Image", "Image")
-                        .WithMany("VideoImages")
-                        .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.Navigation("User");
 
-                    b.HasOne("Ghost.Data.Video", "Video")
-                        .WithMany("VideoImages")
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            b.Navigation("Video");
+          });
 
-                    b.Navigation("Image");
+      modelBuilder.Entity("Ghost.Data.Video", b =>
+          {
+            b.HasOne("Ghost.Data.LibraryPath", "LibraryPath")
+                      .WithMany("Videos")
+                      .HasForeignKey("LibraryPathId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("Video");
-                });
+            b.Navigation("LibraryPath");
+          });
 
-            modelBuilder.Entity("Ghost.Data.Actor", b =>
-                {
-                    b.Navigation("VideoActors");
-                });
+      modelBuilder.Entity("Ghost.Data.VideoActor", b =>
+          {
+            b.HasOne("Ghost.Data.Actor", "Actor")
+                      .WithMany("VideoActors")
+                      .HasForeignKey("ActorId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-            modelBuilder.Entity("Ghost.Data.Genre", b =>
-                {
-                    b.Navigation("VideoGenres");
-                });
+            b.HasOne("Ghost.Data.Video", "Video")
+                      .WithMany("VideoActors")
+                      .HasForeignKey("VideoId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-            modelBuilder.Entity("Ghost.Data.Image", b =>
-                {
-                    b.Navigation("VideoImages");
-                });
+            b.Navigation("Actor");
 
-            modelBuilder.Entity("Ghost.Data.Library", b =>
-                {
-                    b.Navigation("Paths");
-                });
+            b.Navigation("Video");
+          });
 
-            modelBuilder.Entity("Ghost.Data.LibraryPath", b =>
-                {
-                    b.Navigation("Videos");
-                });
+      modelBuilder.Entity("Ghost.Data.VideoGenre", b =>
+          {
+            b.HasOne("Ghost.Data.Genre", "Genre")
+                      .WithMany("VideoGenres")
+                      .HasForeignKey("GenreId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-            modelBuilder.Entity("Ghost.Data.User", b =>
-                {
-                    b.Navigation("FavouriteActors");
+            b.HasOne("Ghost.Data.Video", "Video")
+                      .WithMany("VideoGenres")
+                      .HasForeignKey("VideoId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("FavouriteVideos");
-                });
+            b.Navigation("Genre");
 
-            modelBuilder.Entity("Ghost.Data.Video", b =>
-                {
-                    b.Navigation("Chapters");
+            b.Navigation("Video");
+          });
 
-                    b.Navigation("VideoActors");
+      modelBuilder.Entity("Ghost.Data.VideoImage", b =>
+          {
+            b.HasOne("Ghost.Data.Image", "Image")
+                      .WithMany("VideoImages")
+                      .HasForeignKey("ImageId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("VideoGenres");
+            b.HasOne("Ghost.Data.Video", "Video")
+                      .WithMany("VideoImages")
+                      .HasForeignKey("VideoId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
 
-                    b.Navigation("VideoImages");
-                });
+            b.Navigation("Image");
+
+            b.Navigation("Video");
+          });
+
+      modelBuilder.Entity("Ghost.Data.Actor", b =>
+          {
+            b.Navigation("VideoActors");
+          });
+
+      modelBuilder.Entity("Ghost.Data.Genre", b =>
+          {
+            b.Navigation("VideoGenres");
+          });
+
+      modelBuilder.Entity("Ghost.Data.Image", b =>
+          {
+            b.Navigation("VideoImages");
+          });
+
+      modelBuilder.Entity("Ghost.Data.Library", b =>
+          {
+            b.Navigation("Paths");
+          });
+
+      modelBuilder.Entity("Ghost.Data.LibraryPath", b =>
+          {
+            b.Navigation("Videos");
+          });
+
+      modelBuilder.Entity("Ghost.Data.User", b =>
+          {
+            b.Navigation("FavouriteActors");
+
+            b.Navigation("FavouriteVideos");
+
+            b.Navigation("VideoProgress");
+          });
+
+      modelBuilder.Entity("Ghost.Data.Video", b =>
+          {
+            b.Navigation("Chapters");
+
+            b.Navigation("FavouritedBy");
+
+            b.Navigation("VideoActors");
+
+            b.Navigation("VideoGenres");
+
+            b.Navigation("VideoImages");
+
+            b.Navigation("WatchedBy");
+          });
 #pragma warning restore 612, 618
-        }
     }
+  }
 }

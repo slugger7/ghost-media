@@ -8,7 +8,7 @@ const keyFunctions = {
   "KeyJ": (currentTime) => currentTime - 10
 }
 
-export const Video = ({ source, type, poster, chapter, duration }) => {
+export const Video = ({ source, type, poster, chapter, duration, watched, progressUpdate }) => {
   const videoRef = useRef()
   const [currentTime, setCurrentTime] = useState();
   const [progress, setProgress] = useState(0);
@@ -16,19 +16,29 @@ export const Video = ({ source, type, poster, chapter, duration }) => {
   useEffect(() => {
     videoRef.current?.load()
     videoRef.current?.focus()
-    videoRef.current.ontimeupdate = () => {
-      setCurrentTime(videoRef.current.currentTime);
+    if (videoRef) {
+      videoRef.current.ontimeupdate = () => {
+        setCurrentTime(videoRef.current.currentTime);
+      }
     }
   }, [source])
 
   useEffect(() => {
+    if (watched) {
+      videoRef.current.currentTime = watched;
+    }
+  }, [watched])
+
+  useEffect(() => {
     if (chapter) {
       videoRef.current.currentTime = chapter.timestamp / 1000;
+      videoRef.current.play();
     }
   }, [chapter])
 
   useEffect(() => {
     setProgress(currentTime / duration * 100)
+    progressUpdate(currentTime)
   }, [currentTime]);
 
   const handleKeystroke = (event) => {
@@ -68,5 +78,7 @@ Video.propTypes = {
       name: PropTypes.string.isRequired
     }).isRequired
   }),
-  duration: PropTypes.number.isRequired
+  duration: PropTypes.number.isRequired,
+  progressUpdate: PropTypes.func.isRequired,
+  watched: PropTypes.number
 }
