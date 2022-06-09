@@ -6,6 +6,7 @@ import { Card, CardActionArea, CardHeader, CardMedia, Typography, IconButton, To
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { VideoMenu } from './VideoMenu.jsx'
 import { generateVideoUrl } from '../services/video.service.js'
+import { mergeDeepLeft } from 'ramda'
 
 const generateThumbnail = async ({ videoId, setVideoThumbnail }) => {
   //TODO Deprecate this
@@ -57,7 +58,7 @@ export const VideoCard = ({ video, remove }) => {
       anchorEl={anchorEl}
       handleClose={handleMenuClose}
       removeVideo={remove}
-      setVideo={setLocalVideo}
+      setVideo={video => setLocalVideo(mergeDeepLeft(video))}
       title={localVideo.title}
       favourite={!!localVideo.favourite}
     />
