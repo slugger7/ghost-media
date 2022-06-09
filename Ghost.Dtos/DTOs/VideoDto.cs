@@ -35,7 +35,6 @@ namespace Ghost.Dtos
       initialize(video);
       this.Favourite = video.FavouritedBy.Any(f => f.User.Id == userId);
       var progress = video.WatchedBy.FirstOrDefault(w => w.User.Id == userId);
-      Console.WriteLine("Progress {0}", progress);
       this.Progress = progress != null ? progress.Timestamp : 0;
     }
 
