@@ -16,8 +16,7 @@ export const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [sortBy, setSortBy] = useState('date-added');
   const [sortAscending, setSortAscending] = useState(true);
-  const userId = localStorage.getItem('userId');
-  const videosPage = useAsync(fetchVideos, [page, limit, search, sortBy, sortAscending, userId])
+  const videosPage = useAsync(fetchVideos, [page, limit, search, sortBy, sortAscending])
 
   useEffect(() => {
     if (!videosPage.loading && !videosPage.error) {
