@@ -14,6 +14,7 @@ namespace Ghost.Services
     private readonly IGenreRepository genreRepository;
     private readonly IVideoRepository videoRepository;
     private readonly IActorRepository actorRepository;
+    private readonly IUserRepository userRepository;
     private readonly IImageIoService imageIoService;
     private readonly IImageService imageService;
     private readonly INfoService nfoService;
@@ -25,6 +26,7 @@ namespace Ghost.Services
       IGenreRepository genreRepository,
       IVideoRepository videoRepository,
       IActorRepository actorRepository,
+      IUserRepository userRepository,
       IImageIoService imageIoService,
       IImageService imageService,
       INfoService nfoService)
@@ -38,6 +40,7 @@ namespace Ghost.Services
       this.imageIoService = imageIoService;
       this.imageService = imageService;
       this.nfoService = nfoService;
+      this.userRepository = userRepository;
     }
 
     public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, int userId)
@@ -310,6 +313,20 @@ namespace Ghost.Services
       logger.LogInformation("Chapter images created for {0}", video.FileName);
 
       return new VideoDto(video);
+    }
+
+    public async Task LogProgress(int id, int userId, double progress)
+    {
+      await userRepository.LogProgress(id, userId, progress);
+    }
+
+    public VideoDto GetVideoInfo(int id, int userId)
+    {
+      var includes = new List<string> { "VideoImages.Image", "Chapters.Image", "FavouritedBy.User", "WatchedBy.User" };
+      var video = videoRepository.FindById(id, includes);
+      if (video == null) throw new NullReferenceException("Video not found");
+
+      return new VideoDto(video, userId);
     }
   }
 }

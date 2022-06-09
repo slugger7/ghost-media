@@ -80,5 +80,33 @@ namespace Ghost.Repository
         return false;
       }
     }
+
+    public async Task LogProgress(int id, int userId, double progress)
+    {
+      var video = videoRepository.FindById(id, new List<string> { "WatchedBy.User" });
+      if (video == null) throw new NullReferenceException("Video not found");
+
+      var existingProgress = video.WatchedBy.FirstOrDefault(w => w.User.Id == userId);
+      if (existingProgress == null)
+      {
+        var user = this.FindById(userId);
+        if (user == null) throw new NullReferenceException("User not found");
+
+        var newProgress = new Progress
+        {
+          User = user,
+          Timestamp = progress,
+          Video = video
+        };
+
+        video.WatchedBy.Add(newProgress);
+      }
+      else
+      {
+        existingProgress.Timestamp = progress;
+      }
+
+      await context.SaveChangesAsync();
+    }
   }
 }

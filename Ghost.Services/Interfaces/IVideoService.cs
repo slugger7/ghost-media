@@ -8,6 +8,7 @@ namespace Ghost.Services
     PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, int userId);
     VideoDto GetVideoById(int id, int userId);
     VideoDto GetVideoById(int id, int userId, List<string>? includes);
+    VideoDto GetVideoInfo(int id, int userId);
     Task DeletePermanently(int id);
     string GenerateThumbnail(int id);
     Task<VideoDto> UpdateMetadData(int id);
@@ -19,5 +20,6 @@ namespace Ghost.Services
     Task<VideoDto> SyncWithNFO(int id);
     Task BatchSyncNfos(List<Video> videos);
     Task<VideoDto> GenerateChapters(int id, bool overwrite = false);
+    Task LogProgress(int id, int userId, double progress);
   }
 }

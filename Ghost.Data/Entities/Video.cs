@@ -20,6 +20,7 @@ namespace Ghost.Data
     public virtual List<VideoImage> VideoImages { get; set; } = new List<VideoImage>();
     public virtual List<Chapter> Chapters { get; set; } = new List<Chapter>();
     public virtual List<FavouriteVideo> FavouritedBy { get; set; } = new List<FavouriteVideo>();
+    public virtual List<Progress> WatchedBy { get; set; } = new List<Progress>();
 
     public static Func<string, Func<Video, string>> SortByPredicate = sortBy => video =>
       sortBy.ToLower().Equals("title") ? video.Title

@@ -9,5 +9,6 @@ namespace Ghost.Repository
     Task<User> Create(User user);
     Task<User> Delete(int id);
     Task<bool> ToggleFavouriteVideo(int id, int videoId);
+    Task LogProgress(int id, int userId, double progress);
   }
 }
