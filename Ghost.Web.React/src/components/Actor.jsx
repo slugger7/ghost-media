@@ -11,8 +11,8 @@ import { TextEdit } from './TextEdit.jsx'
 import { mergeDeepRight } from 'ramda'
 
 const fetchActor = async (name) => (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
-const fetchVideos = async (id, page, limit, search, sortBy, ascending, userId) => {
-  const videosResult = await axios.get(`/media/actor/${encodeURIComponent(id)}?${constructVideoParams({ page, limit, search, sortBy, ascending, userId })}`)
+const fetchVideos = async (id, page, limit, search, sortBy, ascending) => {
+  const videosResult = await axios.get(`/media/actor/${encodeURIComponent(id)}?${constructVideoParams({ page, limit, search, sortBy, ascending })}`)
   return videosResult.data;
 }
 const updateActorName = async (id, name) => (await axios.put(`/actor/${id}`, { name })).data
@@ -25,9 +25,9 @@ export const Actor = () => {
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
   const [sortAscending, setSortAscending] = useState();
-  const [sortBy, setSortBy] = useState('title');
+  const [sortBy, setSortBy] = useState('title')
   const userId = localStorage.getItem('userId');
-  const videosPage = useAsync(fetchVideos, [params.id, page, limit, search, sortBy, sortAscending, userId])
+  const videosPage = useAsync(fetchVideos, [params.id, page, limit, search, sortBy, sortAscending])
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
