@@ -40,7 +40,7 @@ namespace Ghost.Services
       this.nfoService = nfoService;
     }
 
-    public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest)
+    public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, int userId)
     {
       var videosPage = videoRepository.SearchVideos(
         pageRequest.Page,
@@ -52,24 +52,24 @@ namespace Ghost.Services
       {
         Total = videosPage.Total,
         Page = videosPage.Page,
-        Content = videosPage.Content.Select(v => new VideoDto(v, pageRequest.UserId)).ToList()
+        Content = videosPage.Content.Select(v => new VideoDto(v, userId)).ToList()
       };
     }
 
-    public VideoDto GetVideoById(int id)
+    public VideoDto GetVideoById(int id, int userId)
     {
       var video = videoRepository.FindById(id);
       if (video == null) throw new NullReferenceException("Video not found");
 
-      return new VideoDto(video);
+      return new VideoDto(video, userId);
     }
 
-    public VideoDto GetVideoById(int id, List<string>? includes)
+    public VideoDto GetVideoById(int id, int userId, List<string>? includes)
     {
       var video = videoRepository.FindById(id, includes);
       if (video == null) throw new NullReferenceException("Video not found");
 
-      return new VideoDto(video);
+      return new VideoDto(video, userId);
     }
 
     public string GenerateThumbnail(int id)

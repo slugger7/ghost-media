@@ -5,9 +5,9 @@ namespace Ghost.Services
 {
   public interface IVideoService
   {
-    PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest);
-    VideoDto GetVideoById(int id);
-    VideoDto GetVideoById(int id, List<string>? includes);
+    PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, int userId);
+    VideoDto GetVideoById(int id, int userId);
+    VideoDto GetVideoById(int id, int userId, List<string>? includes);
     Task DeletePermanently(int id);
     string GenerateThumbnail(int id);
     Task<VideoDto> UpdateMetadData(int id);

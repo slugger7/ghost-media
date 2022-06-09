@@ -53,7 +53,8 @@ namespace Ghost.Repository
       {
         "VideoGenres.Genre.VideoGenres",
         "VideoActors.Actor.VideoActors",
-        "VideoImages.Image"
+        "VideoImages.Image",
+        "FavouritedBy.User"
       });
     }
 
