@@ -17,7 +17,7 @@ const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadata`)).data
 const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
-const toggleFavourite = async (videoId) => await axios.put(`/user/${localStorage.getItem('userId')}/video/${videoId}`)
+const toggleFavourite = async (videoId) => (await axios.put(`/user/${localStorage.getItem('userId')}/video/${videoId}`)).data
 
 export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, removeVideo, setVideo, source }) => {
   const [loadingSync, setLoadingSync] = useState(false)
@@ -67,10 +67,7 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
     setLoadingFavourite(true);
     try {
       const favourite = await toggleFavourite(videoId)
-      setVideo(vid => {
-        vid.favourite = favourite
-        return vid
-      });
+      setVideo({ favourite });
     } finally {
       setLoadingFavourite(false);
       handleClose()
