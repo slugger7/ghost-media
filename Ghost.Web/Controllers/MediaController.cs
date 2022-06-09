@@ -109,9 +109,12 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("genre/{genre}")]
-    public ActionResult<PageResultDto<VideoDto>> GetVideosForGenre(string genre, [FromQuery] PageRequestDto pageRequest)
+    public ActionResult<PageResultDto<VideoDto>> GetVideosForGenre(
+      string genre,
+      [FromQuery] PageRequestDto pageRequest,
+      [FromHeader(Name = "User-Id")] int userId)
     {
-      return videoService.GetVideosForGenre(genre, pageRequest);
+      return videoService.GetVideosForGenre(genre, userId, pageRequest);
     }
 
     [HttpPut("{id}/actors")]
@@ -128,11 +131,14 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("actor/{id}")]
-    public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(int id, [FromQuery] PageRequestDto pageRequest)
+    public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(
+      int id,
+      [FromQuery] PageRequestDto pageRequest,
+      [FromHeader(Name = "User-Id")] int userId)
     {
       try
       {
-        return videoService.GetVideosForActor(id, pageRequest);
+        return videoService.GetVideosForActor(id, userId, pageRequest);
       }
       catch (NullReferenceException)
       {
