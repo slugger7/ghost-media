@@ -21,6 +21,7 @@ namespace Ghost.Repository
       return context.Genres
         .Include("VideoGenres.Video")
         .Include("VideoGenres.Video.VideoImages.Image")
+        .Include("VideoGenres.Video.FavouritedBy.User")
         .FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
     }
 

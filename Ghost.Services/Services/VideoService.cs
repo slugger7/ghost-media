@@ -120,7 +120,7 @@ namespace Ghost.Services
       return new VideoDto(videoEntity);
     }
 
-    public PageResultDto<VideoDto> GetVideosForGenre(string name, PageRequestDto pageRequest)
+    public PageResultDto<VideoDto> GetVideosForGenre(string name, int userId, PageRequestDto pageRequest)
     {
       var videosPage = videoRepository.GetForGenre(
         name,
@@ -133,7 +133,7 @@ namespace Ghost.Services
       {
         Total = videosPage.Total,
         Page = videosPage.Page,
-        Content = videosPage.Content.Select(v => new VideoDto(v)).ToList()
+        Content = videosPage.Content.Select(v => new VideoDto(v, userId)).ToList()
       };
     }
 
@@ -150,7 +150,7 @@ namespace Ghost.Services
       return new VideoDto(videoEntity);
     }
 
-    public PageResultDto<VideoDto> GetVideosForActor(int actorId, PageRequestDto pageRequest)
+    public PageResultDto<VideoDto> GetVideosForActor(int actorId, int userId, PageRequestDto pageRequest)
     {
       var videosPage = videoRepository.GetForActor(
         actorId,
@@ -163,7 +163,7 @@ namespace Ghost.Services
       {
         Total = videosPage.Total,
         Page = videosPage.Page,
-        Content = videosPage.Content.Select(v => new VideoDto(v)).ToList()
+        Content = videosPage.Content.Select(v => new VideoDto(v, userId)).ToList()
       };
     }
 
