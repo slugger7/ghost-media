@@ -19,9 +19,11 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet]
-    public ActionResult<PageResultDto<VideoDto>> SearchVideos([FromQuery] PageRequestDto pageRequest)
+    public ActionResult<PageResultDto<VideoDto>> SearchVideos(
+      [FromQuery] PageRequestDto pageRequest,
+      [FromHeader(Name = "User-Id")] int userId)
     {
-      return videoService.SearchVideos(pageRequest);
+      return videoService.SearchVideos(pageRequest, userId);
     }
 
     [HttpPut("{id}/title")]
@@ -38,9 +40,9 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{id}/info")]
-    public ActionResult<VideoDto> GetVideoInfo(int id)
+    public ActionResult<VideoDto> GetVideoInfo(int id, [FromHeader(Name = "User-Id")] int userId)
     {
-      var video = videoService.GetVideoById(id, new List<string> { "VideoImages.Image", "Chapters.Image" });
+      var video = videoService.GetVideoById(id, userId, new List<string> { "VideoImages.Image", "Chapters.Image", "FavouritedBy.User" });
 
       return video;
     }
@@ -61,11 +63,11 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{id}")]
-    public ActionResult GetVideo(int id)
+    public ActionResult GetVideo(int id, [FromHeader(Name = "User-Id")] int userId)
     {
       try
       {
-        var video = videoService.GetVideoById(id, null);
+        var video = videoService.GetVideoById(id, userId, null);
         if (video != null)
         {
           return PhysicalFile(video.Path ?? "", "video/mp4", true);
