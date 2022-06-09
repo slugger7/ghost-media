@@ -23,7 +23,6 @@ const updateGenres = async (id, genres) => (await axios.put(`/media/${id}/genres
 const updateActors = async (id, actors) => (await axios.put(`/media/${id}/actors`, actors)).data
 const updateTitle = async (id, title) => (await axios.put(`/media/${id}/title`, { title })).data
 const updateProgress = async (id, progress) => {
-  console.log({ progress })
   if (progress !== null && !isNaN(progress)) {
     (await axios.put(`/media/${id}/progress`, { progress }))
   }
