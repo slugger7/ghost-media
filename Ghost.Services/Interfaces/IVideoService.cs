@@ -21,5 +21,6 @@ namespace Ghost.Services
     Task BatchSyncNfos(List<Video> videos);
     Task<VideoDto> GenerateChapters(int id, bool overwrite = false);
     Task LogProgress(int id, int userId, double progress);
+    PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest);
   }
 }

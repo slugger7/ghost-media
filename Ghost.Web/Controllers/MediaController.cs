@@ -190,5 +190,21 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
+
+    [HttpGet("favourites")]
+    public ActionResult<PageResultDto<VideoDto>> GetFavourites(
+      [FromHeader(Name = "User-Id")] int userId,
+      [FromQuery] PageRequestDto pageRequest
+    )
+    {
+      try
+      {
+        return videoService.Favourites(userId, pageRequest);
+      }
+      catch (NullReferenceException)
+      {
+        return NotFound();
+      }
+    }
   }
 }
