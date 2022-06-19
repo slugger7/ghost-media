@@ -53,7 +53,7 @@ export const Media = () => {
         chapter={chapter}
         source={videoSource}
         type={media.result.type}
-        poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}/${media.result.thumbnail?.name}`}
+        poster={media.result.thumbnail ? `${axios.defaults.baseURL}/image/${media.result.thumbnail.id}/${media.result.thumbnail.name}` : undefined}
         duration={media.result.runtime / 1000}
         watched={media.result.progress}
         progressUpdate={handleProgressUpdate}

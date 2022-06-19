@@ -34,7 +34,7 @@ export const VideoCard = ({ video, remove }) => {
         image={`${axios.defaults.baseURL}/image/${localVideo.thumbnail.id}/${localVideo.thumbnail.name}`}
         alt={localVideo.title}
       />}
-      {!localVideo.thumbnail && <Skeleton animation="static" variant="rectangle" height="150px" />}
+      {!localVideo.thumbnail && <Skeleton animation={false} variant="rectangle" height="150px" />}
     </CardActionArea>
     <CardHeader
       className="ghost-video-card-header"
