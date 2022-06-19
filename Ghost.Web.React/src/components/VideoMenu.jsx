@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Menu, MenuItem, ListItemIcon, CircularProgress, ListItemText } from '@mui/material'
+import { Menu, MenuItem, ListItemIcon, CircularProgress, ListItemText, Divider } from '@mui/material'
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import SyncIcon from '@mui/icons-material/Sync';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -8,6 +8,7 @@ import BurstModeIcon from '@mui/icons-material/BurstMode';
 import OfflineShareIcon from '@mui/icons-material/OfflineShare';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import ImageIcon from '@mui/icons-material/Image';
 import axios from 'axios'
 import copy from 'copy-to-clipboard';
 
@@ -18,14 +19,20 @@ const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadat
 const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
 const toggleFavourite = async (videoId) => (await axios.put(`/user/${localStorage.getItem('userId')}/video/${videoId}`)).data
+const chooseThumbnail = async (videoId, progress) => {
+  if (progress !== null && !isNaN(progress)) {
+    (await axios.put(`/image/video/${videoId}?timestamp=${Math.floor(progress * 1000)}&overwrite=true`))
+  }
+}
 
-export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, removeVideo, setVideo, source }) => {
+export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, removeVideo, setVideo, source, progress }) => {
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
   const [loadingGeneratChapter, setLoadingGeneratChapter] = useState(false)
   const [deleteModalOpen, setDeletModalOpen] = useState(false);
   const [loadingFavourite, setLoadingFavourite] = useState(false);
+  const [loadingChooseThumbnail, setLoadingChooseThumbnail] = useState(false);
 
   const handleModalClose = () => {
     if (!loadingDelete) {
@@ -103,6 +110,17 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
     handleClose();
   }
 
+  const handleChooseThumbnail = async () => {
+    if (loadingChooseThumbnail) return;
+    setLoadingChooseThumbnail(true);
+    try {
+      await chooseThumbnail(videoId, progress);
+    } finally {
+      setLoadingChooseThumbnail(false);
+      handleClose();
+    }
+  }
+
   return <>
     <Menu
       id={`${videoId}-video-card-menu`}
@@ -111,13 +129,7 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
       onClose={handleClose}
       MenuListProps={{ 'aria-labelledby': `${videoId}-video-card-menu-button` }}
     >
-      <MenuItem onClick={handleSync}>
-        <ListItemIcon>
-          {!loadingSync && <SyncIcon fontSize="small" />}
-          {loadingSync && <CircularProgress sx={{ mr: 1 }} />}
-        </ListItemIcon>
-        <ListItemText>Sync metadata</ListItemText>
-      </MenuItem>
+
       <MenuItem onClick={handleFavourite}>
         <ListItemIcon>
           {!loadingFavourite && favourite ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
@@ -125,13 +137,13 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
         </ListItemIcon>
         <ListItemText>Favourite</ListItemText>
       </MenuItem>
-      <MenuItem onClick={handleSyncFromNfo}>
+      {progress !== undefined && <MenuItem onClick={handleChooseThumbnail}>
         <ListItemIcon>
-          {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
-          {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
+          {!loadingChooseThumbnail && <ImageIcon fontSize="small" />}
+          {loadingChooseThumbnail && <CircularProgress sx={{ mr: 1 }} />}
         </ListItemIcon>
-        <ListItemText>Sync from NFO</ListItemText>
-      </MenuItem>
+        <ListItemText>Choose as thumbnail</ListItemText>
+      </MenuItem>}
       <MenuItem onClick={handleGenerateChapters}>
         <ListItemIcon>
           {!loadingGeneratChapter && <BurstModeIcon fontSize="small" />}
@@ -145,11 +157,26 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
         </ListItemIcon>
         <ListItemText>Copy stream URL</ListItemText>
       </MenuItem>
+      <Divider />
+      <MenuItem onClick={handleSync}>
+        <ListItemIcon>
+          {!loadingSync && <SyncIcon fontSize="small" />}
+          {loadingSync && <CircularProgress sx={{ mr: 1 }} />}
+        </ListItemIcon>
+        <ListItemText>Sync metadata</ListItemText>
+      </MenuItem>
       <MenuItem onClick={handleDeleteMenuClick}>
         <ListItemIcon>
           <DeleteForeverIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Delete permanently</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={handleSyncFromNfo}>
+        <ListItemIcon>
+          {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
+          {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
+        </ListItemIcon>
+        <ListItemText>Sync from NFO</ListItemText>
       </MenuItem>
     </Menu>
     <DeleteConfirmationModal
@@ -170,5 +197,6 @@ VideoMenu.propTypes = {
   setVideo: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   source: PropTypes.string.isRequired,
-  favourite: PropTypes.bool.isRequired
+  favourite: PropTypes.bool.isRequired,
+  progress: PropTypes.number
 }

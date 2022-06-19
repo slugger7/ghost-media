@@ -45,7 +45,7 @@ namespace Ghost.Services
       }
 
       var outputPath = ImageIoService.GenerateFileName(video.Path, ".png");
-      imageIoService.GenerateImage(video.Path, outputPath);
+      imageIoService.GenerateImage(video.Path, outputPath, generateImageRequest.Timestamp, 720, 480, generateImageRequest.Overwrite);
 
       var image = imageRepository.CreateImageForVideo(video, outputPath);
       return new ImageDto(image);

@@ -37,9 +37,14 @@ export const Media = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState();
   const [chapter, setChapter] = useState();
   const videoSource = generateVideoUrl(params.id);
+  const [progress, setProgress] = useState();
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
   const handleMenuClose = () => setMenuAnchorEl(null);
+  const handleProgressUpdate = (progress) => {
+    setProgress(progress);
+    updateProgress(params.id, progress)
+  }
 
   return <>
     {media.loading && <Skeleton height="200px" width="100%" />}
@@ -51,7 +56,7 @@ export const Media = () => {
         poster={`${axios.defaults.baseURL}/image/${media.result.thumbnail?.id}/${media.result.title}`}
         duration={media.result.runtime / 1000}
         watched={media.result.progress}
-        progressUpdate={(progress) => updateProgress(params.id, progress)}
+        progressUpdate={handleProgressUpdate}
       />}
     <Container sx={{ paddingX: 0 }}>
       <Paper sx={{ p: 2 }}>
@@ -116,6 +121,7 @@ export const Media = () => {
       removeVideo={() => navigate(-1)}
       setVideo={(video) => media.set(mergeDeepRight(media, { result: video }))}
       favourite={!!media.result.favourite}
+      progress={progress}
     />}
   </>
 }

@@ -40,9 +40,9 @@ namespace Ghost.Media
           basePath.LastIndexOf('.')
         ) + extension;
 
-    public void GenerateImage(string videoPath, string outputPath, int captureTimeMillis = -1, int maxWidth = 400, int maxHeight = 400)
+    public void GenerateImage(string videoPath, string outputPath, int captureTimeMillis = -1, int maxWidth = 400, int maxHeight = 400, bool overwrite = false)
     {
-      if (File.Exists(outputPath)) return;
+      if (!overwrite && File.Exists(outputPath)) return;
       var videoInfo = VideoFns.GetVideoInformation(videoPath);
       if (videoInfo == null) return;
       if (captureTimeMillis < 0)
