@@ -1,4 +1,3 @@
-import { Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-async-hook';
@@ -66,7 +65,7 @@ export const Actor = () => {
     setSortDirection={(sortAscendingValue) => updateSearchParams({ ascending: sortAscendingValue })} />
 
   return <>
-    {!actorResult.loading && <TextEdit text={actorResult.result.name} update={handleUpdateActorName} />}
+    {!actorResult.loading && actorResult.result?.name && <TextEdit text={actorResult.result?.name} update={handleUpdateActorName} />}
     <VideoGrid
       videosPage={videosPage}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
