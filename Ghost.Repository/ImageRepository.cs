@@ -16,7 +16,7 @@ namespace Ghost.Repository
       this.logger = logger;
     }
 
-    public Image CreateImageForVideo(Video video, string path)
+    public Image CreateImageForVideo(Video video, string path, string type, int timestamp = -1)
     {
       if (video is null)
       {
@@ -24,26 +24,38 @@ namespace Ghost.Repository
         throw new NullReferenceException("Video was null");
       }
 
-      var image = new Image
+      var videoImage = video.VideoImages.Find(vi => vi.Type.Equals(type));
+      if (videoImage == null)
       {
-        Name = video.Title,
-        Path = path
-      };
 
-      context.Images.Add(image);
+        var image = new Image
+        {
+          Name = video.Title,
+          Path = path
+        };
 
-      var videoImage = new VideoImage
+        context.Images.Add(image);
+
+        videoImage = new VideoImage
+        {
+          Type = "thumbnail",
+          Video = video,
+          Image = image
+        };
+
+        context.VideoImages.Add(videoImage);
+      }
+      else
       {
-        Type = "thumbnail",
-        Video = video,
-        Image = image
-      };
-
-      context.VideoImages.Add(videoImage);
+        if (timestamp > 0)
+        {
+          videoImage.Image.Name = video.Title + timestamp.ToString();
+        }
+      }
 
       context.SaveChanges();
 
-      return image;
+      return videoImage.Image;
     }
 
     public Image? GetImage(int id)
