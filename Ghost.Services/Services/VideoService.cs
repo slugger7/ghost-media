@@ -328,5 +328,23 @@ namespace Ghost.Services
 
       return new VideoDto(video, userId);
     }
+
+    public PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest)
+    {
+      var videoPage = userRepository.Favourites(
+        userId,
+        pageRequest.Page,
+        pageRequest.Limit,
+        pageRequest.Search,
+        pageRequest.SortBy,
+        pageRequest.Ascending);
+
+      return new PageResultDto<VideoDto>
+      {
+        Total = videoPage.Total,
+        Page = videoPage.Page,
+        Content = videoPage.Content.Select(v => new VideoDto(v, userId)).ToList()
+      };
+    }
   }
 }

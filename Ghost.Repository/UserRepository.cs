@@ -39,7 +39,23 @@ namespace Ghost.Repository
 
     public User? FindById(int id)
     {
-      return context.Users.Find(id);
+      return this.FindById(id, null);
+    }
+
+    public User? FindById(int id, List<string>? includes)
+    {
+      var users = context.Users;
+      if (includes != null && includes.Count() > 0)
+      {
+        var userQueryable = users.Include(includes.ElementAt(0));
+        for (int i = 1; i < includes.Count(); i++)
+        {
+          userQueryable = userQueryable.Include(includes.ElementAt(i));
+        }
+        return userQueryable.FirstOrDefault(v => v.Id == id);
+      }
+
+      return users.FirstOrDefault(v => v.Id == id);
     }
 
     public IEnumerable<User> GetUsers()
@@ -107,6 +123,30 @@ namespace Ghost.Repository
       }
 
       await context.SaveChangesAsync();
+    }
+
+    public PageResult<Video> Favourites(int userId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+    {
+      var user = this.FindById(userId, new List<string>
+      {
+        "FavouriteVideos.Video.VideoImages.Image"
+      });
+
+      if (user == null) throw new NullReferenceException("User not found");
+      var videos = user.FavouriteVideos
+          .Select(fv => fv.Video)
+          .Where(VideoRepository.videoSearch(search));
+
+      videos = VideoRepository.SortAndOrderVideos(videos, sortBy, ascending);
+
+      return new PageResult<Video>
+      {
+        Total = user.FavouriteVideos.Count(),
+        Page = page,
+        Content = videos
+          .Skip(limit * page)
+          .Take(limit)
+      };
     }
   }
 }

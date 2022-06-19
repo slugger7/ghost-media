@@ -10,5 +10,6 @@ namespace Ghost.Repository
     Task<User> Delete(int id);
     Task<bool> ToggleFavouriteVideo(int id, int videoId);
     Task LogProgress(int id, int userId, double progress);
+    PageResult<Video> Favourites(int userId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
   }
 }

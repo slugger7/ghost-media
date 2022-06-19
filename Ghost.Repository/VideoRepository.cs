@@ -11,7 +11,7 @@ namespace Ghost.Repository
     private readonly IActorRepository actorRepository;
     private readonly IGenreRepository genreRepository;
     private readonly IImageRepository imageRepository;
-    private Func<String, Func<Video, bool>> videoSearch = search => v => v.Title.ToUpper().Contains(search.Trim().ToUpper());
+    public static Func<String, Func<Video, bool>> videoSearch = search => v => v.Title.ToUpper().Contains(search.Trim().ToUpper());
 
     public VideoRepository(
       GhostContext context,

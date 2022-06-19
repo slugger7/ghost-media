@@ -157,7 +157,9 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
         </ListItemIcon>
         <ListItemText>Copy stream URL</ListItemText>
       </MenuItem>
+
       <Divider />
+
       <MenuItem onClick={handleSync}>
         <ListItemIcon>
           {!loadingSync && <SyncIcon fontSize="small" />}
@@ -165,18 +167,18 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
         </ListItemIcon>
         <ListItemText>Sync metadata</ListItemText>
       </MenuItem>
-      <MenuItem onClick={handleDeleteMenuClick}>
-        <ListItemIcon>
-          <DeleteForeverIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Delete permanently</ListItemText>
-      </MenuItem>
       <MenuItem onClick={handleSyncFromNfo}>
         <ListItemIcon>
           {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
           {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
         </ListItemIcon>
         <ListItemText>Sync from NFO</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={handleDeleteMenuClick}>
+        <ListItemIcon>
+          <DeleteForeverIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Delete permanently</ListItemText>
       </MenuItem>
     </Menu>
     <DeleteConfirmationModal

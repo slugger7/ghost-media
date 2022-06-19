@@ -13,6 +13,7 @@ import { Actor } from './components/Actor.jsx'
 import { Actors } from './components/Actors.jsx'
 
 import './styles.scss'
+import { Favourites } from './components/Favourites.jsx';
 
 export const App = ({ baseUrl }) => {
   return (
@@ -27,6 +28,7 @@ export const App = ({ baseUrl }) => {
           <Route path='/genres/:name' element={<Genre />} />
           <Route path='/actors/:id/:name' element={<Actor />} />
           <Route path='/actors' element={<Actors />} />
+          <Route path='/favourites' element={<Favourites />} />
         </Routes>
       </Layout>
     </BrowserRouter>

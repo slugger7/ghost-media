@@ -1,32 +1,27 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { mergeDeepRight } from 'ramda'
 import { useAsync } from 'react-async-hook';
-import { useParams, useSearchParams } from 'react-router-dom';
+
 import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
-import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
-import { constructVideoParams } from '../services/video.service.js';
 import { TextEdit } from './TextEdit.jsx'
-import { mergeDeepRight } from 'ramda'
+import axios from 'axios';
+import { constructVideoParams } from '../services/video.service';
+import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
 
-const fetchActor = async (name) => (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
-const fetchVideos = async (id, page, limit, search, sortBy, ascending) => {
-  const videosResult = await axios.get(`/media/actor/${encodeURIComponent(id)}?${constructVideoParams({ page, limit, search, sortBy, ascending })}`)
-  return videosResult.data;
-}
-const updateActorName = async (id, name) => (await axios.put(`/actor/${id}`, { name })).data
+const fetchFavouriteVideos = async (page, limit, search, sortBy, ascending) =>
+  (await (await axios.get(`/media/favourites?${constructVideoParams({ page, limit, search, sortBy, ascending })}`))).data
 
-export const Actor = () => {
-  const params = useParams()
-  const actorResult = useAsync(fetchActor, [params.name])
+export const Favourites = () => {
+  const params = useParams();
   const [page, setPage] = useState()
   const [limit, setLimit] = useState()
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
   const [sortAscending, setSortAscending] = useState();
   const [sortBy, setSortBy] = useState('title')
-  const userId = localStorage.getItem('userId');
-  const videosPage = useAsync(fetchVideos, [params.id, page, limit, search, sortBy, sortAscending])
+  const videosPage = useAsync(fetchFavouriteVideos, [page, limit, search, sortBy, sortAscending])
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
@@ -39,7 +34,7 @@ export const Actor = () => {
     const params = getSearchParamsObject(searchParams);
     setLimit(params.limit || limit || 48)
     setPage(params.page || page || 1)
-    setSearch(params.search || search)
+    setSearch(params.search || search || '')
     setSortBy(params.sortBy || sortBy)
     setSortAscending(params.ascending)
   }, [searchParams])
@@ -53,11 +48,6 @@ export const Actor = () => {
     })
   }
 
-  const handleUpdateActorName = async (name) => {
-    const newActor = await updateActorName(actorResult.result.id, name);
-    actorResult.set(mergeDeepRight(actorResult, { result: { name: newActor.name } }))
-  }
-
   const sortComponent = <Sort
     sortBy={sortBy}
     setSortBy={(sortByValue) => updateSearchParams({ sortBy: sortByValue })}
@@ -65,7 +55,6 @@ export const Actor = () => {
     setSortDirection={(sortAscendingValue) => updateSearchParams({ ascending: sortAscendingValue })} />
 
   return <>
-    {!actorResult.loading && actorResult.result?.name && <TextEdit text={actorResult.result?.name} update={handleUpdateActorName} />}
     <VideoGrid
       videosPage={videosPage}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
