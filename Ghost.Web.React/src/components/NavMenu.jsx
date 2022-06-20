@@ -17,8 +17,13 @@ export const NavMenu = () => {
 
   return (
     <header>
-      <Box sx={{ width: '100%' }}>
-        <Tabs value={value} onChange={handleTabChange} aria-label="nav tabs">
+      <Box>
+        <Tabs
+          value={value}
+          onChange={handleTabChange}
+          aria-label="nav tabs scrollable auto"
+          variant="scrollable"
+          scrollButtons="auto">
           <LinkTab to="/" label="Home" icon={<HomeIcon />} iconPosition="start" />
           <LinkTab to="/genres" label="Genres" icon={<TheaterComedyIcon />} iconPosition="start" />
           <LinkTab to="/actors" label="Actors" icon={<PeopleIcon />} iconPosition="start" />
