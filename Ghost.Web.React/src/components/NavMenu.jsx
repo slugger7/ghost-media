@@ -24,7 +24,7 @@ export const NavMenu = () => {
           aria-label="nav tabs scrollable auto"
           variant="scrollable"
           scrollButtons="auto">
-          <LinkTab to="/" label="Nome" icon={<HomeIcon />} iconPosition="start" />
+          <LinkTab to="/" label="Home" icon={<HomeIcon />} iconPosition="start" />
           <LinkTab to="/genres" label="Genres" icon={<TheaterComedyIcon />} iconPosition="start" />
           <LinkTab to="/actors" label="Actors" icon={<PeopleIcon />} iconPosition="start" />
           <LinkTab to="/favourites" label="Favourites" icon={<FavoriteIcon />} iconPosition="start" />
