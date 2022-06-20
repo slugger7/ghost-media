@@ -132,7 +132,7 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
 
       <MenuItem onClick={handleFavourite}>
         <ListItemIcon>
-          {!loadingFavourite && favourite ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+          {!loadingFavourite && (favourite ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />)}
           {loadingFavourite && <CircularProgress sx={{ mr: 1 }} />}
         </ListItemIcon>
         <ListItemText>Favourite</ListItemText>
@@ -142,7 +142,7 @@ export const VideoMenu = ({ anchorEl, handleClose, videoId, favourite, title, re
           {!loadingChooseThumbnail && <ImageIcon fontSize="small" />}
           {loadingChooseThumbnail && <CircularProgress sx={{ mr: 1 }} />}
         </ListItemIcon>
-        <ListItemText>Choose as thumbnail</ListItemText>
+        <ListItemText>Set thumbnail</ListItemText>
       </MenuItem>}
       <MenuItem onClick={handleGenerateChapters}>
         <ListItemIcon>
