@@ -54,8 +54,8 @@ export const Media = () => {
         source={videoSource}
         type={media.result.type}
         poster={media.result.thumbnail ? `${axios.defaults.baseURL}/image/${media.result.thumbnail.id}/${media.result.thumbnail.name}` : undefined}
-        duration={media.result.runtime / 1000}
-        watched={media.result.progress}
+        duration={media.result.runtime}
+        currentProgress={media.result.progress}
         progressUpdate={handleProgressUpdate}
       />}
     <Container sx={{ paddingX: 0 }}>

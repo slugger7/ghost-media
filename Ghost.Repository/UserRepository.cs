@@ -130,7 +130,8 @@ namespace Ghost.Repository
       var user = this.FindById(userId, new List<string>
       {
         "FavouriteVideos.Video.VideoImages.Image",
-        "FavouriteVideos.Video.VideoActors.Actor"
+        "FavouriteVideos.Video.VideoActors.Actor",
+        "FavouriteVideos.Video.WatchedBy.User"
       });
 
       if (user == null) throw new NullReferenceException("User not found");

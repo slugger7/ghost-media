@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import { Card, CardActionArea, CardHeader, CardMedia, Stack, Typography, IconButton, Tooltip, Skeleton, CardActions, Chip } from '@mui/material'
+import { Card, CardActionArea, CardHeader, CardMedia, Stack, Typography, IconButton, Tooltip, Skeleton, CardActions, Chip, LinearProgress } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { items, VideoMenu } from './VideoMenu.jsx'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service.js'
 import { mergeDeepLeft } from 'ramda'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { VideoProgress } from './VideoProgress.jsx'
 
 export const VideoCard = ({ video, remove }) => {
   const [localVideo, setLocalVideo] = useState(video);
@@ -68,6 +69,7 @@ export const VideoCard = ({ video, remove }) => {
       />}
       {!localVideo.thumbnail && <Skeleton animation={false} variant="rectangle" height="150px" />}
     </CardActionArea>
+    <VideoProgress duration={localVideo.runtime} current={localVideo.progress} />
     <CardActions disableSpacing>
       <IconButton aria-label="add to favourites" onClick={handleFavourite} disabled={loadingFavourite}>
         {localVideo.favourite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
