@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { Card, CardActionArea, CardHeader, CardMedia, Typography, IconButton, Tooltip, Skeleton, CardActions } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { VideoMenu } from './VideoMenu.jsx'
+import { items, VideoMenu } from './VideoMenu.jsx'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service.js'
 import { mergeDeepLeft } from 'ramda'
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -76,6 +76,7 @@ export const VideoCard = ({ video, remove }) => {
       setVideo={video => setLocalVideo(mergeDeepLeft(video))}
       title={localVideo.title}
       favourite={!!localVideo.favourite}
+      hideItems={[items.favourite]}
     />
   </Card>)
 }
