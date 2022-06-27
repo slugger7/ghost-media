@@ -45,7 +45,7 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
           to={`/actors/${id}/${encodeURIComponent(name.toLowerCase())}`}
           clickable
         />)}
-        {!editing && actors.length === 0 && <Chip variant="outlined" label="None"></Chip>}
+        {!editing && actors.length === 0 && <Chip variant="outlined" label="Unknown"></Chip>}
       </Box>
       {editing && <>
         <Autocomplete

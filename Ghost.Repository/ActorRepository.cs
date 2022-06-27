@@ -17,6 +17,7 @@ namespace Ghost.Repository
         .Include("VideoActors.Video")
         .Include("VideoActors.Video.VideoImages.Image")
         .Include("VideoActors.Video.FavouritedBy.User")
+        .Include("VideoActors.Video.VideoActors.Actor")
         .FirstOrDefault(a => a.Id == id);
     }
 
