@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Box, LinearProgress } from '@mui/material'
+import { Box } from '@mui/material'
 import axios from 'axios'
+import { VideoProgress } from './VideoProgress'
 
 const keyFunctions = {
   "KeyL": (currentTime) => currentTime + 30,
   "KeyJ": (currentTime) => currentTime - 10
 }
 
-export const Video = ({ source, type, poster, chapter, duration, watched, progressUpdate }) => {
+export const Video = ({ source, type, poster, chapter, duration, currentProgress, progressUpdate }) => {
   const videoRef = useRef()
   const [currentTime, setCurrentTime] = useState();
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     videoRef.current?.load()
@@ -24,10 +24,10 @@ export const Video = ({ source, type, poster, chapter, duration, watched, progre
   }, [source])
 
   useEffect(() => {
-    if (watched) {
-      videoRef.current.currentTime = watched;
+    if (currentProgress) {
+      videoRef.current.currentTime = currentProgress;
     }
-  }, [watched])
+  }, [currentProgress])
 
   useEffect(() => {
     if (chapter) {
@@ -37,7 +37,6 @@ export const Video = ({ source, type, poster, chapter, duration, watched, progre
   }, [chapter])
 
   useEffect(() => {
-    setProgress(currentTime / duration * 100)
     progressUpdate(currentTime)
   }, [currentTime]);
 
@@ -63,7 +62,7 @@ export const Video = ({ source, type, poster, chapter, duration, watched, progre
       type={type}
       onPlay={() => videoRef.current.focus()}>
     </video >
-    <LinearProgress value={progress} variant="determinate" />
+    <VideoProgress duration={duration} current={currentTime} />
   </Box>)
 }
 
@@ -80,5 +79,5 @@ Video.propTypes = {
   }),
   duration: PropTypes.number.isRequired,
   progressUpdate: PropTypes.func.isRequired,
-  watched: PropTypes.number
+  currentProgress: PropTypes.number
 }
