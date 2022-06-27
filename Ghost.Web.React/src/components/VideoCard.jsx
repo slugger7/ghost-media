@@ -61,15 +61,18 @@ export const VideoCard = ({ video, remove }) => {
       subheader={<Stack direction="row" spacing={0.5}>{actors}</Stack >}
       disableTypography={true}
     />
-    <CardActionArea LinkComponent={Link} to={urlToMedia}>
-      {localVideo.thumbnail && <CardMedia sx={{ maxHeight: '200px' }}
+    <CardActionArea
+      LinkComponent={Link}
+      to={urlToMedia}
+    >
+      {localVideo.thumbnail && <CardMedia sx={{ height: "200px" }}
         component="img"
         image={`${axios.defaults.baseURL}/image/${localVideo.thumbnail.id}/${localVideo.thumbnail.name}`}
         alt={localVideo.title}
       />}
       {!localVideo.thumbnail && <Skeleton animation={false} variant="rectangle" height="150px" />}
+      <VideoProgress duration={localVideo.runtime} current={localVideo.progress} />
     </CardActionArea>
-    <VideoProgress duration={localVideo.runtime} current={localVideo.progress} />
     <CardActions disableSpacing>
       <IconButton aria-label="add to favourites" onClick={handleFavourite} disabled={loadingFavourite}>
         {localVideo.favourite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
