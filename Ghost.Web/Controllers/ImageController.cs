@@ -54,20 +54,5 @@ namespace Ghost.Api.Controllers
         return NotFound();
       }
     }
-
-    [HttpPut("video/{videoId}")]
-    public ActionResult<ImageDto> GenerateThumbnailForVideo(int videoId, [FromQuery] GenerateImageRequestDto generateImageRequest)
-    {
-      generateImageRequest.VideoId = videoId;
-      logger.LogDebug("Generating thumbnail for {0}", generateImageRequest.VideoId);
-      try
-      {
-        return imageService.GenerateThumbnailForVideo(generateImageRequest);
-      }
-      catch (NullReferenceException)
-      {
-        return NotFound();
-      }
-    }
   }
 }

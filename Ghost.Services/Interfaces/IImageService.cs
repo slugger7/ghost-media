@@ -6,6 +6,5 @@ namespace Ghost.Services
   {
     PageResultDto<ImageDto> GetImages(PageRequestDto pageRequest);
     ImageDto GetImage(int id);
-    ImageDto GenerateThumbnailForVideo(GenerateImageRequestDto generateImageRequest);
   }
 }

@@ -25,33 +25,6 @@ namespace Ghost.Services
       this.imageIoService = imageIoService;
     }
 
-    public ImageDto GenerateThumbnailForVideo(GenerateImageRequestDto generateImageRequest)
-    {
-      var video = videoRepository.FindById(generateImageRequest.VideoId, new List<string> { "VideoImages.Image" });
-      if (video is null)
-      {
-        logger.LogWarning("Video not found {0}", generateImageRequest.VideoId);
-        throw new NullReferenceException("Video not found");
-      }
-
-      if (!generateImageRequest.Overwrite)
-      {
-        var videoImage = video.VideoImages.FirstOrDefault(vi => vi.Type.Equals(generateImageRequest.Type));
-        if (videoImage is not null)
-        {
-          logger.LogInformation("Image found not regenerating {0}", generateImageRequest.VideoId);
-          return new ImageDto(videoImage.Image);
-        }
-      }
-
-      logger.LogInformation("Generating image for {0}", video.Title);
-      var outputPath = ImageIoService.GenerateFileName(video.Path, ".png");
-      imageIoService.GenerateImage(video.Path, outputPath, generateImageRequest.Timestamp, 720, 480, generateImageRequest.Overwrite);
-
-      var image = imageRepository.CreateImageForVideo(video, outputPath, generateImageRequest.Type, generateImageRequest.Timestamp);
-      return new ImageDto(image);
-    }
-
     public ImageDto GetImage(int id)
     {
       logger.LogDebug("Getting image {0}", id);
