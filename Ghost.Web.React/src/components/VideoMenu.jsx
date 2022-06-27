@@ -11,6 +11,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ImageIcon from '@mui/icons-material/Image';
 import axios from 'axios'
 import copy from 'copy-to-clipboard';
+import { toggleFavourite } from '../services/video.service';
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
 
@@ -18,7 +19,6 @@ const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadata`)).data
 const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
-const toggleFavourite = async (videoId) => (await axios.put(`/user/${localStorage.getItem('userId')}/video/${videoId}`)).data
 const chooseThumbnail = async (videoId, progress) => {
   if (progress !== null && !isNaN(progress)) {
     (await axios.put(`/image/video/${videoId}?timestamp=${Math.floor(progress * 1000)}&overwrite=true`))
