@@ -8,7 +8,6 @@ export const VideoProgress = ({ duration, current }) => {
 
   useEffect(() => {
     setProgress(current / duration * 100000)
-    console.log({ progress });
   }, [current, duration])
 
   return <LinearProgress value={progress} variant="determinate" />
