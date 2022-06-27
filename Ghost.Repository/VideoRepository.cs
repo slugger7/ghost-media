@@ -155,6 +155,7 @@ namespace Ghost.Repository
         .Include("VideoImages.Image")
         .Include("FavouritedBy.User")
         .Include("VideoActors.Actor")
+        .Include("WatchedBy.User")
         .Where(videoSearch(search));
 
       videos = SortAndOrderVideos(videos, sortBy, ascending);
