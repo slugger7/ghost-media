@@ -119,7 +119,10 @@ namespace Ghost.Repository
       }
       else
       {
-        existingProgress.Timestamp = progress;
+        if (existingProgress.Timestamp < progress)
+        {
+          existingProgress.Timestamp = progress;
+        }
       }
 
       await context.SaveChangesAsync();
