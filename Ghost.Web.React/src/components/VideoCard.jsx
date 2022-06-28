@@ -7,14 +7,12 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { items, VideoMenu } from './VideoMenu.jsx'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service.js'
 import { mergeDeepLeft } from 'ramda'
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { VideoProgress } from './VideoProgress.jsx'
+import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 
 export const VideoCard = ({ video, remove }) => {
   const [localVideo, setLocalVideo] = useState(video);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [loadingFavourite, setLoadingFavourite] = useState(false);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -22,17 +20,6 @@ export const VideoCard = ({ video, remove }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null)
-  }
-
-  const handleFavourite = async () => {
-    if (loadingFavourite) return;
-    setLoadingFavourite(true);
-    try {
-      const favourite = await toggleFavourite(localVideo.id)
-      setLocalVideo(mergeDeepLeft({ favourite }));
-    } finally {
-      setLoadingFavourite(false);
-    }
   }
 
   const actors = localVideo.actors.length > 0 ? localVideo.actors.map(a => <Chip
@@ -74,9 +61,11 @@ export const VideoCard = ({ video, remove }) => {
       <VideoProgress duration={localVideo.runtime} current={localVideo.progress} />
     </CardActionArea>
     <CardActions disableSpacing>
-      <IconButton aria-label="add to favourites" onClick={handleFavourite} disabled={loadingFavourite}>
-        {localVideo.favourite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-      </IconButton>
+      <FavouriteIconButton
+        id={localVideo.id}
+        state={localVideo.favourite}
+        toggleFn={toggleFavourite}
+        update={favourite => setLocalVideo(mergeDeepLeft({ favourite }))} />
       <IconButton
         sx={{ marginLeft: "auto" }}
         onClick={handleMenuClick}
