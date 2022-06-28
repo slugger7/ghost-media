@@ -1,18 +1,34 @@
 import { Chip } from '@mui/material'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAsync } from 'react-async-hook'
 import { fetchGenres } from '../services/genre.service'
 import { Link } from 'react-router-dom'
 import { ChipSkeleton } from './ChipSkeleton.jsx'
 import { NothingHere } from './NothingHere.jsx'
+import { Search } from './Search'
+import { Box } from '@mui/system'
+import { includes } from 'ramda'
 
 export const Genres = () => {
   const genresResult = useAsync(fetchGenres, [])
+  const [filteredGenres, setFilteredGenres] = useState([])
+  const [search, setSearch] = useState('')
 
-  return <>
+  useEffect(() => {
+    if (genresResult.result) {
+      setFilteredGenres(genresResult.result.filter(
+        genre => includes(search.trim().toLowerCase(), genre.name.toLowerCase()))
+      );
+    }
+  }, [genresResult, search])
+
+  return <Box sx={{ my: 1 }}>
+    <Box sx={{ mb: 1 }}>
+      <Search search={search} setSearch={setSearch} />
+    </Box>
     {genresResult.loading && <ChipSkeleton />}
     {!genresResult.loading && <>
-      {genresResult.result.map(genre => <Chip
+      {filteredGenres.map(genre => <Chip
         sx={{ m: 0.5 }}
         key={genre.id}
         label={`${genre.name} ${genre.videoCount}`}
@@ -22,7 +38,7 @@ export const Genres = () => {
         to={`/genres/${encodeURIComponent(genre.name)}`}
         clickable />)
       }
-      {genresResult.result.length === 0 && <NothingHere>Nothing here. Add some genres to videos.</NothingHere>}
+      {filteredGenres.length === 0 && <NothingHere>Nothing here. Add some genres to videos.</NothingHere>}
     </>}
-  </>
+  </Box>
 }

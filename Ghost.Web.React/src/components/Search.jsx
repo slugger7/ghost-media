@@ -3,17 +3,9 @@ import React, { useEffect, useCallback, useState } from 'react';
 import PropTypes from 'prop-types'
 import SearchIcon from '@mui/icons-material/Search';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
-import throttle from 'lodash.throttle';
 
 export const Search = ({ search, setSearch }) => {
   const [searchValue, setSearchValue] = useState(search);
-  //const throttledSearch = useCallback(throttle(setSearch, 400), []);
-
-  // useEffect(() => {
-  //   if (searchValue) {
-  //     throttledSearch(searchValue);
-  //   }
-  // }, [searchValue]);
 
   useEffect(() => {
     setSearchValue(search)
