@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
-import { Container, Grid, IconButton, Paper, Skeleton, Box, Tooltip } from '@mui/material'
+import { Container, Grid, IconButton, Paper, Skeleton, Box } from '@mui/material'
 import { mergeDeepRight } from 'ramda'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
@@ -58,7 +58,7 @@ export const Media = () => {
         type={media.result.type}
         poster={media.result.thumbnail ? `${axios.defaults.baseURL}/image/${media.result.thumbnail.id}/${media.result.thumbnail.name}` : undefined}
         duration={media.result.runtime}
-        currentProgress={media.result.progress || 0}
+        currentProgress={media.result.progress}
         progressUpdate={handleProgressUpdate}
       />}
     <Container sx={{ paddingX: 0 }}>
