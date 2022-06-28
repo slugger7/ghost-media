@@ -20,7 +20,7 @@ export const Genres = () => {
         genre => includes(search.trim().toLowerCase(), genre.name.toLowerCase()))
       );
     }
-  }, [genresResult, search])
+  }, [genresResult.result, search])
 
   return <Box sx={{ my: 1 }}>
     <Box sx={{ mb: 1 }}>
