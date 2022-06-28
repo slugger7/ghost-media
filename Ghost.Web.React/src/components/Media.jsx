@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
-import { Container, Grid, IconButton, Paper, Skeleton } from '@mui/material'
+import { Container, Grid, IconButton, Paper, Skeleton, Box } from '@mui/material'
 import { mergeDeepRight } from 'ramda'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
@@ -11,10 +11,11 @@ import { VideoGenres } from './VideoGenres.jsx'
 import { VideoActors } from './VideoActors.jsx'
 import { TextEdit } from './TextEdit.jsx'
 import { VideoMetaData } from './VideoMetaData.jsx'
-import { VideoMenu } from './VideoMenu.jsx'
+import { items, VideoMenu } from './VideoMenu.jsx'
 import { ChipSkeleton } from './ChipSkeleton.jsx'
 import { Chapters } from './Chapters.jsx'
-import { generateVideoUrl } from '../services/video.service';
+import { generateVideoUrl, toggleFavourite } from '../services/video.service';
+import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -46,6 +47,8 @@ export const Media = () => {
     updateProgress(params.id, progress)
   }
 
+  const updateMedia = (val) => media.set(mergeDeepRight(media, { result: val }));
+
   return <>
     {media.loading && <Skeleton height="200px" width="100%" />}
     {!media.loading &&
@@ -60,15 +63,10 @@ export const Media = () => {
       />}
     <Container sx={{ paddingX: 0 }}>
       <Paper sx={{ p: 2 }}>
-        <Grid container spacing={1}>
-          <Grid item xs={10} sm={11}>
-            {media.loading && <Skeleton height="50px" width="100%" />}
-            {!media.loading && <TextEdit text={media.result.title} update={async (title) => {
-              const video = await updateTitle(params.id, title)
-              media.set(mergeDeepRight(media, { result: { title: video.title } }))
-            }} />}
-          </Grid>
-          <Grid item xs={2} sm={1}><IconButton
+        {!media.loading && <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+          <FavouriteIconButton id={params.id} state={media.result.favourite} toggleFn={toggleFavourite} update={favourite => updateMedia({ favourite })} />
+          < IconButton
+            sx={{ marginLeft: 'auto' }}
             onClick={handleMenuClick}
             id={`${params.id}-video-card-menu-button`}
             aria-controls={!!menuAnchorEl ? 'video-card-menu' : undefined}
@@ -77,8 +75,12 @@ export const Media = () => {
           >
             <MoreVertIcon />
           </IconButton>
-          </Grid>
-        </Grid>
+        </Box>}
+        {media.loading && <Skeleton height="50px" width="100%" />}
+        {!media.loading && <TextEdit text={media.result.title} update={async (title) => {
+          const video = await updateTitle(params.id, title)
+          media.set(mergeDeepRight(media, { result: { title: video.title } }))
+        }} />}
         {genresPage.loading && <ChipSkeleton />}
         {!genresPage.loading && <VideoGenres genres={genresPage.result} videoId={params.id}
           updateGenres={async (genres) => {
@@ -112,16 +114,19 @@ export const Media = () => {
       </Paper>
     </Container>
 
-    {!media.loading && <VideoMenu
-      source={videoSource}
-      anchorEl={menuAnchorEl}
-      handleClose={handleMenuClose}
-      videoId={+params.id}
-      title={media.result.title}
-      removeVideo={() => navigate(-1)}
-      setVideo={(video) => media.set(mergeDeepRight(media, { result: video }))}
-      favourite={!!media.result.favourite}
-      progress={progress}
-    />}
+    {
+      !media.loading && <VideoMenu
+        source={videoSource}
+        anchorEl={menuAnchorEl}
+        handleClose={handleMenuClose}
+        videoId={+params.id}
+        title={media.result.title}
+        removeVideo={() => navigate(-1)}
+        setVideo={(video) => media.set(mergeDeepRight(media, { result: video }))}
+        favourite={!!media.result.favourite}
+        progress={progress}
+        hideItems={[items.favourite]}
+      />
+    }
   </>
 }
