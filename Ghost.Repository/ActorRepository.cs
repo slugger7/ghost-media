@@ -11,15 +11,34 @@ namespace Ghost.Repository
     {
       this.context = context;
     }
+
     public Actor? FindById(int id)
     {
-      return context.Actors
-        .Include("VideoActors.Video")
-        .Include("VideoActors.Video.VideoImages.Image")
-        .Include("VideoActors.Video.FavouritedBy.User")
-        .Include("VideoActors.Video.VideoActors.Actor")
-        .Include("VideoActors.Video.WatchedBy.User")
-        .FirstOrDefault(a => a.Id == id);
+      return this.FindById(id, new List<string>
+      {
+        "VideoActors.Video",
+        "VideoActors.Video.VideoImages.Image",
+        "VideoActors.Video.FavouritedBy.User",
+        "VideoActors.Video.VideoActors.Actor",
+        "VideoActors.Video.WatchedBy.User",
+        "FavouritedBy.User"
+      });
+    }
+
+    public Actor? FindById(int id, List<string>? includes)
+    {
+      var actors = context.Actors;
+      if (includes != null && includes.Count() > 0)
+      {
+        var actorQueryable = actors.Include(includes.ElementAt(0));
+        for (int i = 1; i < includes.Count(); i++)
+        {
+          actorQueryable = actorQueryable.Include(includes.ElementAt(i));
+        }
+        return actorQueryable.FirstOrDefault(v => v.Id == id);
+      }
+
+      return actors.FirstOrDefault(v => v.Id == id);
     }
 
     public Actor? GetActorByName(string name)
@@ -27,18 +46,23 @@ namespace Ghost.Repository
       return context.Actors
         .Include("VideoActors.Video")
         .Include("VideoActors.Video.VideoImages.Image")
+        .Include("FavouritedBy.User")
         .FirstOrDefault(a => a.Name.ToUpper().Equals(name.Trim().ToUpper()));
     }
 
     public IEnumerable<Actor> GetActors()
     {
-      return context.Actors.Include("VideoActors").OrderByDescending(a => a.VideoActors.Count());
+      return context.Actors
+        .Include("VideoActors")
+        .Include("FavouritedBy.User")
+        .OrderByDescending(a => a.VideoActors.Count());
     }
 
     public IEnumerable<Actor> GetActorsForVideo(int videoId)
     {
       return context.VideoActors
         .Include("Actor.VideoActors")
+        .Include("Actor.FavouritedBy.User")
         .Where(va => va.Video.Id == videoId)
         .Select(va => va.Actor)
         .OrderByDescending(a => a.VideoActors.Count());

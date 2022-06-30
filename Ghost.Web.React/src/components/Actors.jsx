@@ -32,7 +32,7 @@ export const Actors = () => {
         key={actor.id}
         label={`${actor.name} ${actor.videoCount}`}
         variant="outlined"
-        color="primary"
+        color={actor.favourite ? "success" : "primary"}
         component={Link}
         to={`/actors/${actor.id}/${encodeURIComponent(actor.name.toLowerCase())}`}
         clickable

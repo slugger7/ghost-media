@@ -68,5 +68,11 @@ namespace Ghost.Api.Controllers
     {
       return await userService.ToggleFavouriteVideo(id, videoId);
     }
+
+    [HttpPut("{id}/actor/{actorId}")]
+    public async Task<ActionResult<bool>> ToggleFavouriteActor(int id, int actorId)
+    {
+      return await userService.ToggleFavouriteActor(id, actorId);
+    }
   }
 }

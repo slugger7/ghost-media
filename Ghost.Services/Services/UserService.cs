@@ -49,6 +49,11 @@ namespace Ghost.Services
       };
     }
 
+    public async Task<bool> ToggleFavouriteActor(int id, int actorId)
+    {
+      return await userRepository.ToggleFavouriteActor(id, actorId);
+    }
+
     public async Task<bool> ToggleFavouriteVideo(int id, int videoId)
     {
       return await userRepository.ToggleFavouriteVideo(id, videoId);
