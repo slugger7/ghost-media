@@ -36,6 +36,13 @@ namespace Ghost.Dtos
       this.Favourite = video.FavouritedBy.Any(f => f.User.Id == userId);
       var progress = video.WatchedBy.FirstOrDefault(w => w.User.Id == userId);
       this.Progress = progress != null ? progress.Timestamp : 0;
+      if (video.VideoActors != null)
+      {
+        this.Actors = video.VideoActors
+          .OrderBy(va => va.Actor.Name)
+          .Select(va => new ActorDto(va.Actor, userId))
+          .ToList();
+      }
     }
 
     private void initialize(Video video)

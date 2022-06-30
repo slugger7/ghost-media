@@ -31,17 +31,17 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet]
-    public ActionResult<List<ActorDto>> GetActors()
+    public ActionResult<List<ActorDto>> GetActors([FromHeader(Name = "User-Id")] int userId)
     {
-      return actorService.GetActors();
+      return actorService.GetActors(userId);
     }
 
     [HttpGet("video/{videoId}")]
-    public ActionResult<List<ActorDto>> GetActorsForVideo(int videoId)
+    public ActionResult<List<ActorDto>> GetActorsForVideo(int videoId, [FromHeader(Name = "User-Id")] int userId)
     {
       try
       {
-        return actorService.GetActorsForVideo(videoId);
+        return actorService.GetActorsForVideo(videoId, userId);
       }
       catch (NullReferenceException ex)
       {
