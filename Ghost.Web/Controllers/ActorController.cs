@@ -18,11 +18,11 @@ namespace Ghost.Api.Controllers
     }
 
     [HttpGet("{name}")]
-    public ActionResult<ActorDto> GetActorByName(string name)
+    public ActionResult<ActorDto> GetActorByName(string name, [FromHeader(Name = "User-Id")] int userId)
     {
       try
       {
-        return actorService.GetActorByName(name);
+        return actorService.GetActorByName(name, userId);
       }
       catch (NullReferenceException)
       {

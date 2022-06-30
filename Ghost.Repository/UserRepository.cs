@@ -8,10 +8,16 @@ namespace Ghost.Repository
   {
     private readonly GhostContext context;
     private readonly IVideoRepository videoRepository;
-    public UserRepository(GhostContext context, IVideoRepository videoRepository)
+    private readonly IActorRepository actorRepository;
+
+    public UserRepository(
+      GhostContext context,
+      IVideoRepository videoRepository,
+      IActorRepository actorRepository)
     {
       this.context = context;
       this.videoRepository = videoRepository;
+      this.actorRepository = actorRepository;
     }
 
     public async Task<User> Create(User user)
@@ -152,6 +158,40 @@ namespace Ghost.Repository
           .Skip(limit * page)
           .Take(limit)
       };
+    }
+
+    public async Task<bool> ToggleFavouriteActor(int id, int actorId)
+    {
+      var user = context.Users
+        .Include("FavouriteActors.Actor")
+        .FirstOrDefault(u => u.Id == id);
+      if (user == null) throw new NullReferenceException("User not found");
+      var actor = actorRepository.FindById(actorId, null);
+      if (actor == null) throw new NullReferenceException("Video not found");
+
+      var favourite = user.FavouriteActors.FirstOrDefault(fa => fa.Actor.Id == actorId);
+      if (favourite == null)
+      {
+        favourite = new FavouriteActor
+        {
+          User = user,
+          Actor = actor
+        };
+
+        context.FavouriteActors.Add(favourite);
+
+        await context.SaveChangesAsync();
+
+        return true;
+      }
+      else
+      {
+        context.FavouriteActors.Remove(favourite);
+
+        await context.SaveChangesAsync();
+
+        return false;
+      }
     }
   }
 }

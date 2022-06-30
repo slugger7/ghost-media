@@ -19,13 +19,13 @@ namespace Ghost.Services
         .ToList();
     }
 
-    public ActorDto GetActorByName(string name)
+    public ActorDto GetActorByName(string name, int userId)
     {
       var actor = actorRepository.GetActorByName(name);
 
       if (actor == null) throw new NullReferenceException("Actor not found");
 
-      return new ActorDto(actor);
+      return new ActorDto(actor, userId);
     }
 
     public List<ActorDto> GetActorsForVideo(int videoId)

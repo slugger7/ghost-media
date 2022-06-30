@@ -9,5 +9,6 @@ namespace Ghost.Services
     Task<UserDto> Create(CreateUserDto createUser);
     Task<UserDto> Delete(int id);
     Task<bool> ToggleFavouriteVideo(int id, int videoId);
+    Task<bool> ToggleFavouriteActor(int id, int actorId);
   }
 }

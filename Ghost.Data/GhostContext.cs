@@ -74,6 +74,9 @@ namespace Ghost.Data
       favouriteActor
         .HasOne<User>(x => x.User)
         .WithMany(x => x.FavouriteActors);
+      favouriteActor
+        .HasOne<Actor>(x => x.Actor)
+        .WithMany(x => x.FavouritedBy);
       var progress = modelBuilder.Entity<Progress>().ToTable("Progress");
       progress
         .HasOne<User>(x => x.User)
