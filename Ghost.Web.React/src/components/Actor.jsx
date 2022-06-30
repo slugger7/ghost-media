@@ -8,6 +8,8 @@ import { updateSearchParamsService, getSearchParamsObject } from '../services/se
 import { constructVideoParams } from '../services/video.service.js';
 import { TextEdit } from './TextEdit.jsx'
 import { mergeDeepRight } from 'ramda'
+import { Stack } from '@mui/material';
+import { FavouriteIconButton } from './FavouriteIconButton.jsx';
 
 const fetchActor = async (name) => (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
 const fetchVideos = async (id, page, limit, search, sortBy, ascending) => {
@@ -53,9 +55,13 @@ export const Actor = () => {
     })
   }
 
+  const handleToggleFavourite = async () => (await axios.put(`/user/${localStorage.getItem('userId')}/actor/${actorResult.result.id}`)).data
+
+  const updateActor = val => actorResult.set(mergeDeepRight(actorResult, { result: val }));
+
   const handleUpdateActorName = async (name) => {
     const newActor = await updateActorName(actorResult.result.id, name);
-    actorResult.set(mergeDeepRight(actorResult, { result: { name: newActor.name } }))
+    updateActor({ name: newActor.name })
   }
 
   const sortComponent = <Sort
@@ -65,7 +71,15 @@ export const Actor = () => {
     setSortDirection={(sortAscendingValue) => updateSearchParams({ ascending: sortAscendingValue })} />
 
   return <>
-    {!actorResult.loading && actorResult.result?.name && <TextEdit text={actorResult.result?.name} update={handleUpdateActorName} />}
+    {!actorResult.loading && actorResult.result && <Stack direction="row" spacing={1}>
+      <FavouriteIconButton
+        state={actorResult.result.favourite}
+        toggleFn={handleToggleFavourite}
+        update={favourite => updateActor({ favourite })}
+        id={actorResult.result.id}
+      />
+      <TextEdit text={actorResult.result.name} update={handleUpdateActorName} />
+    </Stack>}
     <VideoGrid
       videosPage={videosPage}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}

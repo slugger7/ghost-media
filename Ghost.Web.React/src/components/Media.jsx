@@ -64,7 +64,11 @@ export const Media = () => {
     <Container sx={{ paddingX: 0 }}>
       <Paper sx={{ p: 2 }}>
         {!media.loading && <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-          <FavouriteIconButton id={params.id} state={media.result.favourite} toggleFn={toggleFavourite} update={favourite => updateMedia({ favourite })} />
+          <FavouriteIconButton
+            id={params.id}
+            state={media.result.favourite}
+            toggleFn={toggleFavourite}
+            update={favourite => updateMedia({ favourite })} />
           < IconButton
             sx={{ marginLeft: 'auto' }}
             onClick={handleMenuClick}
