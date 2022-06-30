@@ -35,10 +35,10 @@ export const VideoActors = ({ actors, videoId, updateActors }) => {
     <Typography variant="h5" component="h5">Actors {!editing && <IconButton color="primary" onClick={() => setEditing(true)}><EditIcon /></IconButton>}</Typography>
     <Stack direction="column" spacing={1}>
       <Box>
-        {!editing && actors.map(({ name, videoCount, id }, index) => <Chip
+        {!editing && actors.map(({ name, videoCount, id, favourite }, index) => <Chip
           sx={{ m: 0.5 }}
           variant="outlined"
-          color="primary"
+          color={favourite ? "success" : "primary"}
           key={index}
           label={`${name} ${videoCount}`}
           component={Link}

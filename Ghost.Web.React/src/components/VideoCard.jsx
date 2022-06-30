@@ -27,7 +27,7 @@ export const VideoCard = ({ video, remove }) => {
     key={a.id}
     label={a.name}
     variant="outlined"
-    color="primary"
+    color={a.favourite ? "success" : "primary"}
     component={Link}
     to={`/actors/${a.id}/${encodeURIComponent(a.name.toLowerCase())}`}
     clickable />) : <Chip variant="outlined" label="Unknown" size='small'></Chip>
