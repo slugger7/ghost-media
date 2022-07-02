@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useEffect } from 'react';
 
-export const VideoProgress = ({ duration, current }) => {
+export const VideoProgress = ({ duration, current = 0 }) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -15,5 +15,5 @@ export const VideoProgress = ({ duration, current }) => {
 
 VideoProgress.propTypes = {
   duration: PropTypes.number.isRequired,
-  current: PropTypes.number.isRequired
+  current: PropTypes.number
 }

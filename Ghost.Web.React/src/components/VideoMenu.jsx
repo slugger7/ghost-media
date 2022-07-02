@@ -9,6 +9,7 @@ import OfflineShareIcon from '@mui/icons-material/OfflineShare';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ImageIcon from '@mui/icons-material/Image';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import axios from 'axios'
 import copy from 'copy-to-clipboard';
 import { toggleFavourite } from '../services/video.service';
@@ -19,6 +20,7 @@ const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadata`)).data
 const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
+const resetProgress = async (videoId) => (await axios.put(`/media/${videoId}/reset-progress`)).data
 const chooseThumbnail = async (videoId, progress) => {
   if (progress !== null && !isNaN(progress)) {
     (await axios.put(`/image/video/${videoId}?timestamp=${Math.floor(progress * 1000)}&overwrite=true`))
@@ -27,6 +29,7 @@ const chooseThumbnail = async (videoId, progress) => {
 
 export const items = {
   favourite: "favourite",
+  resetProgress: "resetProgress",
   chooseThumbnail: "chooseThumbnail",
   generateChapters: "generateChapters",
   copyStreamUrl: "copyStreamUrl",
@@ -54,6 +57,7 @@ export const VideoMenu = ({
   const [deleteModalOpen, setDeletModalOpen] = useState(false);
   const [loadingFavourite, setLoadingFavourite] = useState(false);
   const [loadingChooseThumbnail, setLoadingChooseThumbnail] = useState(false);
+  const [loadingResetProgress, setLoadingResetProgress] = useState(false);
 
   const handleModalClose = () => {
     if (!loadingDelete) {
@@ -142,6 +146,18 @@ export const VideoMenu = ({
     }
   }
 
+  const handleResetProgress = async () => {
+    if (loadingResetProgress) return;
+    setLoadingResetProgress(true);
+    try {
+      const video = await resetProgress(videoId);
+      setVideo({ progress: video.progress });
+    } finally {
+      setLoadingResetProgress(false);
+      handleClose();
+    }
+  }
+
   return <>
     <Menu
       id={`${videoId}-video-card-menu`}
@@ -165,6 +181,14 @@ export const VideoMenu = ({
             {loadingChooseThumbnail && <CircularProgress sx={{ mr: 1 }} />}
           </ListItemIcon>
           <ListItemText>Set thumbnail</ListItemText>
+        </MenuItem>}
+      {progress !== undefined && progress > 0 && !hideItems.includes(items.resetProgress) &&
+        <MenuItem onClick={handleResetProgress}>
+          <ListItemIcon>
+            {!loadingResetProgress && <VisibilityOffIcon fontSize="small" />}
+            {loadingResetProgress && <CircularProgress sx={{ mr: 1 }} />}
+          </ListItemIcon>
+          <ListItemText>Reset progress</ListItemText>
         </MenuItem>}
       {!hideItems.includes(items.generateChapters) && <MenuItem onClick={handleGenerateChapters}>
         <ListItemIcon>

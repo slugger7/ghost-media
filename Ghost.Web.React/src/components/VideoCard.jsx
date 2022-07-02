@@ -86,7 +86,8 @@ export const VideoCard = ({ video, remove }) => {
       setVideo={video => setLocalVideo(mergeDeepLeft(video))}
       title={localVideo.title}
       favourite={!!localVideo.favourite}
-      hideItems={[items.favourite]}
+      progress={localVideo.progress}
+      hideItems={[items.favourite, items.chooseThumbnail]}
     />
   </Card>)
 }
