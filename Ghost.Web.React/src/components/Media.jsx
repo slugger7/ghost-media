@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAsync } from 'react-async-hook'
 import axios from 'axios'
@@ -47,7 +47,15 @@ export const Media = () => {
     updateProgress(params.id, progress)
   }
 
-  const updateMedia = (val) => media.set(mergeDeepRight(media, { result: val }));
+  useEffect(() => {
+    if (media.result?.progress !== undefined) {
+      setProgress(media.result.progress);
+    }
+  }, [media.result])
+
+  const updateMedia = (val) => {
+    media.set(mergeDeepRight(media, { result: val }));
+  }
 
   return <>
     {media.loading && <Skeleton height="200px" width="100%" />}
@@ -83,7 +91,7 @@ export const Media = () => {
         {media.loading && <Skeleton height="50px" width="100%" />}
         {!media.loading && <TextEdit text={media.result.title} update={async (title) => {
           const video = await updateTitle(params.id, title)
-          media.set(mergeDeepRight(media, { result: { title: video.title } }))
+          updateMedia({ title: video.title })
         }} />}
         {genresPage.loading && <ChipSkeleton />}
         {!genresPage.loading && <VideoGenres genres={genresPage.result} videoId={params.id}
@@ -126,7 +134,7 @@ export const Media = () => {
         videoId={+params.id}
         title={media.result.title}
         removeVideo={() => navigate(-1)}
-        setVideo={(video) => media.set(mergeDeepRight(media, { result: video }))}
+        setVideo={updateMedia}
         favourite={!!media.result.favourite}
         progress={progress}
         hideItems={[items.favourite]}

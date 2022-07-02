@@ -191,6 +191,21 @@ namespace Ghost.Api.Controllers
       }
     }
 
+    [HttpPut("{id}/reset-progress")]
+    public async Task<ActionResult<VideoDto>> ResetProgress(int id, [FromHeader(Name = "User-Id")] int userId)
+    {
+      logger.LogInformation("Resetting progress on video {0} for user {1}", id, userId);
+      try
+      {
+        return await videoService.ResetProgress(id, userId);
+      }
+      catch (NullReferenceException ex)
+      {
+        logger.LogWarning("Reset progress: {0}", ex.Message);
+        return NotFound();
+      }
+    }
+
     [HttpGet("favourites")]
     public ActionResult<PageResultDto<VideoDto>> GetFavourites(
       [FromHeader(Name = "User-Id")] int userId,

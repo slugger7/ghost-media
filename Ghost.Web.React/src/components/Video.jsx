@@ -24,8 +24,9 @@ export const Video = ({ source, type, poster, chapter, duration, currentProgress
   }, [source])
 
   useEffect(() => {
-    if (currentProgress) {
+    if (currentProgress !== undefined) {
       videoRef.current.currentTime = currentProgress;
+      setCurrentTime(currentProgress)
     }
   }, [currentProgress])
 
