@@ -346,5 +346,16 @@ namespace Ghost.Services
         Content = videoPage.Content.Select(v => new VideoDto(v, userId)).ToList()
       };
     }
+
+    public async Task<VideoDto> ResetProgress(int id, int userId)
+    {
+      var video = videoRepository.FindById(id, new List<string> { "WatchedBy.User" });
+      if (video == null) throw new NullReferenceException("Video was not found");
+      video.WatchedBy = video.WatchedBy.Where(progress => progress.User.Id != userId).ToList();
+
+      var updatedVideo = await videoRepository.UpdateVideo(video);
+      if (updatedVideo == null) throw new NullReferenceException("Video was not found");
+      return new VideoDto(updatedVideo, userId);
+    }
   }
 }
