@@ -19,7 +19,7 @@ namespace Ghost.Repository
         "VideoActors.Video",
         "VideoActors.Video.VideoImages.Image",
         "VideoActors.Video.FavouritedBy.User",
-        "VideoActors.Video.VideoActors.Actor",
+        "VideoActors.Video.VideoActors.Actor.FavouritedBy.User",
         "VideoActors.Video.WatchedBy.User",
         "FavouritedBy.User"
       });
