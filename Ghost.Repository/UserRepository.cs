@@ -140,6 +140,7 @@ namespace Ghost.Repository
       {
         "FavouriteVideos.Video.VideoImages.Image",
         "FavouriteVideos.Video.VideoActors.Actor",
+        "FavouriteVideos.Video.VideoActors.Actor.FavouritedBy.User",
         "FavouriteVideos.Video.WatchedBy.User"
       });
 
