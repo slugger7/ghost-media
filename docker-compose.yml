@@ -14,7 +14,7 @@ services:
     volumes:
       - $(pwd)/videos:/media/videos
       - $(pwd)/data:/data
-      - $(pwd)/assets:/media/assets
+      - $(pwd)/assets:/data/assets
     environment:
       - DATABASE_PATH=/data/Ghost.db
     
