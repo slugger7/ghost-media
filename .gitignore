@@ -237,3 +237,4 @@ _Pvt_Extensions
 assets
 media
 */**/node_modules
+prod.docker-compose.yml
