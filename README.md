@@ -110,3 +110,19 @@ To add a library to your application
 1. You will be redirected to the `Library` tab again with your newly created library
 1. Click the options on the library and select `Sync` to search for any media within the library folders. (this may take a while depending on the size of your library)
 1. Navigate to home and you should see your media and images start to load and be generated.
+
+# Adding a user
+
+There is no functionality yet to add a user from the frontend yet soo you will have to post to an endpoint of the API in order to create a user for the time being.
+
+```
+POST http://localhost:5120/api/user
+Content-Type: application/json
+
+{
+  "username": "someUsername",
+  "password": "somePassword"
+}
+```
+
+This functionality is still very basic and every time the site loads for the first time you will have to go to the settings section and select the user which you want to be "logged in" as. There are plans to expand on this in the future at the moment the focus is more on the video management side of things.
