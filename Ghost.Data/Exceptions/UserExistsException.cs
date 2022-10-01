@@ -1,7 +1,7 @@
 namespace Ghost.Exceptions
 {
-  public class UserExisistException : Exception
-  {
-    public UserExisistException() : base("User already exsits") { }
-  }
+    public class UserExistsException : Exception
+    {
+        public UserExistsException() : base("User already exsits") { }
+    }
 }
