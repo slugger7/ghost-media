@@ -4,194 +4,194 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ghost.Repository
 {
-  public class UserRepository : IUserRepository
-  {
-    private readonly GhostContext context;
-    private readonly IVideoRepository videoRepository;
-    private readonly IActorRepository actorRepository;
-
-    public UserRepository(
-      GhostContext context,
-      IVideoRepository videoRepository,
-      IActorRepository actorRepository)
+    public class UserRepository : IUserRepository
     {
-      this.context = context;
-      this.videoRepository = videoRepository;
-      this.actorRepository = actorRepository;
-    }
+        private readonly GhostContext context;
+        private readonly IVideoRepository videoRepository;
+        private readonly IActorRepository actorRepository;
 
-    public async Task<User> Create(User user)
-    {
-      var userEntity = context.Users
-        .FirstOrDefault(u => u.Username.ToLower().Equals(user.Username.Trim().ToLower()));
-      if (userEntity != null) throw new UserExisistException();
-      context.Users.Add(user);
-      await context.SaveChangesAsync();
-
-      return user;
-    }
-
-    public async Task<User> Delete(int id)
-    {
-      var user = context.Users.Find(id);
-      if (user == null) throw new NullReferenceException("User was not found");
-
-      context.Users.Remove(user);
-
-      await context.SaveChangesAsync();
-
-      return user;
-    }
-
-    public User? FindById(int id)
-    {
-      return this.FindById(id, null);
-    }
-
-    public User? FindById(int id, List<string>? includes)
-    {
-      var users = context.Users;
-      if (includes != null && includes.Count() > 0)
-      {
-        var userQueryable = users.Include(includes.ElementAt(0));
-        for (int i = 1; i < includes.Count(); i++)
+        public UserRepository(
+          GhostContext context,
+          IVideoRepository videoRepository,
+          IActorRepository actorRepository)
         {
-          userQueryable = userQueryable.Include(includes.ElementAt(i));
+            this.context = context;
+            this.videoRepository = videoRepository;
+            this.actorRepository = actorRepository;
         }
-        return userQueryable.FirstOrDefault(v => v.Id == id);
-      }
 
-      return users.FirstOrDefault(v => v.Id == id);
-    }
-
-    public IEnumerable<User> GetUsers()
-    {
-      return context.Users;
-    }
-
-    public async Task<bool> ToggleFavouriteVideo(int id, int videoId)
-    {
-      var user = context.Users
-        .Include("FavouriteVideos.Video")
-        .FirstOrDefault(u => u.Id == id);
-      if (user == null) throw new NullReferenceException("User not found");
-      var video = videoRepository.FindById(videoId, null);
-      if (video == null) throw new NullReferenceException("Video not found");
-
-      var favourite = user.FavouriteVideos.FirstOrDefault(fv => fv.Video.Id == videoId);
-      if (favourite == null)
-      {
-        favourite = new FavouriteVideo
+        public async Task<User> Create(User user)
         {
-          User = user,
-          Video = video
-        };
+            var userEntity = context.Users
+              .FirstOrDefault(u => u.Username.ToLower().Equals(user.Username.Trim().ToLower()));
+            if (userEntity != null) throw new UserExistsException();
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
 
-        context.FavouriteVideos.Add(favourite);
-
-        await context.SaveChangesAsync();
-
-        return true;
-      }
-      else
-      {
-        context.FavouriteVideos.Remove(favourite);
-
-        await context.SaveChangesAsync();
-
-        return false;
-      }
-    }
-
-    public async Task LogProgress(int id, int userId, double progress)
-    {
-      var video = videoRepository.FindById(id, new List<string> { "WatchedBy.User" });
-      if (video == null) throw new NullReferenceException("Video not found");
-
-      var existingProgress = video.WatchedBy.FirstOrDefault(w => w.User.Id == userId);
-      if (existingProgress == null)
-      {
-        var user = this.FindById(userId);
-        if (user == null) throw new NullReferenceException("User not found");
-
-        var newProgress = new Progress
-        {
-          User = user,
-          Timestamp = progress,
-          Video = video
-        };
-
-        video.WatchedBy.Add(newProgress);
-      }
-      else
-      {
-        if (existingProgress.Timestamp < progress)
-        {
-          existingProgress.Timestamp = progress;
+            return user;
         }
-      }
 
-      await context.SaveChangesAsync();
-    }
+        public async Task<User> Delete(int id)
+        {
+            var user = context.Users.Find(id);
+            if (user == null) throw new NullReferenceException("User was not found");
 
-    public PageResult<Video> Favourites(int userId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
-    {
-      var user = this.FindById(userId, new List<string>
+            context.Users.Remove(user);
+
+            await context.SaveChangesAsync();
+
+            return user;
+        }
+
+        public User? FindById(int id)
+        {
+            return this.FindById(id, null);
+        }
+
+        public User? FindById(int id, List<string>? includes)
+        {
+            var users = context.Users;
+            if (includes != null && includes.Count() > 0)
+            {
+                var userQueryable = users.Include(includes.ElementAt(0));
+                for (int i = 1; i < includes.Count(); i++)
+                {
+                    userQueryable = userQueryable.Include(includes.ElementAt(i));
+                }
+                return userQueryable.FirstOrDefault(v => v.Id == id);
+            }
+
+            return users.FirstOrDefault(v => v.Id == id);
+        }
+
+        public IEnumerable<User> GetUsers()
+        {
+            return context.Users;
+        }
+
+        public async Task<bool> ToggleFavouriteVideo(int id, int videoId)
+        {
+            var user = context.Users
+              .Include("FavouriteVideos.Video")
+              .FirstOrDefault(u => u.Id == id);
+            if (user == null) throw new NullReferenceException("User not found");
+            var video = videoRepository.FindById(videoId, null);
+            if (video == null) throw new NullReferenceException("Video not found");
+
+            var favourite = user.FavouriteVideos.FirstOrDefault(fv => fv.Video.Id == videoId);
+            if (favourite == null)
+            {
+                favourite = new FavouriteVideo
+                {
+                    User = user,
+                    Video = video
+                };
+
+                context.FavouriteVideos.Add(favourite);
+
+                await context.SaveChangesAsync();
+
+                return true;
+            }
+            else
+            {
+                context.FavouriteVideos.Remove(favourite);
+
+                await context.SaveChangesAsync();
+
+                return false;
+            }
+        }
+
+        public async Task LogProgress(int id, int userId, double progress)
+        {
+            var video = videoRepository.FindById(id, new List<string> { "WatchedBy.User" });
+            if (video == null) throw new NullReferenceException("Video not found");
+
+            var existingProgress = video.WatchedBy.FirstOrDefault(w => w.User.Id == userId);
+            if (existingProgress == null)
+            {
+                var user = this.FindById(userId);
+                if (user == null) throw new NullReferenceException("User not found");
+
+                var newProgress = new Progress
+                {
+                    User = user,
+                    Timestamp = progress,
+                    Video = video
+                };
+
+                video.WatchedBy.Add(newProgress);
+            }
+            else
+            {
+                if (existingProgress.Timestamp < progress)
+                {
+                    existingProgress.Timestamp = progress;
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        public PageResult<Video> Favourites(int userId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+        {
+            var user = this.FindById(userId, new List<string>
       {
         "FavouriteVideos.Video.VideoImages.Image",
         "FavouriteVideos.Video.VideoActors.Actor.FavouritedBy.User",
         "FavouriteVideos.Video.WatchedBy.User"
       });
 
-      if (user == null) throw new NullReferenceException("User not found");
-      var videos = user.FavouriteVideos
-          .Select(fv => fv.Video)
-          .Where(VideoRepository.videoSearch(search));
+            if (user == null) throw new NullReferenceException("User not found");
+            var videos = user.FavouriteVideos
+                .Select(fv => fv.Video)
+                .Where(VideoRepository.videoSearch(search));
 
-      videos = VideoRepository.SortAndOrderVideos(videos, sortBy, ascending);
+            videos = VideoRepository.SortAndOrderVideos(videos, sortBy, ascending);
 
-      return new PageResult<Video>
-      {
-        Total = user.FavouriteVideos.Count(),
-        Page = page,
-        Content = videos
-          .Skip(limit * page)
-          .Take(limit)
-      };
-    }
+            return new PageResult<Video>
+            {
+                Total = user.FavouriteVideos.Count(),
+                Page = page,
+                Content = videos
+                .Skip(limit * page)
+                .Take(limit)
+            };
+        }
 
-    public async Task<bool> ToggleFavouriteActor(int id, int actorId)
-    {
-      var user = context.Users
-        .Include("FavouriteActors.Actor")
-        .FirstOrDefault(u => u.Id == id);
-      if (user == null) throw new NullReferenceException("User not found");
-      var actor = actorRepository.FindById(actorId, null);
-      if (actor == null) throw new NullReferenceException("Video not found");
-
-      var favourite = user.FavouriteActors.FirstOrDefault(fa => fa.Actor.Id == actorId);
-      if (favourite == null)
-      {
-        favourite = new FavouriteActor
+        public async Task<bool> ToggleFavouriteActor(int id, int actorId)
         {
-          User = user,
-          Actor = actor
-        };
+            var user = context.Users
+              .Include("FavouriteActors.Actor")
+              .FirstOrDefault(u => u.Id == id);
+            if (user == null) throw new NullReferenceException("User not found");
+            var actor = actorRepository.FindById(actorId, null);
+            if (actor == null) throw new NullReferenceException("Video not found");
 
-        context.FavouriteActors.Add(favourite);
+            var favourite = user.FavouriteActors.FirstOrDefault(fa => fa.Actor.Id == actorId);
+            if (favourite == null)
+            {
+                favourite = new FavouriteActor
+                {
+                    User = user,
+                    Actor = actor
+                };
 
-        await context.SaveChangesAsync();
+                context.FavouriteActors.Add(favourite);
 
-        return true;
-      }
-      else
-      {
-        context.FavouriteActors.Remove(favourite);
+                await context.SaveChangesAsync();
 
-        await context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                context.FavouriteActors.Remove(favourite);
 
-        return false;
-      }
+                await context.SaveChangesAsync();
+
+                return false;
+            }
+        }
     }
-  }
 }
