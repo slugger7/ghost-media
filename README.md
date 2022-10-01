@@ -9,6 +9,7 @@ In order to get the project running locally for development here are a few steps
 
 ## API
 
+1. `sudo apt-get update && sudo apt-get install -y ffmpeg`
 1. `cd Ghost.Web`
 1. `dotnet watch run --urls=http://localhost:5120`
 
