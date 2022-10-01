@@ -1,16 +1,16 @@
 import React from 'react'
-import { useAsync } from 'react-async-hook'
 import axios from 'axios'
 
 import { ButtonLink } from './ButtonLink.jsx';
 import { LibraryCard } from './LibraryCard.jsx'
 import { Stack, Skeleton, Typography, Box } from '@mui/material';
 import { NothingHere } from './NothingHere.jsx';
+import usePromise from '../services/use-promise.js';
 
 const fetchLibraries = async () => (await axios.get("library")).data
 
 export const Libraries = () => {
-  const librariesPage = useAsync(fetchLibraries, [])
+  const librariesPage = usePromise(() => fetchLibraries());
 
   return (<Box>
     <Typography variant="h4" component="h4">Libraries</Typography>

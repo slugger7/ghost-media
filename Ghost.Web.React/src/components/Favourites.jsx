@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { mergeDeepRight } from 'ramda'
-import { useAsync } from 'react-async-hook';
+import axios from 'axios';
 
 import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
-import { TextEdit } from './TextEdit.jsx'
-import axios from 'axios';
 import { constructVideoParams } from '../services/video.service';
 import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
+import usePromise from '../services/use-promise.js';
 
 const fetchFavouriteVideos = async (page, limit, search, sortBy, ascending) =>
   (await (await axios.get(`/media/favourites?${constructVideoParams({ page, limit, search, sortBy, ascending })}`))).data
@@ -21,7 +19,10 @@ export const Favourites = () => {
   const [total, setTotal] = useState(0)
   const [sortAscending, setSortAscending] = useState();
   const [sortBy, setSortBy] = useState('title')
-  const videosPage = useAsync(fetchFavouriteVideos, [page, limit, search, sortBy, sortAscending])
+  const videosPage = usePromise(
+    () => fetchFavouriteVideos(page, limit, search, sortBy, sortAscending), 
+    [page, limit, search, sortBy, sortAscending]
+  );
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {

@@ -1,18 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, Box } from '@mui/material'
+import { Stack, Chip, Typography, Button, IconButton, Autocomplete, TextField, Box } from '@mui/material'
 import { Link } from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
-import { useAsync } from 'react-async-hook';
 import { prop } from 'ramda'
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
 import { fetchActors } from '../services/actor.service'
+import usePromise from '../services/use-promise';
 
 export const VideoActors = ({ actors, videoId, updateActors }) => {
   const [editing, setEditing] = useState(false);
-  const allActors = useAsync(fetchActors, []);
+  const allActors = usePromise(() => fetchActors());
   const [selectedActors, setSelectedActors] = useState([...actors]);
   const [submitting, setSubmitting] = useState(false)
   const autocompleteRef = useRef()

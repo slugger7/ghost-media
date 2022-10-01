@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Typography, Skeleton, Stack } from '@mui/material'
-import { useAsync } from 'react-async-hook'
 import axios from 'axios'
 
 import { UserCard } from './UserCard'
@@ -8,7 +7,7 @@ import { UserCard } from './UserCard'
 const fetchUsers = async () => (await axios.get("user")).data
 
 export const Users = () => {
-  const usersPage = useAsync(fetchUsers, [])
+  const usersPage = usePromise(() => fetchUsers())
   return <Box>
     <Typography variant="h4" component="h4">Users</Typography>
     {usersPage.loading && <Skeleton height="90px" />}

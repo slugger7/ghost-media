@@ -1,6 +1,5 @@
 import { Chip } from '@mui/material'
 import React, { useState, useEffect } from 'react'
-import { useAsync } from 'react-async-hook'
 import { fetchGenres } from '../services/genre.service'
 import { Link } from 'react-router-dom'
 import { ChipSkeleton } from './ChipSkeleton.jsx'
@@ -8,9 +7,10 @@ import { NothingHere } from './NothingHere.jsx'
 import { Search } from './Search'
 import { Box } from '@mui/system'
 import { includes } from 'ramda'
+import usePromise from '../services/use-promise'
 
 export const Genres = () => {
-  const genresResult = useAsync(fetchGenres, [])
+  const genresResult = usePromise(() => fetchGenres())
   const [filteredGenres, setFilteredGenres] = useState([])
   const [search, setSearch] = useState('')
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useAsync } from 'react-async-hook'
 import axios from 'axios'
 import { Container, Grid, IconButton, Paper, Skeleton, Box } from '@mui/material'
 import { mergeDeepRight } from 'ramda'
@@ -16,6 +15,7 @@ import { ChipSkeleton } from './ChipSkeleton.jsx'
 import { Chapters } from './Chapters.jsx'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service';
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
+import usePromise from '../services/use-promise.js'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -32,9 +32,9 @@ const updateProgress = async (id, progress) => {
 export const Media = () => {
   const params = useParams()
   const navigate = useNavigate();
-  const media = useAsync(fetchMedia, [params.id])
-  const genresPage = useAsync(fetchGenres, [params.id])
-  const actorsPage = useAsync(fetchActors, [params.id])
+  const media = usePromise(() => fetchMedia(params.id), [params.id])
+  const genresPage = usePromise(() => fetchGenres(params.id), [params.id])
+  const actorsPage = usePromise(() => fetchActors(params.id), [params.id])
   const [menuAnchorEl, setMenuAnchorEl] = useState();
   const [chapter, setChapter] = useState();
   const videoSource = generateVideoUrl(params.id);

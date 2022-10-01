@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Stack, Chip, Typography, Paper, Button, IconButton, Autocomplete, TextField, Box } from '@mui/material'
+import { Stack, Chip, Typography, Button, IconButton, Autocomplete, TextField, Box } from '@mui/material'
 import { Link } from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
-import { useAsync } from 'react-async-hook';
 import { prop } from 'ramda'
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 
 import { fetchGenres } from '../services/genre.service'
+import usePromise from '../services/use-promise';
 
 export const VideoGenres = ({ genres, videoId, updateGenres }) => {
   const [editing, setEditing] = useState(false);
-  const allGenres = useAsync(fetchGenres, []);
+  const allGenres = usePromise(() => fetchGenres());
   const [selectedGenres, setSelectedGenres] = useState([...genres.map(prop("name"))]);
   const [submitting, setSubmitting] = useState(false)
   const autocompleteRef = useRef()

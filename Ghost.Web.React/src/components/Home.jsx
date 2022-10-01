@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useAsync } from 'react-async-hook'
 import { useSearchParams } from 'react-router-dom';
 
 import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
 import { fetchVideos } from '../services/video.service'
 import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
+import usePromise from '../services/use-promise.js';
 
 
 export const Home = () => {
@@ -16,13 +16,16 @@ export const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [sortBy, setSortBy] = useState('date-added');
   const [sortAscending, setSortAscending] = useState(true);
-  const videosPage = useAsync(fetchVideos, [page, limit, search, sortBy, sortAscending])
+  const {result: videos, error, loading} = usePromise(
+    () => fetchVideos(page, limit, search, sortBy, sortAscending),
+    [page, limit, search, sortBy, sortAscending]
+  );
 
   useEffect(() => {
-    if (!videosPage.loading && !videosPage.error) {
-      setTotal(videosPage.result.total)
+    if (!loading && !error) {
+      setTotal(videos.total)
     }
-  }, [videosPage])
+  }, [videos, error, loading])
 
   useEffect(() => {
     const params = getSearchParamsObject(searchParams);
@@ -53,7 +56,7 @@ export const Home = () => {
 
   return (<>
     <VideoGrid
-      videosPage={videosPage}
+      videosPage={{result: videos, error, loading}}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
       page={page}
       count={Math.ceil(total / limit) || 1}

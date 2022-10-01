@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useAsync } from 'react-async-hook';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { VideoGrid } from './VideoGrid.jsx';
 import { Sort } from './Sort.jsx'
@@ -10,6 +9,7 @@ import { TextEdit } from './TextEdit.jsx'
 import { mergeDeepRight } from 'ramda'
 import { Stack } from '@mui/material';
 import { FavouriteIconButton } from './FavouriteIconButton.jsx';
+import usePromise from '../services/use-promise.js';
 
 const fetchActor = async (name) => (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
 const fetchVideos = async (id, page, limit, search, sortBy, ascending) => {
@@ -20,7 +20,7 @@ const updateActorName = async (id, name) => (await axios.put(`/actor/${id}`, { n
 
 export const Actor = () => {
   const params = useParams()
-  const actorResult = useAsync(fetchActor, [params.name])
+  const actorResult = usePromise(() => fetchActor(params.name), [params.name])
   const [page, setPage] = useState()
   const [limit, setLimit] = useState()
   const [search, setSearch] = useState('')

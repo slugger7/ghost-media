@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useAsync } from 'react-async-hook';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { mergeDeepRight } from 'ramda';
 import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
@@ -19,7 +18,7 @@ const updateGenreName = async (id, name) => (await axios.put(`/genre/${id}`, { n
 
 export const Genre = () => {
   const params = useParams()
-  const genreResult = useAsync(fetchGenre, [params.name])
+  const genreResult = usePromise(() => fetchGenre(params.name), [params.name])
   const [page, setPage] = useState()
   const [limit, setLimit] = useState()
   const [search, setSearch] = useState('')
@@ -27,7 +26,10 @@ export const Genre = () => {
   const [sortBy, setSortBy] = useState('title')
   const [sortAscending, setSortAscending] = useState()
   const userId = localStorage.getItem('userId')
-  const videosPage = useAsync(fetchVideos, [params.name, page, limit, search, sortBy, sortAscending, userId])
+  const videosPage = usePromise(
+    () => fetchVideos(params.name, page, limit, search, sortBy, sortAscending, userId),
+    [params.name, page, limit, search, sortBy, sortAscending, userId]
+  );
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {

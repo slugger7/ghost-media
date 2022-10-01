@@ -11,9 +11,9 @@ import { Genre } from './components/Genre.jsx'
 import { Genres } from './components/Genres.jsx'
 import { Actor } from './components/Actor.jsx'
 import { Actors } from './components/Actors.jsx'
+import { Favourites } from './components/Favourites.jsx';
 
 import './styles.scss'
-import { Favourites } from './components/Favourites.jsx';
 
 export const App = ({ baseUrl }) => {
   return (
