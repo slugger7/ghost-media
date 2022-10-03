@@ -142,7 +142,7 @@ export const Media = () => {
               actors={actors}
               updateActors={async (actors) => {
                 const video = await updateActors(params.id, actors)
-                setActors(mergeDeepRight(media, { result: video.actors }))
+                setActors(video.actors)
               }}
             />
           )}

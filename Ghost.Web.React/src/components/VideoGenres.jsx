@@ -21,7 +21,7 @@ import usePromise from '../services/use-promise'
 
 export const VideoGenres = ({ genres, updateGenres }) => {
   const [editing, setEditing] = useState(false)
-  const allGenres = usePromise(() => fetchGenres())
+  const [allGenres, loadingGenres] = usePromise(() => fetchGenres())
   const [selectedGenres, setSelectedGenres] = useState([
     ...genres.map(prop('name')),
   ])
@@ -79,9 +79,9 @@ export const VideoGenres = ({ genres, updateGenres }) => {
               multiple
               freeSolo
               onChange={(e, newGenres) => setSelectedGenres(newGenres)}
-              options={allGenres?.result?.map(prop('name')) || []}
+              options={allGenres?.map(prop('name')) || []}
               defaultValue={selectedGenres}
-              loading={allGenres.loading}
+              loading={loadingGenres}
               renderInput={(params) => (
                 <TextField
                   id="genre-text-box"

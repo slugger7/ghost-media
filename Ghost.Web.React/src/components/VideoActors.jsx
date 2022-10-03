@@ -21,7 +21,7 @@ import usePromise from '../services/use-promise'
 
 export const VideoActors = ({ actors, updateActors }) => {
   const [editing, setEditing] = useState(false)
-  const allActors = usePromise(() => fetchActors())
+  const [allActors, loadingActors] = usePromise(() => fetchActors())
   const [selectedActors, setSelectedActors] = useState([...actors])
   const [submitting, setSubmitting] = useState(false)
   const autocompleteRef = useRef()
@@ -77,9 +77,9 @@ export const VideoActors = ({ actors, updateActors }) => {
               multiple
               freeSolo
               onChange={(e, newActors) => setSelectedActors(newActors)}
-              options={allActors?.result?.map(prop('name')) || []}
+              options={allActors?.map(prop('name')) || []}
               defaultValue={actors.map(prop('name'))}
-              loading={allActors.loading}
+              loading={loadingActors}
               renderInput={(params) => (
                 <TextField inputRef={autocompleteRef} {...params} />
               )}
