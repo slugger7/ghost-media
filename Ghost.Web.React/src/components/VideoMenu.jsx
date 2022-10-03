@@ -1,42 +1,55 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Menu, MenuItem, ListItemIcon, CircularProgress, ListItemText, Divider } from '@mui/material'
-import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import SyncIcon from '@mui/icons-material/Sync';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import BurstModeIcon from '@mui/icons-material/BurstMode';
-import OfflineShareIcon from '@mui/icons-material/OfflineShare';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ImageIcon from '@mui/icons-material/Image';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  CircularProgress,
+  ListItemText,
+  Divider,
+} from '@mui/material'
+import SyncAltIcon from '@mui/icons-material/SyncAlt'
+import SyncIcon from '@mui/icons-material/Sync'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import BurstModeIcon from '@mui/icons-material/BurstMode'
+import OfflineShareIcon from '@mui/icons-material/OfflineShare'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import ImageIcon from '@mui/icons-material/Image'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import axios from 'axios'
-import copy from 'copy-to-clipboard';
-import { toggleFavourite } from '../services/video.service';
+import copy from 'copy-to-clipboard'
+import { toggleFavourite } from '../services/video.service'
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
 
 const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
-const updateVideoMetaData = async (id) => (await axios.put(`/media/${id}/metadata`)).data
-const generateChapters = async (id) => (await axios.put(`/media/${id}/chapters`)).data
+const updateVideoMetaData = async (id) =>
+  (await axios.put(`/media/${id}/metadata`)).data
+const generateChapters = async (id) =>
+  (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
-const resetProgress = async (videoId) => (await axios.put(`/media/${videoId}/reset-progress`)).data
+const resetProgress = async (videoId) =>
+  (await axios.put(`/media/${videoId}/reset-progress`)).data
 const chooseThumbnail = async (videoId, progress) => {
   if (progress !== null && !isNaN(progress)) {
-    (await axios.put(`/image/video/${videoId}?timestamp=${Math.floor(progress * 1000)}&overwrite=true`))
+    await axios.put(
+      `/image/video/${videoId}?timestamp=${Math.floor(
+        progress * 1000,
+      )}&overwrite=true`,
+    )
   }
 }
 
 export const items = {
-  favourite: "favourite",
-  resetProgress: "resetProgress",
-  chooseThumbnail: "chooseThumbnail",
-  generateChapters: "generateChapters",
-  copyStreamUrl: "copyStreamUrl",
-  sync: "sync",
-  syncNfo: "syncNfo",
-  delete: "delete",
-
+  favourite: 'favourite',
+  resetProgress: 'resetProgress',
+  chooseThumbnail: 'chooseThumbnail',
+  generateChapters: 'generateChapters',
+  copyStreamUrl: 'copyStreamUrl',
+  sync: 'sync',
+  syncNfo: 'syncNfo',
+  delete: 'delete',
 }
 
 export const VideoMenu = ({
@@ -49,24 +62,25 @@ export const VideoMenu = ({
   setVideo,
   source,
   progress,
-  hideItems = [] }) => {
+  hideItems = [],
+}) => {
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
-  const [loadingGeneratChapter, setLoadingGeneratChapter] = useState(false)
-  const [deleteModalOpen, setDeletModalOpen] = useState(false);
-  const [loadingFavourite, setLoadingFavourite] = useState(false);
-  const [loadingChooseThumbnail, setLoadingChooseThumbnail] = useState(false);
-  const [loadingResetProgress, setLoadingResetProgress] = useState(false);
+  const [loadingGenerateChapter, setLoadingGenerateChapter] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [loadingFavourite, setLoadingFavourite] = useState(false)
+  const [loadingChooseThumbnail, setLoadingChooseThumbnail] = useState(false)
+  const [loadingResetProgress, setLoadingResetProgress] = useState(false)
 
   const handleModalClose = () => {
     if (!loadingDelete) {
-      setDeletModalOpen(false)
+      setDeleteModalOpen(false)
     }
   }
 
   const handleSyncFromNfo = async () => {
-    if (loadingSyncNfo) return;
+    if (loadingSyncNfo) return
     setLoadingSyncNfo(true)
     try {
       setVideo(await syncFromNfo(videoId))
@@ -77,16 +91,16 @@ export const VideoMenu = ({
   }
 
   const handleDeleteMenuClick = () => {
-    setDeletModalOpen(true)
-    handleClose();
+    setDeleteModalOpen(true)
+    handleClose()
   }
 
   const handleDelete = async () => {
-    if (loadingDelete) return;
+    if (loadingDelete) return
     setLoadingDelete(true)
     try {
-      await deleteVideo(videoId);
-      removeVideo();
+      await deleteVideo(videoId)
+      removeVideo()
     } finally {
       setLoadingDelete(false)
       handleModalClose()
@@ -95,146 +109,172 @@ export const VideoMenu = ({
   }
 
   const handleFavourite = async () => {
-    if (loadingFavourite) return;
-    setLoadingFavourite(true);
+    if (loadingFavourite) return
+    setLoadingFavourite(true)
     try {
       const favourite = await toggleFavourite(videoId)
-      setVideo({ favourite });
+      setVideo({ favourite })
     } finally {
-      setLoadingFavourite(false);
+      setLoadingFavourite(false)
       handleClose()
     }
   }
 
   const handleSync = async () => {
-    if (loadingSync) return;
+    if (loadingSync) return
     setLoadingSync(true)
     try {
       const video = await updateVideoMetaData(videoId)
-      setVideo(video);
+      setVideo(video)
     } finally {
-      setLoadingSync(false);
-      handleClose();
+      setLoadingSync(false)
+      handleClose()
     }
   }
 
   const handleGenerateChapters = async () => {
-    if (loadingGeneratChapter) return;
-    setLoadingGeneratChapter(true)
+    if (loadingGenerateChapter) return
+    setLoadingGenerateChapter(true)
     try {
       const video = await generateChapters(videoId)
       setVideo(video)
     } finally {
-      setLoadingGeneratChapter(false)
-      handleClose();
+      setLoadingGenerateChapter(false)
+      handleClose()
     }
   }
 
   const handleCopyStreamUrl = async () => {
-    copy(source);
-    handleClose();
+    copy(source)
+    handleClose()
   }
 
   const handleChooseThumbnail = async () => {
-    if (loadingChooseThumbnail) return;
-    setLoadingChooseThumbnail(true);
+    if (loadingChooseThumbnail) return
+    setLoadingChooseThumbnail(true)
     try {
-      await chooseThumbnail(videoId, progress);
+      await chooseThumbnail(videoId, progress)
     } finally {
-      setLoadingChooseThumbnail(false);
-      handleClose();
+      setLoadingChooseThumbnail(false)
+      handleClose()
     }
   }
 
   const handleResetProgress = async () => {
-    if (loadingResetProgress) return;
-    setLoadingResetProgress(true);
+    if (loadingResetProgress) return
+    setLoadingResetProgress(true)
     try {
-      const video = await resetProgress(videoId);
-      setVideo({ progress: video.progress });
+      const video = await resetProgress(videoId)
+      setVideo({ progress: video.progress })
     } finally {
-      setLoadingResetProgress(false);
-      handleClose();
+      setLoadingResetProgress(false)
+      handleClose()
     }
   }
 
-  return <>
-    <Menu
-      id={`${videoId}-video-card-menu`}
-      anchorEl={anchorEl}
-      open={!!anchorEl}
-      onClose={handleClose}
-      MenuListProps={{ 'aria-labelledby': `${videoId}-video-card-menu-button` }}
-    >
+  return (
+    <>
+      <Menu
+        id={`${videoId}-video-card-menu`}
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': `${videoId}-video-card-menu-button`,
+        }}
+      >
+        {!hideItems.includes(items.favourite) && (
+          <MenuItem onClick={handleFavourite}>
+            <ListItemIcon>
+              {!loadingFavourite &&
+                (favourite ? (
+                  <FavoriteIcon fontSize="small" />
+                ) : (
+                  <FavoriteBorderIcon fontSize="small" />
+                ))}
+              {loadingFavourite && <CircularProgress sx={{ mr: 1 }} />}
+            </ListItemIcon>
+            <ListItemText>Favourite</ListItemText>
+          </MenuItem>
+        )}
+        {progress !== undefined && !hideItems.includes(items.chooseThumbnail) && (
+          <MenuItem onClick={handleChooseThumbnail}>
+            <ListItemIcon>
+              {!loadingChooseThumbnail && <ImageIcon fontSize="small" />}
+              {loadingChooseThumbnail && <CircularProgress sx={{ mr: 1 }} />}
+            </ListItemIcon>
+            <ListItemText>Set thumbnail</ListItemText>
+          </MenuItem>
+        )}
+        {progress !== undefined &&
+          progress > 0 &&
+          !hideItems.includes(items.resetProgress) && (
+            <MenuItem onClick={handleResetProgress}>
+              <ListItemIcon>
+                {!loadingResetProgress && (
+                  <VisibilityOffIcon fontSize="small" />
+                )}
+                {loadingResetProgress && <CircularProgress sx={{ mr: 1 }} />}
+              </ListItemIcon>
+              <ListItemText>Reset progress</ListItemText>
+            </MenuItem>
+          )}
+        {!hideItems.includes(items.generateChapters) && (
+          <MenuItem onClick={handleGenerateChapters}>
+            <ListItemIcon>
+              {!loadingGenerateChapter && <BurstModeIcon fontSize="small" />}
+              {loadingGenerateChapter && <CircularProgress sx={{ mr: 1 }} />}
+            </ListItemIcon>
+            <ListItemText>Generate Chapters</ListItemText>
+          </MenuItem>
+        )}
+        {!hideItems.includes(items.copyStreamUrl) && (
+          <MenuItem onClick={handleCopyStreamUrl}>
+            <ListItemIcon>
+              <OfflineShareIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Copy stream URL</ListItemText>
+          </MenuItem>
+        )}
 
-      {!hideItems.includes(items.favourite) && <MenuItem onClick={handleFavourite}>
-        <ListItemIcon>
-          {!loadingFavourite && (favourite ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />)}
-          {loadingFavourite && <CircularProgress sx={{ mr: 1 }} />}
-        </ListItemIcon>
-        <ListItemText>Favourite</ListItemText>
-      </MenuItem>}
-      {progress !== undefined && !hideItems.includes(items.chooseThumbnail) &&
-        <MenuItem onClick={handleChooseThumbnail}>
-          <ListItemIcon>
-            {!loadingChooseThumbnail && <ImageIcon fontSize="small" />}
-            {loadingChooseThumbnail && <CircularProgress sx={{ mr: 1 }} />}
-          </ListItemIcon>
-          <ListItemText>Set thumbnail</ListItemText>
-        </MenuItem>}
-      {progress !== undefined && progress > 0 && !hideItems.includes(items.resetProgress) &&
-        <MenuItem onClick={handleResetProgress}>
-          <ListItemIcon>
-            {!loadingResetProgress && <VisibilityOffIcon fontSize="small" />}
-            {loadingResetProgress && <CircularProgress sx={{ mr: 1 }} />}
-          </ListItemIcon>
-          <ListItemText>Reset progress</ListItemText>
-        </MenuItem>}
-      {!hideItems.includes(items.generateChapters) && <MenuItem onClick={handleGenerateChapters}>
-        <ListItemIcon>
-          {!loadingGeneratChapter && <BurstModeIcon fontSize="small" />}
-          {loadingGeneratChapter && <CircularProgress sx={{ mr: 1 }} />}
-        </ListItemIcon>
-        <ListItemText>Generate Chapters</ListItemText>
-      </MenuItem>}
-      {!hideItems.includes(items.copyStreamUrl) && <MenuItem onClick={handleCopyStreamUrl}>
-        <ListItemIcon>
-          <OfflineShareIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Copy stream URL</ListItemText>
-      </MenuItem>}
+        <Divider />
 
-      <Divider />
-
-      {!hideItems.includes(items.sync) && <MenuItem onClick={handleSync}>
-        <ListItemIcon>
-          {!loadingSync && <SyncIcon fontSize="small" />}
-          {loadingSync && <CircularProgress sx={{ mr: 1 }} />}
-        </ListItemIcon>
-        <ListItemText>Sync metadata</ListItemText>
-      </MenuItem>}
-      {!hideItems.includes(items.syncNfo) && <MenuItem onClick={handleSyncFromNfo}>
-        <ListItemIcon>
-          {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
-          {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
-        </ListItemIcon>
-        <ListItemText>Sync from NFO</ListItemText>
-      </MenuItem>}
-      {!hideItems.includes(items.delete) && <MenuItem onClick={handleDeleteMenuClick}>
-        <ListItemIcon>
-          <DeleteForeverIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Delete permanently</ListItemText>
-      </MenuItem>}
-    </Menu>
-    <DeleteConfirmationModal
-      open={deleteModalOpen}
-      onClose={handleModalClose}
-      title={title}
-      loadingConfirm={loadingDelete}
-      onConfirm={handleDelete}
-    />
-  </>
+        {!hideItems.includes(items.sync) && (
+          <MenuItem onClick={handleSync}>
+            <ListItemIcon>
+              {!loadingSync && <SyncIcon fontSize="small" />}
+              {loadingSync && <CircularProgress sx={{ mr: 1 }} />}
+            </ListItemIcon>
+            <ListItemText>Sync metadata</ListItemText>
+          </MenuItem>
+        )}
+        {!hideItems.includes(items.syncNfo) && (
+          <MenuItem onClick={handleSyncFromNfo}>
+            <ListItemIcon>
+              {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
+              {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
+            </ListItemIcon>
+            <ListItemText>Sync from NFO</ListItemText>
+          </MenuItem>
+        )}
+        {!hideItems.includes(items.delete) && (
+          <MenuItem onClick={handleDeleteMenuClick}>
+            <ListItemIcon>
+              <DeleteForeverIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Delete permanently</ListItemText>
+          </MenuItem>
+        )}
+      </Menu>
+      <DeleteConfirmationModal
+        open={deleteModalOpen}
+        onClose={handleModalClose}
+        title={title}
+        loadingConfirm={loadingDelete}
+        onConfirm={handleDelete}
+      />
+    </>
+  )
 }
 
 VideoMenu.propTypes = {
@@ -247,5 +287,5 @@ VideoMenu.propTypes = {
   source: PropTypes.string.isRequired,
   favourite: PropTypes.bool.isRequired,
   progress: PropTypes.number,
-  hideItems: PropTypes.arrayOf(PropTypes.string)
+  hideItems: PropTypes.arrayOf(PropTypes.string),
 }

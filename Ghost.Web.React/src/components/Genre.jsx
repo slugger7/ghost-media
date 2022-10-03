@@ -1,83 +1,93 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useAsync } from 'react-async-hook';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { mergeDeepRight } from 'ramda';
-import { updateSearchParamsService, getSearchParamsObject } from '../services/searchParam.service.js';
-import { VideoGrid } from './VideoGrid.jsx';
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { mergeDeepLeft } from 'ramda'
+import { VideoGrid } from './VideoGrid.jsx'
 import { constructVideoParams } from '../services/video.service.js'
 import { Sort } from './Sort.jsx'
 import { TextEdit } from './TextEdit.jsx'
+import usePromise from '../services/use-promise.js'
 
-const fetchGenre = async (name) => (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
+const fetchGenre = async (name) =>
+  (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
 const fetchVideos = async (genre, page, limit, search, sortBy, ascending) => {
-  const videosResult = await axios.get(`/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({ page, limit, search, sortBy, ascending })}`)
+  const videosResult = await axios.get(
+    `/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({
+      page,
+      limit,
+      search,
+      sortBy,
+      ascending,
+    })}`,
+  )
 
-  return videosResult.data;
+  return videosResult.data
 }
-const updateGenreName = async (id, name) => (await axios.put(`/genre/${id}`, { name })).data
+const updateGenreName = async (id, name) =>
+  (await axios.put(`/genre/${id}`, { name })).data
 
 export const Genre = () => {
   const params = useParams()
-  const genreResult = useAsync(fetchGenre, [params.name])
-  const [page, setPage] = useState()
-  const [limit, setLimit] = useState()
+  const [genre, , loadingGenre, setGenre] = usePromise(
+    () => fetchGenre(params.name),
+    [params.name],
+  )
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(48)
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
-  const [sortBy, setSortBy] = useState('title')
-  const [sortAscending, setSortAscending] = useState()
+  const [sortBy, setSortBy] = useState('date-added')
+  const [sortAscending, setSortAscending] = useState(false)
   const userId = localStorage.getItem('userId')
-  const videosPage = useAsync(fetchVideos, [params.name, page, limit, search, sortBy, sortAscending, userId])
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [videosPage, fetchVideosError, loadingVideos] = usePromise(
+    () =>
+      fetchVideos(
+        params.name,
+        page,
+        limit,
+        search,
+        sortBy,
+        sortAscending,
+        userId,
+      ),
+    [params.name, page, limit, search, sortBy, sortAscending, userId],
+  )
 
   useEffect(() => {
-    if (!videosPage.loading && !videosPage.error) {
-      setTotal(videosPage.result.total)
+    if (!loadingVideos && !fetchVideosError) {
+      setTotal(videosPage.total)
     }
-  }, [videosPage])
+  }, [videosPage, loadingVideos, fetchVideosError])
 
-  useEffect(() => {
-    const params = getSearchParamsObject(searchParams);
-    setLimit(params.limit || limit || 48)
-    setPage(params.page || page || 1)
-    setSearch(params.search || search)
-    setSortBy(params.sortBy || sortBy)
-    setSortAscending(params.ascending)
-  }, [searchParams])
-
-  const updateSearchParams = updateSearchParamsService(
-    setSearchParams,
-    { page, limit, search, sortBy, ascending: sortAscending }
-  );
-
-  const handleSearchChange = (searchValue) => {
-    updateSearchParams({
-      search: encodeURIComponent(searchValue),
-      page: 0,
-    })
+  const handleGenreUpdate = async (genreName) => {
+    const newGenre = await updateGenreName(genre.id, genreName)
+    setGenre(mergeDeepLeft({ name: newGenre.name }))
   }
 
-  const handleGenreUpdate = async (genre) => {
-    const newGenre = await updateGenreName(genreResult.result.id, genre)
-    genreResult.set(mergeDeepRight(genreResult, { result: { name: newGenre.name } }))
-  }
-
-  const sortComponent = <Sort
-    sortBy={sortBy}
-    setSortBy={(sortByValue) => updateSearchParams({ sortBy: sortByValue })}
-    sortDirection={sortAscending}
-    setSortDirection={(sortAscendingValue) => updateSearchParams({ ascending: sortAscendingValue })} />
-
-  return <>
-    {!genreResult.loading && <TextEdit text={genreResult.result.name} update={handleGenreUpdate} />}
-    <VideoGrid
-      videosPage={videosPage}
-      onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
-      page={page}
-      count={Math.ceil(total / limit) || 1}
-      search={search}
-      setSearch={handleSearchChange}
-      sortComponent={sortComponent}
+  const sortComponent = (
+    <Sort
+      sortBy={sortBy}
+      setSortBy={setSortBy}
+      sortDirection={sortAscending}
+      setSortDirection={setSortAscending}
     />
-  </>
+  )
+
+  return (
+    <>
+      {!loadingGenre && (
+        <TextEdit text={genre.name} update={handleGenreUpdate} />
+      )}
+      <VideoGrid
+        videos={videosPage?.content}
+        loading={loadingVideos}
+        onPageChange={(e, newPage) => setPage(newPage)}
+        page={page}
+        count={Math.ceil(total / limit) || 1}
+        search={search}
+        setSearch={setSearch}
+        sortComponent={sortComponent}
+      />
+    </>
+  )
 }

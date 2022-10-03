@@ -9,7 +9,15 @@ const keyFunctions = {
   "KeyJ": (currentTime) => currentTime - 10
 }
 
-export const Video = ({ source, type, poster, chapter, duration, currentProgress, progressUpdate }) => {
+export const Video = ({ 
+  source,
+  type,
+  poster, 
+  chapter, 
+  duration, 
+  currentProgress, 
+  progressUpdate 
+}) => {
   const videoRef = useRef()
   const [currentTime, setCurrentTime] = useState();
 
