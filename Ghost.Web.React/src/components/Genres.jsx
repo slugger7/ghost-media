@@ -10,24 +10,24 @@ import { includes } from 'ramda'
 import usePromise from '../services/use-promise'
 
 export const Genres = () => {
-  const genresResult = usePromise(() => fetchGenres())
+  const [genres,, loadingGenres] = usePromise(() => fetchGenres())
   const [filteredGenres, setFilteredGenres] = useState([])
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    if (genresResult.result) {
-      setFilteredGenres(genresResult.result.filter(
+    if (genres) {
+      setFilteredGenres(genres.filter(
         genre => includes(search.trim().toLowerCase(), genre.name.toLowerCase()))
       );
     }
-  }, [genresResult.result, search])
+  }, [genres, search])
 
   return <Box sx={{ my: 1 }}>
     <Box sx={{ mb: 1 }}>
       <Search search={search} setSearch={setSearch} />
     </Box>
-    {genresResult.loading && <ChipSkeleton />}
-    {!genresResult.loading && <>
+    {loadingGenres && <ChipSkeleton />}
+    {!loadingGenres && <>
       {filteredGenres.map(genre => <Chip
         sx={{ m: 0.5 }}
         key={genre.id}

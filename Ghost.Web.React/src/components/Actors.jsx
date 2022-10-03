@@ -9,24 +9,24 @@ import { NothingHere } from './NothingHere'
 import { Search } from './Search'
 
 export const Actors = () => {
-  const actorsResult = usePromise(() => fetchActors())
+  const [actorsResult,, loading] = usePromise(() => fetchActors())
   const [filteredActors, setFilteredActors] = useState([]);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    if (actorsResult.result) {
-      setFilteredActors(actorsResult.result.filter(
+    if (actorsResult) {
+      setFilteredActors(actorsResult.filter(
         actor => includes(search.trim().toLowerCase(), actor.name.toLowerCase())
       ));
     }
-  }, [search, actorsResult.result])
+  }, [search, actorsResult])
 
   return <Box sx={{ my: 1 }}>
     <Box sx={{ mb: 1 }}>
       <Search search={search} setSearch={setSearch} />
     </Box>
-    {actorsResult.loading && <ChipSkeleton />}
-    {!actorsResult.loading && <>
+    {loading && <ChipSkeleton />}
+    {!loading && <>
       {filteredActors.map(actor => <Chip
         sx={{ m: 0.5 }}
         key={actor.id}

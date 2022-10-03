@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import axios from 'axios';
 
 import { VideoGrid } from './VideoGrid.jsx';
@@ -12,24 +12,23 @@ const fetchFavouriteVideos = async (page, limit, search, sortBy, ascending) =>
   (await (await axios.get(`/media/favourites?${constructVideoParams({ page, limit, search, sortBy, ascending })}`))).data
 
 export const Favourites = () => {
-  const params = useParams();
   const [page, setPage] = useState()
   const [limit, setLimit] = useState()
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
   const [sortAscending, setSortAscending] = useState();
   const [sortBy, setSortBy] = useState('title')
-  const videosPage = usePromise(
+  const [videosPage, fetchVideosError, loadingVideos] = usePromise(
     () => fetchFavouriteVideos(page, limit, search, sortBy, sortAscending), 
     [page, limit, search, sortBy, sortAscending]
   );
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
-    if (!videosPage.loading && !videosPage.error) {
-      setTotal(videosPage.result.total)
+    if (!loadingVideos && !fetchVideosError) {
+      setTotal(videosPage.total)
     }
-  }, [videosPage])
+  }, [videosPage, loadingVideos, fetchVideosError])
 
   useEffect(() => {
     const params = getSearchParamsObject(searchParams);
@@ -57,7 +56,8 @@ export const Favourites = () => {
 
   return <>
     <VideoGrid
-      videosPage={videosPage}
+      videos={videosPage?.content}
+      loading={loadingVideos}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
       page={page}
       count={Math.ceil(total / limit) || 1}

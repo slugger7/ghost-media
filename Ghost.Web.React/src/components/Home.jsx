@@ -16,16 +16,16 @@ export const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [sortBy, setSortBy] = useState('date-added');
   const [sortAscending, setSortAscending] = useState(true);
-  const {result: videos, error, loading} = usePromise(
+  const [videosPage, error, loading] = usePromise(
     () => fetchVideos(page, limit, search, sortBy, sortAscending),
     [page, limit, search, sortBy, sortAscending]
   );
 
   useEffect(() => {
     if (!loading && !error) {
-      setTotal(videos.total)
+      setTotal(videosPage.total)
     }
-  }, [videos, error, loading])
+  }, [videosPage, error, loading])
 
   useEffect(() => {
     const params = getSearchParamsObject(searchParams);
@@ -56,7 +56,8 @@ export const Home = () => {
 
   return (<>
     <VideoGrid
-      videosPage={{result: videos, error, loading}}
+      videos={videosPage?.content}
+      loading={loading}
       onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
       page={page}
       count={Math.ceil(total / limit) || 1}

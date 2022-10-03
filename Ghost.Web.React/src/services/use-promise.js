@@ -28,5 +28,5 @@ export default function usePromise(f, deps) {
     }
   }, deps || [])
 
-  return {result, error, loading}
+  return [result, error, loading, setResult]
 }

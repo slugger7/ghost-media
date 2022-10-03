@@ -12,7 +12,8 @@ const removeVideo = ({ index, setVideos }) => () =>
   setVideos(remove(index, 1))
 
 export const VideoGrid = ({
-  videosPage,
+  videos = [],
+  loading,
   page,
   count,
   onPageChange,
@@ -20,14 +21,6 @@ export const VideoGrid = ({
   search,
   sortComponent
 }) => {
-  const [videos, setVideos] = useState([]);
-
-  useEffect(() => {
-    if (videosPage && !videosPage.loading && videosPage.result) {
-      setVideos(videosPage.result.content);
-    }
-  }, [videosPage]);
-
   const paginationComponent = <>
     {count > 1 && page && <Grid item xs={12} md={6} lg={5}>
       <Pagination
@@ -58,11 +51,11 @@ export const VideoGrid = ({
       </Grid>}
     </Grid>
     <Grid container spacing={2}>
-      {videosPage.loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
-      {!videosPage.loading && videos.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
+      {loading && <Grid item xs={12} sm={6} md={4} lg={3} xl={2}><VideoCardSkeleton /></Grid>}
+      {!loading && videos.length === 0 && <Grid item xs={12}><NothingHere>Nothing here. Add a library and sync it to have videos appear here</NothingHere></Grid>}
 
-      {!videosPage.loading && videos.map((video, index) => <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
-        <VideoCard video={video} remove={removeVideo({ index, setVideos })} />
+      {!loading && videos && videos.map((video, index) => <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
+        <VideoCard video={video} remove={removeVideo({ index, setVideos: () => {} })} />
       </Grid>)}
     </Grid>
     <Grid container alignItems="center" direction="row" sx={{ my: 1 }}>
@@ -74,11 +67,8 @@ export const VideoGrid = ({
 }
 
 VideoGrid.propTypes = {
-  videosPage: PropTypes.shape({
-    loading: PropTypes.bool.isRequired,
-    error: PropTypes.object,
-    result: PropTypes.object
-  }),
+  videos: PropTypes.array,
+  loading: PropTypes.bool.isRequired,
   page: PropTypes.number,
   count: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
