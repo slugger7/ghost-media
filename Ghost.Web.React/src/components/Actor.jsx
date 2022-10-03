@@ -34,7 +34,7 @@ export const Actor = () => {
     [params.name],
   )
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(2)
+  const [limit, setLimit] = useState(48)
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
   const [sortAscending, setSortAscending] = useState(false)

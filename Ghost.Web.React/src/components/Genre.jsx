@@ -1,11 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { mergeDeepLeft } from 'ramda'
-import {
-  updateSearchParamsService,
-  getSearchParamsObject,
-} from '../services/searchParam.service.js'
 import { VideoGrid } from './VideoGrid.jsx'
 import { constructVideoParams } from '../services/video.service.js'
 import { Sort } from './Sort.jsx'
@@ -36,12 +32,12 @@ export const Genre = () => {
     () => fetchGenre(params.name),
     [params.name],
   )
-  const [page, setPage] = useState()
-  const [limit, setLimit] = useState()
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(48)
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
-  const [sortBy, setSortBy] = useState('title')
-  const [sortAscending, setSortAscending] = useState()
+  const [sortBy, setSortBy] = useState('date-added')
+  const [sortAscending, setSortAscending] = useState(false)
   const userId = localStorage.getItem('userId')
   const [videosPage, fetchVideosError, loadingVideos] = usePromise(
     () =>
@@ -56,37 +52,12 @@ export const Genre = () => {
       ),
     [params.name, page, limit, search, sortBy, sortAscending, userId],
   )
-  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     if (!loadingVideos && !fetchVideosError) {
       setTotal(videosPage.total)
     }
   }, [videosPage, loadingVideos, fetchVideosError])
-
-  useEffect(() => {
-    const params = getSearchParamsObject(searchParams)
-    setLimit(params.limit || limit || 48)
-    setPage(params.page || page || 1)
-    setSearch(params.search || search)
-    setSortBy(params.sortBy || sortBy)
-    setSortAscending(params.ascending)
-  }, [searchParams])
-
-  const updateSearchParams = updateSearchParamsService(setSearchParams, {
-    page,
-    limit,
-    search,
-    sortBy,
-    ascending: sortAscending,
-  })
-
-  const handleSearchChange = (searchValue) => {
-    updateSearchParams({
-      search: encodeURIComponent(searchValue),
-      page: 0,
-    })
-  }
 
   const handleGenreUpdate = async (genreName) => {
     const newGenre = await updateGenreName(genre.id, genreName)
@@ -96,11 +67,9 @@ export const Genre = () => {
   const sortComponent = (
     <Sort
       sortBy={sortBy}
-      setSortBy={(sortByValue) => updateSearchParams({ sortBy: sortByValue })}
+      setSortBy={setSortBy}
       sortDirection={sortAscending}
-      setSortDirection={(sortAscendingValue) =>
-        updateSearchParams({ ascending: sortAscendingValue })
-      }
+      setSortDirection={setSortAscending}
     />
   )
 
@@ -112,11 +81,11 @@ export const Genre = () => {
       <VideoGrid
         videos={videosPage?.content}
         loading={loadingVideos}
-        onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
+        onPageChange={(e, newPage) => setPage(newPage)}
         page={page}
         count={Math.ceil(total / limit) || 1}
         search={search}
-        setSearch={handleSearchChange}
+        setSearch={setSearch}
         sortComponent={sortComponent}
       />
     </>
