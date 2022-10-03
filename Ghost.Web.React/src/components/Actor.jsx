@@ -1,15 +1,11 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { VideoGrid } from './VideoGrid.jsx'
 import { Sort } from './Sort.jsx'
-import {
-  updateSearchParamsService,
-  getSearchParamsObject,
-} from '../services/searchParam.service.js'
 import { constructVideoParams } from '../services/video.service.js'
 import { TextEdit } from './TextEdit.jsx'
-import { mergeDeepLeft, mergeDeepRight } from 'ramda'
+import { mergeDeepLeft } from 'ramda'
 import { Stack } from '@mui/material'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 import usePromise from '../services/use-promise.js'
@@ -37,48 +33,22 @@ export const Actor = () => {
     () => fetchActor(params.name),
     [params.name],
   )
-  const [page, setPage] = useState()
-  const [limit, setLimit] = useState()
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(2)
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
-  const [sortAscending, setSortAscending] = useState()
-  const [sortBy, setSortBy] = useState('title')
-  const userId = localStorage.getItem('userId')
+  const [sortAscending, setSortAscending] = useState(false)
+  const [sortBy, setSortBy] = useState('date-added')
   const [videosPage, fetchVideoError, loadingVideos] = usePromise(
     () => fetchVideos(params.id, page, limit, search, sortBy, sortAscending),
     [params.id, page, limit, search, sortBy, sortAscending],
   )
-  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
     if (!loadingVideos && !fetchVideoError) {
       setTotal(videosPage.total)
     }
   }, [videosPage])
-
-  useEffect(() => {
-    const params = getSearchParamsObject(searchParams)
-    setLimit(params.limit || limit || 48)
-    setPage(params.page || page || 1)
-    setSearch(params.search || search)
-    setSortBy(params.sortBy || sortBy)
-    setSortAscending(params.ascending)
-  }, [searchParams])
-
-  const updateSearchParams = updateSearchParamsService(setSearchParams, {
-    page,
-    limit,
-    search,
-    sortBy,
-    ascending: sortAscending,
-  })
-
-  const handleSearchChange = (searchValue) => {
-    updateSearchParams({
-      search: encodeURIComponent(searchValue),
-      page: 0,
-    })
-  }
 
   const handleToggleFavourite = async () =>
     (
@@ -97,11 +67,9 @@ export const Actor = () => {
   const sortComponent = (
     <Sort
       sortBy={sortBy}
-      setSortBy={(sortByValue) => updateSearchParams({ sortBy: sortByValue })}
+      setSortBy={setSortBy}
       sortDirection={sortAscending}
-      setSortDirection={(sortAscendingValue) =>
-        updateSearchParams({ ascending: sortAscendingValue })
-      }
+      setSortDirection={setSortAscending}
     />
   )
 
@@ -121,11 +89,11 @@ export const Actor = () => {
       <VideoGrid
         videos={videosPage?.content}
         loading={loadingVideos}
-        onPageChange={(e, newPage) => updateSearchParams({ page: newPage })}
+        onPageChange={(e, newPage) => setPage(newPage)}
         page={page}
         count={Math.ceil(total / limit) || 1}
         search={search}
-        setSearch={handleSearchChange}
+        setSearch={setSearch}
         sortComponent={sortComponent}
       />
     </>
