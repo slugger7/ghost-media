@@ -7,7 +7,7 @@ import usePromise from '../services/use-promise.js'
 
 export const Home = () => {
   const [page, setPage] = useState(1)
-  const [limit] = useState(2)
+  const [limit] = useState(48)
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useState('date-added')
