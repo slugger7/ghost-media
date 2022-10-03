@@ -1,6 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Grid, Pagination } from '@mui/material'
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  Pagination,
+} from '@mui/material'
 import { remove } from 'ramda'
 
 import { VideoCard } from './VideoCard.jsx'
@@ -22,6 +28,8 @@ export const VideoGrid = ({
   setSearch,
   search,
   sortComponent,
+  watched,
+  setWatched,
 }) => {
   const paginationComponent = (
     <>
@@ -66,6 +74,30 @@ export const VideoGrid = ({
             {sortComponent}
           </Grid>
         )}
+        <Grid item xs={6} md={3} lg={2}>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={watched}
+                  indeterminate={watched === null}
+                  onChange={(e, newWatched) => {
+                    if (watched === null) {
+                      setWatched(newWatched)
+                    }
+                    if (watched === false) {
+                      setWatched(null)
+                    }
+                    if (watched === true) {
+                      setWatched(false)
+                    }
+                  }}
+                />
+              }
+              label="Watched"
+            />
+          </FormGroup>
+        </Grid>
       </Grid>
       <Grid container spacing={2}>
         {loading && (
@@ -110,4 +142,6 @@ VideoGrid.propTypes = {
   search: PropTypes.string.isRequired,
   setSearch: PropTypes.func.isRequired,
   sortComponent: PropTypes.node,
+  watched: PropTypes.bool.isRequired,
+  setWatched: PropTypes.func.isRequired,
 }

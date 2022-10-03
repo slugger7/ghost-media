@@ -9,7 +9,7 @@ import {
   Skeleton,
   Box,
 } from '@mui/material'
-import { mergeDeepLeft, mergeDeepRight } from 'ramda'
+import { mergeDeepLeft } from 'ramda'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 import { Video } from './Video.jsx'
@@ -73,7 +73,7 @@ export const Media = () => {
   }, [media])
 
   const updateMedia = (val) => {
-    setMedia(mergeDeepLeft({ ...val }))
+    setMedia(mergeDeepLeft(val))
   }
 
   return (

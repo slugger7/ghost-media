@@ -12,9 +12,10 @@ export const Home = () => {
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useState('date-added')
   const [sortAscending, setSortAscending] = useState(false)
+  const [watched, setWatched] = useState(false)
   const [videosPage, error, loading] = usePromise(
-    () => fetchVideos(page, limit, search, sortBy, sortAscending),
-    [page, limit, search, sortBy, sortAscending],
+    () => fetchVideos(page, limit, search, sortBy, sortAscending, watched),
+    [page, limit, search, sortBy, sortAscending, watched],
   )
 
   useEffect(() => {
@@ -42,6 +43,8 @@ export const Home = () => {
       search={search}
       setSearch={setSearch}
       sortComponent={sortComponent}
+      watched={watched}
+      setWatched={setWatched}
     />
   )
 }
