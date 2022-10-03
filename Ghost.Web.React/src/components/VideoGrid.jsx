@@ -52,7 +52,13 @@ export const VideoGrid = ({
         spacing={1}
       >
         <Grid item xs={12} md={6} lg={4}>
-          <Search search={search} setSearch={setSearch} />
+          <Search
+            search={search}
+            setSearch={(...args) => {
+              setSearch(...args)
+              onPageChange(null, 1)
+            }}
+          />
         </Grid>
         {paginationComponent}
         {sortComponent && (
