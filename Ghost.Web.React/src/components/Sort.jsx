@@ -1,11 +1,11 @@
 import React from 'react'
 import {
+  Box,
   FormControl,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
-  Stack,
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
@@ -17,7 +17,7 @@ export const Sort = ({
   sortDirection,
   setSortDirection,
 }) => (
-  <Stack direction="row" alignItems="center" spacing={1}>
+  <Box sx={{ mr: 1, mb: 1 }}>
     <FormControl sx={{ minWidth: '150px' }} size="small">
       <InputLabel id="sort-label">Sort By</InputLabel>
       <Select
@@ -42,7 +42,7 @@ export const Sort = ({
         {sortDirection ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
       </IconButton>
     )}
-  </Stack>
+  </Box>
 )
 
 Sort.propTypes = {

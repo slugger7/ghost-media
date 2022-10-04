@@ -1,23 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Pagination,
-  Select,
-  FormControl,
-} from '@mui/material'
+import { Box, Grid, Pagination } from '@mui/material'
 import { remove } from 'ramda'
 
 import { VideoCard } from './VideoCard.jsx'
 import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 import { Search } from './Search'
 import { NothingHere } from './NothingHere.jsx'
-import watchStates from '../constants/watch-states.js'
+import { WatchState } from './WatchState.jsx'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -39,7 +29,7 @@ export const VideoGrid = ({
   const paginationComponent = (
     <>
       {count > 1 && page && (
-        <Grid item xs={12} md={6} lg={5}>
+        <Box sx={{ mb: 1 }}>
           <Pagination
             size="small"
             color="primary"
@@ -50,92 +40,77 @@ export const VideoGrid = ({
             showLastButton
             onChange={onPageChange}
           />
-        </Grid>
+        </Box>
       )}
     </>
   )
 
-  return (
-    <>
-      <Grid
-        container
-        alignItems="center"
-        direction="row"
-        sx={{ my: 1 }}
-        spacing={1}
-      >
-        <Grid item xs={12} md={6} lg={4}>
-          <Search
-            search={search}
-            setSearch={(...args) => {
-              setSearch(...args)
-              onPageChange(null, 1)
-            }}
-          />
-        </Grid>
-        {paginationComponent}
-        {sortComponent && (
-          <Grid item xs={12} md={6} lg={3}>
-            {sortComponent}
-          </Grid>
-        )}
-        <Grid item xs={6} md={3} lg={2}>
-          <FormControl size="small">
-            <InputLabel id="watch-state">Watched state</InputLabel>
-            <Select
-              labelId="watch-state"
-              id="watch-state-select"
-              value={watchState}
-              label="Watch state"
-              onChange={(e) => setWatchState(e.target.value)}
-            >
-              <MenuItem value={watchStates.inProgress}>
-                {watchStates.inProgress.name}
-              </MenuItem>
-              <MenuItem value={watchStates.watched}>
-                {watchStates.watched.name}
-              </MenuItem>
-              <MenuItem value={watchStates.unwatched}>
-                {watchStates.unwatched.name}
-              </MenuItem>
-              <MenuItem value={watchStates.all}>
-                {watchStates.all.name}
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-        {loading && (
-          <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-            <VideoCardSkeleton />
-          </Grid>
-        )}
-        {!loading && videos.length === 0 && (
-          <Grid item xs={12}>
-            <NothingHere>
-              Nothing here. Add a library and sync it to have videos appear here
-            </NothingHere>
-          </Grid>
-        )}
+  const paginationAndFiltering = (
+    <Box
+      sx={{
+        my: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+      }}
+    >
+      <Search
+        search={search}
+        setSearch={(...args) => {
+          setSearch(...args)
+          onPageChange(null, 1)
+        }}
+      />
+      {paginationComponent}
+      {sortComponent}
+      <WatchState watchState={watchState} setWatchState={setWatchState} />
+    </Box>
+  )
 
-        {!loading &&
-          videos &&
-          videos.map((video, index) => (
-            <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
-              <VideoCard
-                video={video}
-                remove={removeVideo({ index, setVideos: () => {} })}
-              />
+  return (
+    <Box>
+      {paginationAndFiltering}
+      <Box>
+        <Grid container spacing={2}>
+          {loading && (
+            <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+              <VideoCardSkeleton />
             </Grid>
-          ))}
-      </Grid>
-      <Grid container alignItems="center" direction="row" sx={{ my: 1 }}>
-        <Grid item md={12}>
-          {paginationComponent}
+          )}
+          {!loading && videos.length === 0 && (
+            <Grid item xs={12}>
+              <NothingHere>
+                Nothing here. Add a library and sync it to have videos appear
+                here
+              </NothingHere>
+            </Grid>
+          )}
+
+          {!loading &&
+            videos &&
+            videos.map((video, index) => (
+              <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
+                <VideoCard
+                  video={video}
+                  remove={removeVideo({ index, setVideos: () => {} })}
+                />
+              </Grid>
+            ))}
         </Grid>
-      </Grid>
-    </>
+      </Box>
+      <Box
+        sx={{
+          my: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          mb: 5,
+        }}
+      >
+        {paginationComponent}
+      </Box>
+    </Box>
   )
 }
 

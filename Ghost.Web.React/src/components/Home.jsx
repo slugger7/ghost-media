@@ -13,7 +13,7 @@ export const Home = () => {
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useState('date-added')
   const [sortAscending, setSortAscending] = useState(false)
-  const [watchState, setWatchState] = useState(watchStates.all)
+  const [watchState, setWatchState] = useState(watchStates.unwatched)
   const [videosPage, error, loading] = usePromise(
     () => fetchVideos(page, limit, search, sortBy, sortAscending, watchState),
     [page, limit, search, sortBy, sortAscending, watchState],
