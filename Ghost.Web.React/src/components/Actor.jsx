@@ -9,10 +9,19 @@ import { mergeDeepLeft } from 'ramda'
 import { Stack } from '@mui/material'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 import usePromise from '../services/use-promise.js'
+import watchStates from '../constants/watch-states.js'
 
 const fetchActor = async (name) =>
   (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
-const fetchVideos = async (id, page, limit, search, sortBy, ascending) => {
+const fetchVideos = async (
+  id,
+  page,
+  limit,
+  search,
+  sortBy,
+  ascending,
+  watchState,
+) => {
   const videosResult = await axios.get(
     `/media/actor/${encodeURIComponent(id)}?${constructVideoParams({
       page,
@@ -20,6 +29,7 @@ const fetchVideos = async (id, page, limit, search, sortBy, ascending) => {
       search,
       sortBy,
       ascending,
+      watchState,
     })}`,
   )
   return videosResult.data
@@ -39,9 +49,19 @@ export const Actor = () => {
   const [total, setTotal] = useState(0)
   const [sortAscending, setSortAscending] = useState(false)
   const [sortBy, setSortBy] = useState('date-added')
+  const [watchState, setWatchState] = useState(watchStates.all)
   const [videosPage, fetchVideoError, loadingVideos] = usePromise(
-    () => fetchVideos(params.id, page, limit, search, sortBy, sortAscending),
-    [params.id, page, limit, search, sortBy, sortAscending],
+    () =>
+      fetchVideos(
+        params.id,
+        page,
+        limit,
+        search,
+        sortBy,
+        sortAscending,
+        watchState,
+      ),
+    [params.id, page, limit, search, sortBy, sortAscending, watchState],
   )
 
   useEffect(() => {
@@ -95,6 +115,8 @@ export const Actor = () => {
         search={search}
         setSearch={setSearch}
         sortComponent={sortComponent}
+        watchState={watchState}
+        setWatchState={setWatchState}
       />
     </>
   )

@@ -4,6 +4,7 @@ import { VideoGrid } from './VideoGrid.jsx'
 import { Sort } from './Sort.jsx'
 import { fetchVideos } from '../services/video.service'
 import usePromise from '../services/use-promise.js'
+import watchStates from '../constants/watch-states.js'
 
 export const Home = () => {
   const [page, setPage] = useState(1)
@@ -12,9 +13,10 @@ export const Home = () => {
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useState('date-added')
   const [sortAscending, setSortAscending] = useState(false)
+  const [watchState, setWatchState] = useState(watchStates.unwatched)
   const [videosPage, error, loading] = usePromise(
-    () => fetchVideos(page, limit, search, sortBy, sortAscending),
-    [page, limit, search, sortBy, sortAscending],
+    () => fetchVideos(page, limit, search, sortBy, sortAscending, watchState),
+    [page, limit, search, sortBy, sortAscending, watchState],
   )
 
   useEffect(() => {
@@ -42,6 +44,8 @@ export const Home = () => {
       search={search}
       setSearch={setSearch}
       sortComponent={sortComponent}
+      watchState={watchState}
+      setWatchState={setWatchState}
     />
   )
 }

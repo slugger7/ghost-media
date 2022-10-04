@@ -7,10 +7,19 @@ import { constructVideoParams } from '../services/video.service.js'
 import { Sort } from './Sort.jsx'
 import { TextEdit } from './TextEdit.jsx'
 import usePromise from '../services/use-promise.js'
+import watchStates from '../constants/watch-states.js'
 
 const fetchGenre = async (name) =>
   (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
-const fetchVideos = async (genre, page, limit, search, sortBy, ascending) => {
+const fetchVideos = async (
+  genre,
+  page,
+  limit,
+  search,
+  sortBy,
+  ascending,
+  watchState,
+) => {
   const videosResult = await axios.get(
     `/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({
       page,
@@ -18,6 +27,7 @@ const fetchVideos = async (genre, page, limit, search, sortBy, ascending) => {
       search,
       sortBy,
       ascending,
+      watchState,
     })}`,
   )
 
@@ -38,7 +48,7 @@ export const Genre = () => {
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useState('date-added')
   const [sortAscending, setSortAscending] = useState(false)
-  const userId = localStorage.getItem('userId')
+  const [watchState, setWatchState] = useState(watchStates.all)
   const [videosPage, fetchVideosError, loadingVideos] = usePromise(
     () =>
       fetchVideos(
@@ -48,9 +58,9 @@ export const Genre = () => {
         search,
         sortBy,
         sortAscending,
-        userId,
+        watchState,
       ),
-    [params.name, page, limit, search, sortBy, sortAscending, userId],
+    [params.name, page, limit, search, sortBy, sortAscending, watchState],
   )
 
   useEffect(() => {
@@ -87,6 +97,8 @@ export const Genre = () => {
         search={search}
         setSearch={setSearch}
         sortComponent={sortComponent}
+        watchState={watchState}
+        setWatchState={setWatchState}
       />
     </>
   )

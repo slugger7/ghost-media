@@ -5,8 +5,16 @@ import { VideoGrid } from './VideoGrid.jsx'
 import { Sort } from './Sort.jsx'
 import { constructVideoParams } from '../services/video.service'
 import usePromise from '../services/use-promise.js'
+import watchStates from '../constants/watch-states.js'
 
-const fetchFavouriteVideos = async (page, limit, search, sortBy, ascending) =>
+const fetchFavouriteVideos = async (
+  page,
+  limit,
+  search,
+  sortBy,
+  ascending,
+  watchState,
+) =>
   (
     await await axios.get(
       `/media/favourites?${constructVideoParams({
@@ -15,6 +23,7 @@ const fetchFavouriteVideos = async (page, limit, search, sortBy, ascending) =>
         search,
         sortBy,
         ascending,
+        watchState,
       })}`,
     )
   ).data
@@ -26,9 +35,18 @@ export const Favourites = () => {
   const [total, setTotal] = useState(0)
   const [sortAscending, setSortAscending] = useState(false)
   const [sortBy, setSortBy] = useState('date-added')
+  const [watchState, setWatchState] = useState(watchStates.all)
   const [videosPage, error, loading] = usePromise(
-    () => fetchFavouriteVideos(page, limit, search, sortBy, sortAscending),
-    [page, limit, search, sortBy, sortAscending],
+    () =>
+      fetchFavouriteVideos(
+        page,
+        limit,
+        search,
+        sortBy,
+        sortAscending,
+        watchState,
+      ),
+    [page, limit, search, sortBy, sortAscending, watchState],
   )
 
   useEffect(() => {
@@ -56,6 +74,8 @@ export const Favourites = () => {
       search={search}
       setSearch={setSearch}
       sortComponent={sortComponent}
+      watchState={watchState}
+      setWatchState={setWatchState}
     />
   )
 }

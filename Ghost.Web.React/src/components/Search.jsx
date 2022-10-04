@@ -3,8 +3,8 @@ import {
   InputAdornment,
   OutlinedInput,
   IconButton,
-  Stack,
   Button,
+  Box,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
@@ -25,8 +25,8 @@ export const Search = ({ search, setSearch }) => {
   }
 
   return (
-    <Stack direction="row" spacing={1}>
-      <FormControl variant="standard">
+    <Box>
+      <FormControl variant="standard" size="small" sx={{ mr: 1, mb: 1 }}>
         <OutlinedInput
           onKeyUp={handleKeyPress}
           id="ghost-search-box"
@@ -53,10 +53,15 @@ export const Search = ({ search, setSearch }) => {
           }
         />
       </FormControl>
-      <Button variant="outlined" onClick={() => setSearch(searchValue)}>
+      <Button
+        sx={{ mr: 1, mb: 1, p: 1 }}
+        size="small"
+        variant="outlined"
+        onClick={() => setSearch(searchValue)}
+      >
         <SearchIcon /> Search
       </Button>
-    </Stack>
+    </Box>
   )
 }
 
