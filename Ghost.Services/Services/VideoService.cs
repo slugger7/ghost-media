@@ -126,9 +126,11 @@ namespace Ghost.Services
             return new VideoDto(videoEntity);
         }
 
-        public PageResultDto<VideoDto> GetVideosForGenre(string name, int userId, PageRequestDto pageRequest)
+        public PageResultDto<VideoDto> GetVideosForGenre(string name, int userId, PageRequestDto pageRequest, FilterQueryDto filters)
         {
             var videosPage = videoRepository.GetForGenre(
+              userId,
+              filters.WatchState,
               name,
               pageRequest.Page,
               pageRequest.Limit,

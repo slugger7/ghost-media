@@ -13,7 +13,7 @@ namespace Ghost.Services
         string GenerateThumbnail(int id);
         Task<VideoDto> UpdateMetaData(int id);
         VideoDto SetGenresByNameToVideo(int id, List<string> genres);
-        PageResultDto<VideoDto> GetVideosForGenre(string genre, int userId, PageRequestDto pageRequest);
+        PageResultDto<VideoDto> GetVideosForGenre(string genre, int userId, PageRequestDto pageRequest, FilterQueryDto filters);
         VideoDto SetActorsByNameToVideo(int id, List<string> actors);
         PageResultDto<VideoDto> GetVideosForActor(int actorId, int userId, PageRequestDto pageRequest, FilterQueryDto filters);
         Task<VideoDto> UpdateTitle(int id, string title);

@@ -113,9 +113,10 @@ namespace Ghost.Api.Controllers
         public ActionResult<PageResultDto<VideoDto>> GetVideosForGenre(
           string genre,
           [FromQuery] PageRequestDto pageRequest,
+          [FromQuery] FilterQueryDto filters,
           [FromHeader(Name = "User-Id")] int userId)
         {
-            return videoService.GetVideosForGenre(genre, userId, pageRequest);
+            return videoService.GetVideosForGenre(genre, userId, pageRequest, filters);
         }
 
         [HttpPut("{id}/actors")]
