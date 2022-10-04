@@ -26,7 +26,7 @@ export const Search = ({ search, setSearch }) => {
 
   return (
     <Stack direction="row" spacing={1}>
-      <FormControl variant="standard">
+      <FormControl variant="standard" size="small">
         <OutlinedInput
           onKeyUp={handleKeyPress}
           id="ghost-search-box"

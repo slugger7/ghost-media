@@ -47,7 +47,7 @@ namespace Ghost.Services
         {
             var videosPage = videoRepository.SearchVideos(
               userId,
-              filterQuery.Watched,
+              filterQuery.WatchState,
               pageRequest.Page,
               pageRequest.Limit,
               pageRequest.Search,

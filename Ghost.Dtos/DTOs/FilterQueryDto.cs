@@ -1,7 +1,9 @@
+using Ghost.Data.Enums;
+
 namespace Ghost.Dtos
 {
     public class FilterQueryDto
     {
-        public bool? Watched { get; set; }
+        public string WatchState { get; set; } = String.Empty;
     }
 }

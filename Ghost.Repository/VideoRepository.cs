@@ -1,6 +1,8 @@
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Ghost.Data.Enums;
+using Ghost.Repository.Extensions;
 
 namespace Ghost.Repository
 {
@@ -74,19 +76,6 @@ namespace Ghost.Repository
             return videos.FirstOrDefault(v => v.Id == id);
         }
 
-        public static IEnumerable<Video> SortAndOrderVideos(IEnumerable<Video> videos, string sortBy, bool ascending)
-        {
-            var orderByPredicate = Video.SortByPredicate(sortBy);
-            if (ascending)
-            {
-                return videos.OrderBy(orderByPredicate);
-            }
-            else
-            {
-                return videos.OrderByDescending(orderByPredicate);
-            }
-        }
-
         public PageResult<Video> GetForGenre(string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
         {
             var genre = genreRepository.GetByName(name);
@@ -94,9 +83,8 @@ namespace Ghost.Repository
             if (genre == null) throw new NullReferenceException("Genre not found");
             var videos = genre.VideoGenres
                 .Select(vg => vg.Video)
-                .Where(videoSearch(search));
-
-            videos = SortAndOrderVideos(videos, sortBy, ascending);
+                .Where(videoSearch(search))
+                .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>
             {
@@ -115,9 +103,9 @@ namespace Ghost.Repository
             if (actor == null) throw new NullReferenceException("Actor not found");
             var videos = actor.VideoActors
                 .Select(va => va.Video)
-                .Where(videoSearch(search));
+                .Where(videoSearch(search))
+                .SortAndOrderVideos(sortBy, ascending);
 
-            videos = SortAndOrderVideos(videos, sortBy, ascending);
             return new PageResult<Video>
             {
                 Total = videos.Count(),
@@ -148,8 +136,7 @@ namespace Ghost.Repository
             if (video == null) throw new NullReferenceException("Video was null");
             return video;
         }
-
-        public PageResult<Video> SearchVideos(int userId, bool? watched, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+        public PageResult<Video> SearchVideos(int userId, string watchState, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
         {
             var videos = context.Videos
               .Include("VideoImages.Image")
@@ -157,31 +144,9 @@ namespace Ghost.Repository
               .Include("VideoActors.Actor")
               .Include("VideoActors.Actor.FavouritedBy.User")
               .Include("WatchedBy.User")
-              .Where(videoSearch(search));
-
-            if (watched.HasValue)
-            {
-                videos = videos.Where((Func<Video, bool>)(v =>
-                {
-                    var progress = v.WatchedBy.FirstOrDefault<Progress>(p => p.User.Id == userId);
-                    if (progress == null)
-                    {
-                        return (bool)!watched.Value;
-                    }
-
-                    var watchedPercentage = progress.Timestamp * 1000 / v.Runtime;
-                    if (watched.Value)
-                    {
-                        return progress != null && watchedPercentage > 0.9;
-                    }
-                    else
-                    {
-                        return progress != null && watchedPercentage <= 0.9;
-                    }
-                }));
-            }
-
-            videos = SortAndOrderVideos(videos, sortBy, ascending);
+              .Where(videoSearch(search))
+              .FilterWatchedState(watchState, userId)
+              .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>
             {

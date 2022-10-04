@@ -1,8 +1,22 @@
 import axios from 'axios'
 
-export const fetchVideos = async (page, limit, search, sortBy, ascending, watched) => {
+export const fetchVideos = async (
+  page,
+  limit,
+  search,
+  sortBy,
+  ascending,
+  watchState,
+) => {
   const videosResult = await axios.get(
-    `media?${constructVideoParams({ page, limit, search, sortBy, ascending, watched })}`,
+    `media?${constructVideoParams({
+      page,
+      limit,
+      search,
+      sortBy,
+      ascending,
+      watchState,
+    })}`,
   )
 
   return videosResult.data
@@ -14,7 +28,7 @@ export const constructVideoParams = ({
   search,
   sortBy,
   ascending,
-  watched
+  watchState,
 }) => {
   const params = []
   if (page) {
@@ -32,8 +46,8 @@ export const constructVideoParams = ({
   if (ascending !== undefined) {
     params.push(`ascending=${ascending}`)
   }
-  if (watched !== undefined && watched !== null) {
-    params.push(`watched=${watched}`)
+  if (watchState !== undefined && watchState !== null) {
+    params.push(`watchState=${watchState.value}`)
   }
   return params.join('&')
 }

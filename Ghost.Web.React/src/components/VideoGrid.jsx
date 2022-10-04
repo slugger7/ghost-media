@@ -5,7 +5,11 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
+  InputLabel,
+  MenuItem,
   Pagination,
+  Select,
+  FormControl,
 } from '@mui/material'
 import { remove } from 'ramda'
 
@@ -13,6 +17,7 @@ import { VideoCard } from './VideoCard.jsx'
 import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 import { Search } from './Search'
 import { NothingHere } from './NothingHere.jsx'
+import watchStates from '../constants/watch-states.js'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -28,8 +33,8 @@ export const VideoGrid = ({
   setSearch,
   search,
   sortComponent,
-  watched,
-  setWatched,
+  watchState,
+  setWatchState,
 }) => {
   const paginationComponent = (
     <>
@@ -75,28 +80,29 @@ export const VideoGrid = ({
           </Grid>
         )}
         <Grid item xs={6} md={3} lg={2}>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={watched}
-                  indeterminate={watched === null}
-                  onChange={(e, newWatched) => {
-                    if (watched === null) {
-                      setWatched(newWatched)
-                    }
-                    if (watched === false) {
-                      setWatched(null)
-                    }
-                    if (watched === true) {
-                      setWatched(false)
-                    }
-                  }}
-                />
-              }
-              label="Watched"
-            />
-          </FormGroup>
+          <FormControl size="small">
+            <InputLabel id="watch-state">Watched state</InputLabel>
+            <Select
+              labelId="watch-state"
+              id="watch-state-select"
+              value={watchState}
+              label="Watch state"
+              onChange={(e) => setWatchState(e.target.value)}
+            >
+              <MenuItem value={watchStates.inProgress}>
+                {watchStates.inProgress.name}
+              </MenuItem>
+              <MenuItem value={watchStates.watched}>
+                {watchStates.watched.name}
+              </MenuItem>
+              <MenuItem value={watchStates.unwatched}>
+                {watchStates.unwatched.name}
+              </MenuItem>
+              <MenuItem value={watchStates.all}>
+                {watchStates.all.name}
+              </MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
@@ -142,6 +148,6 @@ VideoGrid.propTypes = {
   search: PropTypes.string.isRequired,
   setSearch: PropTypes.func.isRequired,
   sortComponent: PropTypes.node,
-  watched: PropTypes.bool.isRequired,
-  setWatched: PropTypes.func.isRequired,
+  watchState: PropTypes.object.isRequired,
+  setWatchState: PropTypes.func.isRequired,
 }

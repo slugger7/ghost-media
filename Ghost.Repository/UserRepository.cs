@@ -1,5 +1,6 @@
 using Ghost.Data;
 using Ghost.Exceptions;
+using Ghost.Repository.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ghost.Repository
@@ -146,9 +147,8 @@ namespace Ghost.Repository
             if (user == null) throw new NullReferenceException("User not found");
             var videos = user.FavouriteVideos
                 .Select(fv => fv.Video)
-                .Where(VideoRepository.videoSearch(search));
-
-            videos = VideoRepository.SortAndOrderVideos(videos, sortBy, ascending);
+                .Where(VideoRepository.videoSearch(search))
+                .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>
             {
