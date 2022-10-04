@@ -212,12 +212,13 @@ namespace Ghost.Api.Controllers
         [HttpGet("favourites")]
         public ActionResult<PageResultDto<VideoDto>> GetFavourites(
           [FromHeader(Name = "User-Id")] int userId,
-          [FromQuery] PageRequestDto pageRequest
+          [FromQuery] PageRequestDto pageRequest,
+          [FromQuery] FilterQueryDto filterQueryDto
         )
         {
             try
             {
-                return videoService.Favourites(userId, pageRequest);
+                return videoService.Favourites(userId, pageRequest, filterQueryDto);
             }
             catch (NullReferenceException)
             {

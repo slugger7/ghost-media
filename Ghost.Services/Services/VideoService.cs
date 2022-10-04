@@ -336,10 +336,11 @@ namespace Ghost.Services
             return new VideoDto(video, userId);
         }
 
-        public PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest)
+        public PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest, FilterQueryDto filters)
         {
             var videoPage = userRepository.Favourites(
               userId,
+              filters.WatchState,
               pageRequest.Page,
               pageRequest.Limit,
               pageRequest.Search,

@@ -22,6 +22,6 @@ namespace Ghost.Services
         Task<VideoDto> GenerateChapters(int id, bool overwrite = false);
         Task LogProgress(int id, int userId, double progress);
         Task<VideoDto> ResetProgress(int id, int userId);
-        PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest);
+        PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest, FilterQueryDto filters);
     }
 }
