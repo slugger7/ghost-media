@@ -24,7 +24,6 @@ namespace Ghost.Api.Controllers
           [FromQuery] FilterQueryDto filters,
           [FromHeader(Name = "User-Id")] int userId)
         {
-            Console.WriteLine(filters.WatchState);
             return videoService.SearchVideos(pageRequest, filters, userId);
         }
 
