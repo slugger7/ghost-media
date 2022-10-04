@@ -135,11 +135,12 @@ namespace Ghost.Api.Controllers
         public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(
           int id,
           [FromQuery] PageRequestDto pageRequest,
+          [FromQuery] FilterQueryDto filters,
           [FromHeader(Name = "User-Id")] int userId)
         {
             try
             {
-                return videoService.GetVideosForActor(id, userId, pageRequest);
+                return videoService.GetVideosForActor(id, userId, pageRequest, filters);
             }
             catch (NullReferenceException)
             {

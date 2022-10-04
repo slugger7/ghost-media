@@ -96,7 +96,7 @@ namespace Ghost.Repository
             };
         }
 
-        public PageResult<Video> GetForActor(int actorId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+        public PageResult<Video> GetForActor(int userId, string watchState, int actorId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
         {
             var actor = actorRepository.FindById(actorId);
 
@@ -104,6 +104,7 @@ namespace Ghost.Repository
             var videos = actor.VideoActors
                 .Select(va => va.Video)
                 .Where(videoSearch(search))
+                .FilterWatchedState(watchState, userId)
                 .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>

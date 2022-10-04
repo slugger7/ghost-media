@@ -15,7 +15,7 @@ namespace Ghost.Services
         VideoDto SetGenresByNameToVideo(int id, List<string> genres);
         PageResultDto<VideoDto> GetVideosForGenre(string genre, int userId, PageRequestDto pageRequest);
         VideoDto SetActorsByNameToVideo(int id, List<string> actors);
-        PageResultDto<VideoDto> GetVideosForActor(int actorId, int userId, PageRequestDto pageRequest);
+        PageResultDto<VideoDto> GetVideosForActor(int actorId, int userId, PageRequestDto pageRequest, FilterQueryDto filters);
         Task<VideoDto> UpdateTitle(int id, string title);
         Task<VideoDto> SyncWithNFO(int id);
         Task BatchSyncNfos(List<Video> videos);
