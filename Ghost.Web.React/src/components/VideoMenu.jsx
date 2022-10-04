@@ -19,7 +19,7 @@ import ImageIcon from '@mui/icons-material/Image'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
-import { toggleFavourite } from '../services/video.service'
+import { toggleFavourite, resetProgress } from '../services/video.service'
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
 
@@ -29,8 +29,6 @@ const updateVideoMetaData = async (id) =>
 const generateChapters = async (id) =>
   (await axios.put(`/media/${id}/chapters`)).data
 const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
-const resetProgress = async (videoId) =>
-  (await axios.put(`/media/${videoId}/reset-progress`)).data
 const chooseThumbnail = async (videoId, progress) => {
   if (progress !== null && !isNaN(progress)) {
     await axios.put(

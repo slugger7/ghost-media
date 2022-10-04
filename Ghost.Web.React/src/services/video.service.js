@@ -57,3 +57,5 @@ export const generateVideoUrl = (id) => `${axios.defaults.baseURL}/media/${id}`
 export const toggleFavourite = async (videoId) =>
   (await axios.put(`/user/${localStorage.getItem('userId')}/video/${videoId}`))
     .data
+export const resetProgress = async (videoId) =>
+  (await axios.put(`/media/${videoId}/reset-progress`)).data

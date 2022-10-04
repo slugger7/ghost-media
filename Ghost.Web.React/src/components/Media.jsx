@@ -20,9 +20,14 @@ import { VideoMetaData } from './VideoMetaData.jsx'
 import { items, VideoMenu } from './VideoMenu.jsx'
 import { ChipSkeleton } from './ChipSkeleton.jsx'
 import { Chapters } from './Chapters.jsx'
-import { generateVideoUrl, toggleFavourite } from '../services/video.service'
+import {
+  generateVideoUrl,
+  toggleFavourite,
+  resetProgress,
+} from '../services/video.service'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 import usePromise from '../services/use-promise.js'
+import { ResetProgressIconButton } from './ResetProgressIconButton.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -65,12 +70,17 @@ export const Media = () => {
     setProgress(progress)
     updateProgress(params.id, progress)
   }
+  const handleProgressReset = async () => {
+    setProgress(0)
+    await resetProgress(params.id, 0)
+    updateMedia({ progress: 0 })
+  }
 
   useEffect(() => {
     if (media?.progress !== undefined) {
       setProgress(media.progress)
     }
-  }, [media])
+  }, [media?.progress])
 
   const updateMedia = (val) => {
     setMedia(mergeDeepLeft(val))
@@ -90,20 +100,34 @@ export const Media = () => {
               : undefined
           }
           duration={media.runtime}
-          currentProgress={media.progress}
+          currentProgress={progress}
           progressUpdate={handleProgressUpdate}
         />
       )}
       <Container sx={{ paddingX: 0 }}>
         <Paper sx={{ p: 2 }}>
           {!loadingMedia && (
-            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-              <FavouriteIconButton
-                id={params.id}
-                state={media.favourite}
-                toggleFn={toggleFavourite}
-                update={(favourite) => updateMedia({ favourite })}
-              />
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box>
+                <FavouriteIconButton
+                  id={params.id}
+                  state={media.favourite}
+                  toggleFn={toggleFavourite}
+                  update={(favourite) => updateMedia({ favourite })}
+                />
+                {progress !== undefined && progress > 0 && (
+                  <ResetProgressIconButton
+                    id={params.id}
+                    resetFn={handleProgressReset}
+                  />
+                )}
+              </Box>
               <IconButton
                 sx={{ marginLeft: 'auto' }}
                 onClick={handleMenuClick}
@@ -181,7 +205,7 @@ export const Media = () => {
           setVideo={updateMedia}
           favourite={!!media.favourite}
           progress={progress}
-          hideItems={[items.favourite]}
+          hideItems={[items.favourite, items.resetProgress]}
         />
       )}
     </>
