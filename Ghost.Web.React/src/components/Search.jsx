@@ -25,7 +25,7 @@ export const Search = ({ search, setSearch }) => {
   }
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex' }}>
       <FormControl variant="standard" size="small" sx={{ mr: 1, mb: 1 }}>
         <OutlinedInput
           onKeyUp={handleKeyPress}

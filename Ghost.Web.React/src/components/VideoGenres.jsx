@@ -46,14 +46,22 @@ export const VideoGenres = ({ genres, updateGenres }) => {
 
   return (
     <>
-      <Typography variant="h5" component="h5">
-        Genres{' '}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography variant="h5" component="h5">
+          Genres
+        </Typography>
         {!editing && (
           <IconButton color="primary" onClick={() => setEditing(true)}>
             <EditIcon />
           </IconButton>
         )}
-      </Typography>
+      </Box>
       <Stack direction="column" spacing={1}>
         <Box>
           {!editing &&
