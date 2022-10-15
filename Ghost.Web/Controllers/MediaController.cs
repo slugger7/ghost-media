@@ -183,7 +183,6 @@ namespace Ghost.Api.Controllers
           [FromHeader(Name = "User-Id")] int userId,
           [FromBody] ProgressUpdateDto progress)
         {
-            Console.WriteLine($"Progress: {progress.Progress}");
             try
             {
                 await videoService.LogProgress(id, userId, progress.Progress);
