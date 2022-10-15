@@ -121,16 +121,16 @@ namespace Ghost.Repository
                     Timestamp = progress,
                     Video = video
                 };
+                existingProgress = newProgress;
 
-                video.WatchedBy.Add(newProgress);
             }
             else
             {
-                if (existingProgress.Timestamp < progress)
-                {
-                    existingProgress.Timestamp = progress;
-                }
+                existingProgress.Timestamp = progress;
             }
+
+
+            video.WatchedBy.Add(existingProgress);
 
             await context.SaveChangesAsync();
         }

@@ -18,6 +18,7 @@ import SaveIcon from '@mui/icons-material/Save'
 
 import { fetchActors } from '../services/actor.service'
 import usePromise from '../services/use-promise'
+import { EditIconButton } from './EditIconButton'
 
 export const VideoActors = ({ actors, updateActors }) => {
   const [editing, setEditing] = useState(false)
@@ -43,15 +44,18 @@ export const VideoActors = ({ actors, updateActors }) => {
   }
 
   return (
-    <>
-      <Typography variant="h5" component="h5">
-        Actors{' '}
-        {!editing && (
-          <IconButton color="primary" onClick={() => setEditing(true)}>
-            <EditIcon />
-          </IconButton>
-        )}
-      </Typography>
+    <Box sx={{ width: '100%' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h5" component="h5">
+          Actors
+        </Typography>
+        {!editing && <EditIconButton onClick={() => setEditing(true)} />}
+      </Box>
       <Stack direction="column" spacing={1}>
         <Box>
           {!editing &&
@@ -100,7 +104,7 @@ export const VideoActors = ({ actors, updateActors }) => {
           </>
         )}
       </Stack>
-    </>
+    </Box>
   )
 }
 

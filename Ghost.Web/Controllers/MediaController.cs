@@ -183,6 +183,7 @@ namespace Ghost.Api.Controllers
           [FromHeader(Name = "User-Id")] int userId,
           [FromBody] ProgressUpdateDto progress)
         {
+            Console.WriteLine($"Progress: {progress.Progress}");
             try
             {
                 await videoService.LogProgress(id, userId, progress.Progress);
@@ -190,21 +191,6 @@ namespace Ghost.Api.Controllers
             }
             catch (NullReferenceException)
             {
-                return NotFound();
-            }
-        }
-
-        [HttpPut("{id}/reset-progress")]
-        public async Task<ActionResult<VideoDto>> ResetProgress(int id, [FromHeader(Name = "User-Id")] int userId)
-        {
-            logger.LogInformation("Resetting progress on video {0} for user {1}", id, userId);
-            try
-            {
-                return await videoService.ResetProgress(id, userId);
-            }
-            catch (NullReferenceException ex)
-            {
-                logger.LogWarning("Reset progress: {0}", ex.Message);
                 return NotFound();
             }
         }

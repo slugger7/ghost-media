@@ -23,6 +23,8 @@ import { Chapters } from './Chapters.jsx'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 import usePromise from '../services/use-promise.js'
+import { ProgressIconButton } from './ProgressIconButton.jsx'
+import { MediaSection } from './MediaSection.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -61,16 +63,16 @@ export const Media = () => {
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
   const handleMenuClose = () => setMenuAnchorEl(null)
-  const handleProgressUpdate = (progress) => {
+  const handleProgressUpdate = async (progress) => {
     setProgress(progress)
-    updateProgress(params.id, progress)
+    await updateProgress(params.id, progress)
   }
 
   useEffect(() => {
     if (media?.progress !== undefined) {
       setProgress(media.progress)
     }
-  }, [media])
+  }, [media?.progress])
 
   const updateMedia = (val) => {
     setMedia(mergeDeepLeft(val))
@@ -90,34 +92,41 @@ export const Media = () => {
               : undefined
           }
           duration={media.runtime}
-          currentProgress={media.progress}
+          currentProgress={media?.progress}
           progressUpdate={handleProgressUpdate}
         />
       )}
-      <Container sx={{ paddingX: 0 }}>
-        <Paper sx={{ p: 2 }}>
-          {!loadingMedia && (
-            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+      <Container sx={{ paddingX: 0, mt: 1 }}>
+        {!loadingMedia && (
+          <MediaSection>
+            <Box>
               <FavouriteIconButton
                 id={params.id}
                 state={media.favourite}
                 toggleFn={toggleFavourite}
                 update={(favourite) => updateMedia({ favourite })}
               />
-              <IconButton
-                sx={{ marginLeft: 'auto' }}
-                onClick={handleMenuClick}
-                id={`${params.id}-video-card-menu-button`}
-                aria-controls={!!menuAnchorEl ? 'video-card-menu' : undefined}
-                aria-haspopup={true}
-                aria-expanded={!!menuAnchorEl}
-              >
-                <MoreVertIcon />
-              </IconButton>
+              <ProgressIconButton
+                update={handleProgressUpdate}
+                progress={progress || 0}
+                runtime={media?.runtime}
+              />
             </Box>
-          )}
-          {loadingMedia && <Skeleton height="50px" width="100%" />}
-          {!loadingMedia && (
+            <IconButton
+              sx={{ marginLeft: 'auto' }}
+              onClick={handleMenuClick}
+              id={`${params.id}-video-card-menu-button`}
+              aria-controls={!!menuAnchorEl ? 'video-card-menu' : undefined}
+              aria-haspopup={true}
+              aria-expanded={!!menuAnchorEl}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          </MediaSection>
+        )}
+        {loadingMedia && <Skeleton height="50px" width="100%" />}
+        {!loadingMedia && (
+          <MediaSection sx={{ justifyContent: '' }}>
             <TextEdit
               text={media.title}
               update={async (title) => {
@@ -125,9 +134,11 @@ export const Media = () => {
                 updateMedia({ title: video.title })
               }}
             />
-          )}
-          {loadingGenres && <ChipSkeleton />}
-          {!loadingGenres && (
+          </MediaSection>
+        )}
+        {loadingGenres && <ChipSkeleton />}
+        {!loadingGenres && (
+          <MediaSection>
             <VideoGenres
               genres={genres}
               updateGenres={async (genres) => {
@@ -135,9 +146,11 @@ export const Media = () => {
                 setGenres(video.genres)
               }}
             />
-          )}
-          {loadingActors && <ChipSkeleton />}
-          {!loadingActors && (
+          </MediaSection>
+        )}
+        {loadingActors && <ChipSkeleton />}
+        {!loadingActors && (
+          <MediaSection>
             <VideoActors
               actors={actors}
               updateActors={async (actors) => {
@@ -145,11 +158,15 @@ export const Media = () => {
                 setActors(video.actors)
               }}
             />
-          )}
-          {!loadingMedia && (
+          </MediaSection>
+        )}
+        {!loadingMedia && media.chapters.length > 0 && (
+          <MediaSection>
             <Chapters chapters={media.chapters} setChapter={setChapter} />
-          )}
-          {loadingMedia && (
+          </MediaSection>
+        )}
+        {loadingMedia && (
+          <MediaSection>
             <Grid container spacing={1} sx={{ py: 1 }}>
               <Grid item xs={12} sm={6} md={4} lg={3}>
                 <Skeleton height="400px" />
@@ -164,10 +181,18 @@ export const Media = () => {
                 <Skeleton height="400px" />
               </Grid>
             </Grid>
-          )}
-          {!loadingMedia && <VideoMetaData video={media} />}
-          {loadingMedia && <Skeleton height="20px" width="100%" />}
-        </Paper>
+          </MediaSection>
+        )}
+        {!loadingMedia && (
+          <MediaSection>
+            <VideoMetaData video={media} />
+          </MediaSection>
+        )}
+        {loadingMedia && (
+          <MediaSection>
+            <Skeleton height="20px" width="100%" />
+          </MediaSection>
+        )}
       </Container>
 
       {!loadingMedia && (
@@ -181,7 +206,7 @@ export const Media = () => {
           setVideo={updateMedia}
           favourite={!!media.favourite}
           progress={progress}
-          hideItems={[items.favourite]}
+          hideItems={[items.favourite, items.resetProgress]}
         />
       )}
     </>
