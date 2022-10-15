@@ -11,13 +11,13 @@ import {
   Box,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
-import EditIcon from '@mui/icons-material/Edit'
 import { prop } from 'ramda'
 import LoadingButton from '@mui/lab/LoadingButton'
 import SaveIcon from '@mui/icons-material/Save'
 
 import { fetchGenres } from '../services/genre.service'
 import usePromise from '../services/use-promise'
+import { EditIconButton } from './EditIconButton'
 
 export const VideoGenres = ({ genres, updateGenres }) => {
   const [editing, setEditing] = useState(false)
@@ -45,22 +45,17 @@ export const VideoGenres = ({ genres, updateGenres }) => {
   }
 
   return (
-    <>
+    <Box sx={{ width: '100%' }}>
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
         }}
       >
         <Typography variant="h5" component="h5">
           Genres
         </Typography>
-        {!editing && (
-          <IconButton color="primary" onClick={() => setEditing(true)}>
-            <EditIcon />
-          </IconButton>
-        )}
+        {!editing && <EditIconButton onClick={() => setEditing(true)} />}
       </Box>
       <Stack direction="column" spacing={1}>
         <Box>
@@ -114,7 +109,7 @@ export const VideoGenres = ({ genres, updateGenres }) => {
           </>
         )}
       </Stack>
-    </>
+    </Box>
   )
 }
 

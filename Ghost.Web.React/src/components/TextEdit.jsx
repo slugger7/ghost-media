@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import PropTypes from 'prop-types'
 import LoadingButton from '@mui/lab/LoadingButton'
 import SaveIcon from '@mui/icons-material/Save'
+import { EditIconButton } from './EditIconButton'
 
 export const TextEdit = ({ text, update }) => {
   const [editing, setEditing] = useState(false)
@@ -36,62 +37,56 @@ export const TextEdit = ({ text, update }) => {
   }
 
   return (
-    <>
-      <Stack direction="column">
-        {!editing && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-            }}
+    <Box sx={{ width: '100%' }}>
+      {!editing && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+          }}
+        >
+          <Typography
+            variant="h4"
+            gutterBottom
+            component="h4"
+            overflow="hidden"
+            textOverflow="ellipsis"
           >
-            <Typography
-              variant="h4"
-              gutterBottom
-              component="h4"
-              overflow="hidden"
-              textOverflow="ellipsis"
+            {localText}
+          </Typography>
+          <EditIconButton
+            onClick={() => {
+              setEditing(true)
+            }}
+          />
+        </Box>
+      )}
+      {editing && (
+        <>
+          <TextField
+            inputRef={inputRef}
+            sx={{ mb: 1, width: '100%' }}
+            id="ghost-edit-field"
+            variant="outlined"
+            value={localText}
+            onChange={(event) => setText(event.target.value)}
+          />
+          <Stack direction="row" spacing={2}>
+            <LoadingButton
+              onClick={handleSubmit}
+              variant="contained"
+              loading={submitting}
+              disabled={submitting}
+              loadingPosition="start"
+              startIcon={<SaveIcon />}
             >
-              {localText}
-            </Typography>
-            <IconButton
-              color="primary"
-              onClick={() => {
-                setEditing(true)
-              }}
-            >
-              <EditIcon />
-            </IconButton>
-          </Box>
-        )}
-        {editing && (
-          <>
-            <TextField
-              inputRef={inputRef}
-              sx={{ mb: 1 }}
-              id="ghost-edit-field"
-              variant="outlined"
-              value={localText}
-              onChange={(event) => setText(event.target.value)}
-            />
-            <Stack direction="row" spacing={2}>
-              <LoadingButton
-                onClick={handleSubmit}
-                variant="contained"
-                loading={submitting}
-                disabled={submitting}
-                loadingPosition="start"
-                startIcon={<SaveIcon />}
-              >
-                Done
-              </LoadingButton>
-              <Button onClick={handleCancel}>Cancel</Button>
-            </Stack>
-          </>
-        )}
-      </Stack>
-    </>
+              Done
+            </LoadingButton>
+            <Button onClick={handleCancel}>Cancel</Button>
+          </Stack>
+        </>
+      )}
+    </Box>
   )
 }
 
