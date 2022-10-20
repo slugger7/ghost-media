@@ -1,13 +1,13 @@
 import axios from 'axios'
 
-export const fetchVideos = async (
+export const fetchVideos = async ({
   page,
   limit,
   search,
   sortBy,
   ascending,
   watchState,
-) => {
+}) => {
   const videosResult = await axios.get(
     `media?${constructVideoParams({
       page,
