@@ -14,7 +14,15 @@ export const VideoView = ({ fetchFn }) => {
   const [sortAscending, setSortAscending] = useState(false)
   const [watchState, setWatchState] = useState(watchStates.unwatched)
   const [videosPage, error, loading] = usePromise(
-    () => fetchFn(page, limit, search, sortBy, sortAscending, watchState),
+    () =>
+      fetchFn({
+        page,
+        limit,
+        search,
+        sortBy,
+        ascending: sortAscending,
+        watchState,
+      }),
     [page, limit, search, sortBy, sortAscending, watchState],
   )
 

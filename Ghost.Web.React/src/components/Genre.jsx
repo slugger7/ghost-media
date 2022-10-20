@@ -10,7 +10,8 @@ import { VideoView } from './VideoView.jsx'
 const fetchGenre = async (name) =>
   (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
 const fetchVideos =
-  (genre) => async (page, limit, search, sortBy, ascending, watchState) => {
+  (genre) =>
+  async ({ page, limit, search, sortBy, ascending, watchState }) => {
     const videosResult = await axios.get(
       `/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({
         page,
