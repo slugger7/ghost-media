@@ -8,6 +8,7 @@ import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 import { Search } from './Search'
 import { NothingHere } from './NothingHere.jsx'
 import { WatchState } from './WatchState.jsx'
+import { Sort } from './Sort.jsx'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -22,9 +23,12 @@ export const VideoGrid = ({
   onPageChange,
   setSearch,
   search,
-  sortComponent,
   watchState,
   setWatchState,
+  sortBy,
+  setSortBy,
+  sortDirection,
+  setSortDirection,
 }) => {
   const paginationComponent = (
     <>
@@ -63,7 +67,12 @@ export const VideoGrid = ({
         }}
       />
       {paginationComponent}
-      {sortComponent}
+      <Sort
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortDirection={sortDirection}
+        setSortDirection={setSortDirection}
+      />
       <WatchState watchState={watchState} setWatchState={setWatchState} />
     </Box>
   )
@@ -122,7 +131,7 @@ VideoGrid.propTypes = {
   onPageChange: PropTypes.func.isRequired,
   search: PropTypes.string.isRequired,
   setSearch: PropTypes.func.isRequired,
-  sortComponent: PropTypes.node,
   watchState: PropTypes.object.isRequired,
   setWatchState: PropTypes.func.isRequired,
+  ...Sort.propTypes,
 }
