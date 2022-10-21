@@ -76,7 +76,7 @@ namespace Ghost.Repository
             return videos.FirstOrDefault(v => v.Id == id);
         }
 
-        public PageResult<Video> GetForGenre(int userId, string watchState, string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+        public PageResult<Video> GetForGenre(int userId, string watchState, string[]? genresFilter, string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
         {
             var genre = genreRepository.GetByName(name);
 
@@ -85,6 +85,7 @@ namespace Ghost.Repository
                 .Select(vg => vg.Video)
                 .Where(videoSearch(search))
                 .FilterWatchedState(watchState, userId)
+                .FilterGenres(genresFilter)
                 .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>

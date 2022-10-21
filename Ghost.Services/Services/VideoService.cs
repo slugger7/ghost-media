@@ -132,6 +132,7 @@ namespace Ghost.Services
             var videosPage = videoRepository.GetForGenre(
               userId,
               filters.WatchState,
+              filters.Genres,
               name,
               pageRequest.Page,
               pageRequest.Limit,

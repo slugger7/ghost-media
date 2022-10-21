@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { mergeDeepLeft } from 'ramda'
 import { constructVideoParams } from '../services/video.service.js'
@@ -11,7 +11,7 @@ const fetchGenre = async (name) =>
   (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
 const fetchVideos =
   (genre) =>
-  async ({ page, limit, search, sortBy, ascending, watchState }) => {
+  async ({ page, limit, search, sortBy, ascending, watchState, genres }) => {
     const videosResult = await axios.get(
       `/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({
         page,
@@ -20,6 +20,7 @@ const fetchVideos =
         sortBy,
         ascending,
         watchState,
+        genres,
       })}`,
     )
 
