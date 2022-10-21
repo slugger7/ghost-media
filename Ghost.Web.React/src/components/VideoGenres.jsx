@@ -5,7 +5,6 @@ import {
   Chip,
   Typography,
   Button,
-  IconButton,
   Autocomplete,
   TextField,
   Box,
@@ -21,7 +20,7 @@ import { EditIconButton } from './EditIconButton'
 
 export const VideoGenres = ({ genres, updateGenres }) => {
   const [editing, setEditing] = useState(false)
-  const [allGenres, loadingGenres] = usePromise(() => fetchGenres())
+  const [allGenres, , loadingGenres] = usePromise(() => fetchGenres())
   const [selectedGenres, setSelectedGenres] = useState([
     ...genres.map(prop('name')),
   ])

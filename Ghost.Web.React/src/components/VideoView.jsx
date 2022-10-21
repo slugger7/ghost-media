@@ -1,31 +1,64 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Box, Grid, Pagination } from '@mui/material'
 import { remove } from 'ramda'
+
+import usePromise from '../services/use-promise'
+
+import watchStates from '../constants/watch-states'
 
 import { VideoCard } from './VideoCard.jsx'
 import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 import { Search } from './Search'
 import { NothingHere } from './NothingHere.jsx'
 import { WatchState } from './WatchState.jsx'
+import { Sort } from './Sort.jsx'
+import { GenreFilter } from './GenreFilter.jsx'
 
 const removeVideo =
   ({ index, setVideos }) =>
   () =>
     setVideos(remove(index, 1))
 
-export const VideoGrid = ({
-  videos = [],
-  loading,
-  page,
-  count,
-  onPageChange,
-  setSearch,
-  search,
-  sortComponent,
-  watchState,
-  setWatchState,
-}) => {
+export const VideoView = ({ fetchFn }) => {
+  const [page, setPage] = useState(1)
+  const [limit] = useState(48)
+  const [search, setSearch] = useState('')
+  const [total, setTotal] = useState(0)
+  const [sortBy, setSortBy] = useState('date-added')
+  const [sortAscending, setSortAscending] = useState(false)
+  const [watchState, setWatchState] = useState(watchStates.unwatched)
+  const [selectedGenres, setSelectedGenres] = useState([])
+  const [count, setCount] = useState(0)
+  const [videos, setVideos] = useState([])
+  const [videosPage, error, loading] = usePromise(
+    () =>
+      fetchFn({
+        page,
+        limit,
+        search,
+        sortBy,
+        ascending: sortAscending,
+        watchState,
+        genres: selectedGenres,
+      }),
+    [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
+  )
+
+  useEffect(() => {
+    if (!loading && !error) {
+      setTotal(videosPage.total)
+    }
+  }, [videosPage, error, loading])
+
+  useEffect(() => {
+    setVideos(videosPage?.content || [])
+  }, [videosPage])
+
+  useEffect(() => {
+    setCount(Math.ceil(total / limit) || 1)
+  }, [total, limit])
+
   const paginationComponent = (
     <>
       {count > 1 && page && (
@@ -38,7 +71,7 @@ export const VideoGrid = ({
             count={count}
             showFirstButton
             showLastButton
-            onChange={onPageChange}
+            onChange={(e, newPage) => setPage(newPage)}
           />
         </Box>
       )}
@@ -63,7 +96,16 @@ export const VideoGrid = ({
         }}
       />
       {paginationComponent}
-      {sortComponent}
+      <Sort
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortDirection={sortAscending}
+        setSortDirection={setSortAscending}
+      />
+      <GenreFilter
+        setSelectedGenres={setSelectedGenres}
+        selectedGenres={selectedGenres}
+      />
       <WatchState watchState={watchState} setWatchState={setWatchState} />
     </Box>
   )
@@ -114,15 +156,6 @@ export const VideoGrid = ({
   )
 }
 
-VideoGrid.propTypes = {
-  videos: PropTypes.array,
-  loading: PropTypes.bool.isRequired,
-  page: PropTypes.number,
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  search: PropTypes.string.isRequired,
-  setSearch: PropTypes.func.isRequired,
-  sortComponent: PropTypes.node,
-  watchState: PropTypes.object.isRequired,
-  setWatchState: PropTypes.func.isRequired,
+VideoView.propTypes = {
+  fetchFn: PropTypes.func.isRequired,
 }

@@ -48,6 +48,7 @@ namespace Ghost.Services
             var videosPage = videoRepository.SearchVideos(
               userId,
               filterQuery.WatchState,
+              filterQuery.Genres,
               pageRequest.Page,
               pageRequest.Limit,
               pageRequest.Search,
@@ -131,6 +132,7 @@ namespace Ghost.Services
             var videosPage = videoRepository.GetForGenre(
               userId,
               filters.WatchState,
+              filters.Genres,
               name,
               pageRequest.Page,
               pageRequest.Limit,
@@ -163,6 +165,7 @@ namespace Ghost.Services
             var videosPage = videoRepository.GetForActor(
               userId,
               filters.WatchState,
+              filters.Genres,
               actorId,
               pageRequest.Page,
               pageRequest.Limit,
@@ -341,6 +344,7 @@ namespace Ghost.Services
             var videoPage = userRepository.Favourites(
               userId,
               filters.WatchState,
+              filters.Genres,
               pageRequest.Page,
               pageRequest.Limit,
               pageRequest.Search,

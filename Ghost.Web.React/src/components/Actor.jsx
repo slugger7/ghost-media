@@ -1,39 +1,32 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
-import { VideoGrid } from './VideoGrid.jsx'
-import { Sort } from './Sort.jsx'
 import { constructVideoParams } from '../services/video.service.js'
 import { TextEdit } from './TextEdit.jsx'
 import { mergeDeepLeft } from 'ramda'
 import { Stack } from '@mui/material'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 import usePromise from '../services/use-promise.js'
-import watchStates from '../constants/watch-states.js'
+import { VideoView } from './VideoView.jsx'
 
 const fetchActor = async (name) =>
   (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
-const fetchVideos = async (
-  id,
-  page,
-  limit,
-  search,
-  sortBy,
-  ascending,
-  watchState,
-) => {
-  const videosResult = await axios.get(
-    `/media/actor/${encodeURIComponent(id)}?${constructVideoParams({
-      page,
-      limit,
-      search,
-      sortBy,
-      ascending,
-      watchState,
-    })}`,
-  )
-  return videosResult.data
-}
+const fetchVideos =
+  (id) =>
+  async ({ page, limit, search, sortBy, ascending, watchState, genres }) => {
+    const videosResult = await axios.get(
+      `/media/actor/${encodeURIComponent(id)}?${constructVideoParams({
+        page,
+        limit,
+        search,
+        sortBy,
+        ascending,
+        watchState,
+        genres,
+      })}`,
+    )
+    return videosResult.data
+  }
 const updateActorName = async (id, name) =>
   (await axios.put(`/actor/${id}`, { name })).data
 
@@ -43,32 +36,6 @@ export const Actor = () => {
     () => fetchActor(params.name),
     [params.name],
   )
-  const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(48)
-  const [search, setSearch] = useState('')
-  const [total, setTotal] = useState(0)
-  const [sortAscending, setSortAscending] = useState(false)
-  const [sortBy, setSortBy] = useState('date-added')
-  const [watchState, setWatchState] = useState(watchStates.all)
-  const [videosPage, fetchVideoError, loadingVideos] = usePromise(
-    () =>
-      fetchVideos(
-        params.id,
-        page,
-        limit,
-        search,
-        sortBy,
-        sortAscending,
-        watchState,
-      ),
-    [params.id, page, limit, search, sortBy, sortAscending, watchState],
-  )
-
-  useEffect(() => {
-    if (!loadingVideos && !fetchVideoError) {
-      setTotal(videosPage.total)
-    }
-  }, [videosPage])
 
   const handleToggleFavourite = async () =>
     (
@@ -84,15 +51,6 @@ export const Actor = () => {
     updateActor({ name: newActor.name })
   }
 
-  const sortComponent = (
-    <Sort
-      sortBy={sortBy}
-      setSortBy={setSortBy}
-      sortDirection={sortAscending}
-      setSortDirection={setSortAscending}
-    />
-  )
-
   return (
     <>
       {!loadingActor && actorsPage && (
@@ -106,18 +64,7 @@ export const Actor = () => {
           <TextEdit text={actorsPage.name} update={handleUpdateActorName} />
         </Stack>
       )}
-      <VideoGrid
-        videos={videosPage?.content}
-        loading={loadingVideos}
-        onPageChange={(e, newPage) => setPage(newPage)}
-        page={page}
-        count={Math.ceil(total / limit) || 1}
-        search={search}
-        setSearch={setSearch}
-        sortComponent={sortComponent}
-        watchState={watchState}
-        setWatchState={setWatchState}
-      />
+      <VideoView fetchFn={fetchVideos(params.id)} />
     </>
   )
 }

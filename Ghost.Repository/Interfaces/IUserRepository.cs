@@ -11,6 +11,6 @@ namespace Ghost.Repository
         Task<bool> ToggleFavouriteVideo(int id, int videoId);
         Task<bool> ToggleFavouriteActor(int id, int actorId);
         Task LogProgress(int id, int userId, double progress);
-        PageResult<Video> Favourites(int userId, string watchState, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
+        PageResult<Video> Favourites(int userId, string watchState, string[]? genresFilter, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
     }
 }
