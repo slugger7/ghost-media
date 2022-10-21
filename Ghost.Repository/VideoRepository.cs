@@ -138,7 +138,7 @@ namespace Ghost.Repository
             if (video == null) throw new NullReferenceException("Video was null");
             return video;
         }
-        public PageResult<Video> SearchVideos(int userId, string watchState, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+        public PageResult<Video> SearchVideos(int userId, string watchState, string[]? genres, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
         {
             var videos = context.Videos
               .Include("VideoImages.Image")
@@ -146,8 +146,10 @@ namespace Ghost.Repository
               .Include("VideoActors.Actor")
               .Include("VideoActors.Actor.FavouritedBy.User")
               .Include("WatchedBy.User")
+              .Include("VideoGenres.Genre")
               .Where(videoSearch(search))
               .FilterWatchedState(watchState, userId)
+              .FilterGenres(genres)
               .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>
