@@ -164,6 +164,7 @@ namespace Ghost.Services
             var videosPage = videoRepository.GetForActor(
               userId,
               filters.WatchState,
+              filters.Genres,
               actorId,
               pageRequest.Page,
               pageRequest.Limit,

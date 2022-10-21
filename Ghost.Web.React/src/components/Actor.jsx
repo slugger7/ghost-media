@@ -13,7 +13,7 @@ const fetchActor = async (name) =>
   (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
 const fetchVideos =
   (id) =>
-  async ({ page, limit, search, sortBy, ascending, watchState }) => {
+  async ({ page, limit, search, sortBy, ascending, watchState, genres }) => {
     const videosResult = await axios.get(
       `/media/actor/${encodeURIComponent(id)}?${constructVideoParams({
         page,
@@ -22,6 +22,7 @@ const fetchVideos =
         sortBy,
         ascending,
         watchState,
+        genres,
       })}`,
     )
     return videosResult.data
