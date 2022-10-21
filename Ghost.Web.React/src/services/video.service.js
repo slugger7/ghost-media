@@ -7,6 +7,7 @@ export const fetchVideos = async ({
   sortBy,
   ascending,
   watchState,
+  genres,
 }) => {
   const videosResult = await axios.get(
     `media?${constructVideoParams({
@@ -16,6 +17,7 @@ export const fetchVideos = async ({
       sortBy,
       ascending,
       watchState,
+      genres,
     })}`,
   )
 
@@ -29,6 +31,7 @@ export const constructVideoParams = ({
   sortBy,
   ascending,
   watchState,
+  genres,
 }) => {
   const params = []
   if (page) {
@@ -48,6 +51,11 @@ export const constructVideoParams = ({
   }
   if (watchState !== undefined && watchState !== null) {
     params.push(`watchState=${watchState.value}`)
+  }
+  if (genres !== undefined && genres !== null && genres.length > 0) {
+    params.push(
+      genres.map((genre) => `genres=${encodeURIComponent(genre)}`).join('&'),
+    )
   }
   return params.join('&')
 }

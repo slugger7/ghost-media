@@ -22,7 +22,7 @@ const removeVideo =
 
 export const VideoView = ({ fetchFn }) => {
   const [page, setPage] = useState(1)
-  const [limit] = useState(2)
+  const [limit] = useState(48)
   const [search, setSearch] = useState('')
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useState('date-added')
@@ -40,8 +40,9 @@ export const VideoView = ({ fetchFn }) => {
         sortBy,
         ascending: sortAscending,
         watchState,
+        genres: selectedGenres,
       }),
-    [page, limit, search, sortBy, sortAscending, watchState],
+    [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
   )
 
   useEffect(() => {
