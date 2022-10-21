@@ -137,13 +137,19 @@ namespace Ghost.Repository
 
         public PageResult<Video> Favourites(int userId, string watchState, string[]? genresFilter, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
         {
-            var user = this.FindById(userId, new List<string>
+            var userIncludes = new List<string>
             {
                 "FavouriteVideos.Video.VideoImages.Image",
                 "FavouriteVideos.Video.VideoActors.Actor.FavouritedBy.User",
-                "FavouriteVideos.Video.WatchedBy.User",
-                "FavouriteVideos.Video.VideoGenres.Genre"
-            });
+                "FavouriteVideos.Video.WatchedBy.User"
+            };
+
+            if (genresFilter != null)
+            {
+                userIncludes.Add("FavouriteVideos.Video.VideoGenres.Genre");
+            }
+
+            var user = this.FindById(userId, userIncludes);
 
             if (user == null) throw new NullReferenceException("User not found");
             var videos = user.FavouriteVideos

@@ -18,15 +18,31 @@ namespace Ghost.Repository
 
         public Genre? GetByName(string name)
         {
-            return context.Genres
-              .Include("VideoGenres.Video")
-              .Include("VideoGenres.Video.VideoImages.Image")
-              .Include("VideoGenres.Video.FavouritedBy.User")
-              .Include("VideoGenres.Video.VideoActors.Actor")
-              .Include("VideoGenres.Video.VideoGenres.Genre")
-              .Include("VideoGenres.Video.WatchedBy.User")
-              .Include("VideoGenres.Video.VideoActors.Actor.FavouritedBy.User")
-              .FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
+            return this.GetByName(name, new List<string> {
+              "VideoGenres.Video",
+              "VideoGenres.Video.VideoImages.Image",
+              "VideoGenres.Video.FavouritedBy.User",
+              "VideoGenres.Video.VideoActors.Actor",
+              "VideoGenres.Video.WatchedBy.User",
+              "VideoGenres.Video.VideoActors.Actor.FavouritedBy.User"
+              });
+        }
+
+        public Genre? GetByName(string name, List<string>? includes)
+        {
+            var genres = context.Genres;
+            if (includes != null && includes.Count() > 0)
+            {
+                var genresQueryable = genres.Include(includes.ElementAt(0));
+                for (int i = 1; i < includes.Count(); i++)
+                {
+                    genresQueryable = genresQueryable.Include(includes.ElementAt(i));
+                }
+                return genresQueryable
+                  .FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
+            }
+
+            return genres.FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
         }
 
         public IEnumerable<Genre> GetGenres()

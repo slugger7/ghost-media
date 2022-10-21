@@ -15,15 +15,14 @@ namespace Ghost.Repository
         public Actor? FindById(int id)
         {
             return this.FindById(id, new List<string>
-      {
-        "VideoActors.Video",
-        "VideoActors.Video.VideoImages.Image",
-        "VideoActors.Video.FavouritedBy.User",
-        "VideoActors.Video.VideoActors.Actor.FavouritedBy.User",
-        "VideoActors.Video.VideoGenres.Genre",
-        "VideoActors.Video.WatchedBy.User",
-        "FavouritedBy.User"
-      });
+            {
+                "VideoActors.Video",
+                "VideoActors.Video.VideoImages.Image",
+                "VideoActors.Video.FavouritedBy.User",
+                "VideoActors.Video.VideoActors.Actor.FavouritedBy.User",
+                "VideoActors.Video.WatchedBy.User",
+                "FavouritedBy.User"
+            });
         }
 
         public Actor? FindById(int id, List<string>? includes)
