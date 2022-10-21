@@ -11,13 +11,16 @@ export const GenreFilter = ({ setSelectedGenres }) => {
 
   return (
     <Autocomplete
+      sx={{ mb: 1 }}
       multiple
+      size="small"
       onChange={(e, newGenres) => setSelectedGenres(newGenres)}
       options={allGenres?.map(prop('name')) || []}
       loading={loadingAllGenres}
       renderInput={(params) => (
         <TextField
-          sx={{ mr: 1 }}
+          size="small"
+          sx={{ mr: 6 }}
           placeholder="Genres"
           id="genre-filter-text-box"
           inputRef={autocompleteRef}
