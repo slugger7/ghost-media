@@ -135,13 +135,14 @@ namespace Ghost.Repository
             await context.SaveChangesAsync();
         }
 
-        public PageResult<Video> Favourites(int userId, string watchState, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+        public PageResult<Video> Favourites(int userId, string watchState, string[]? genresFilter, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
         {
             var user = this.FindById(userId, new List<string>
             {
                 "FavouriteVideos.Video.VideoImages.Image",
                 "FavouriteVideos.Video.VideoActors.Actor.FavouritedBy.User",
-                "FavouriteVideos.Video.WatchedBy.User"
+                "FavouriteVideos.Video.WatchedBy.User",
+                "FavouriteVideos.Video.VideoGenres.Genre"
             });
 
             if (user == null) throw new NullReferenceException("User not found");
@@ -149,6 +150,7 @@ namespace Ghost.Repository
                 .Select(fv => fv.Video)
                 .Where(VideoRepository.videoSearch(search))
                 .FilterWatchedState(watchState, userId)
+                .FilterGenres(genresFilter)
                 .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>

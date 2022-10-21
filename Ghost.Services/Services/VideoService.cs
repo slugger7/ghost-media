@@ -343,6 +343,7 @@ namespace Ghost.Services
             var videoPage = userRepository.Favourites(
               userId,
               filters.WatchState,
+              filters.Genres,
               pageRequest.Page,
               pageRequest.Limit,
               pageRequest.Search,

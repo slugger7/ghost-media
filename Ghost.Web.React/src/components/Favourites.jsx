@@ -10,6 +10,7 @@ const fetchFavouriteVideos = async ({
   sortBy,
   ascending,
   watchState,
+  genres,
 }) =>
   (
     await await axios.get(
@@ -20,6 +21,7 @@ const fetchFavouriteVideos = async ({
         sortBy,
         ascending,
         watchState,
+        genres,
       })}`,
     )
   ).data
