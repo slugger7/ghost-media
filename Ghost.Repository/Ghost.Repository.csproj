@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ghost.Data\Ghost.Data.csproj" />
+    <ProjectReference Include="..\Ghost.Dtos\Ghost.Dtos.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

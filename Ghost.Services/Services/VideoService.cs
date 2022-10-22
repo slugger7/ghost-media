@@ -325,7 +325,7 @@ namespace Ghost.Services
             return new VideoDto(video);
         }
 
-        public async Task LogProgress(int id, int userId, double progress)
+        public async Task LogProgress(int id, int userId, ProgressUpdateDto progress)
         {
             await userRepository.LogProgress(id, userId, progress);
         }
