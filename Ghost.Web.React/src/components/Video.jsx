@@ -56,7 +56,6 @@ export const Video = ({
       videoRef.current.currentTime = fn(videoRef.current.currentTime)
     } else {
       if (loseFocus && event.code === 'Escape') {
-        console.log('Video losing focus')
         loseFocus()
       }
     }
