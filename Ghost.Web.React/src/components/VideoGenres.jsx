@@ -18,7 +18,7 @@ import { fetchGenres } from '../services/genre.service'
 import usePromise from '../services/use-promise'
 import { EditIconButton } from './EditIconButton'
 
-export const VideoGenres = ({ genres, updateGenres }) => {
+export const VideoGenres = ({ genres, updateGenres, loseFocus }) => {
   const [editing, setEditing] = useState(false)
   const [allGenres, , loadingGenres] = usePromise(() => fetchGenres())
   const [selectedGenres, setSelectedGenres] = useState([
@@ -36,11 +36,18 @@ export const VideoGenres = ({ genres, updateGenres }) => {
   const handleCancel = () => {
     setEditing(false)
   }
+
   const handleSubmit = async () => {
     setSubmitting(true)
     await updateGenres({ genres: selectedGenres })
     setSubmitting(false)
     setEditing(false)
+  }
+
+  const handleKeyUp = (event) => {
+    if (loseFocus && event.code === 'Escape') {
+      loseFocus(() => autocompleteRef.current.focus())
+    }
   }
 
   return (
@@ -86,7 +93,7 @@ export const VideoGenres = ({ genres, updateGenres }) => {
               loading={loadingGenres}
               renderInput={(params) => (
                 <TextField
-                  id="genre-text-box"
+                  onKeyUp={handleKeyUp}
                   inputRef={autocompleteRef}
                   {...params}
                 />
@@ -120,4 +127,5 @@ VideoGenres.propTypes = {
     }),
   ).isRequired,
   updateGenres: PropTypes.func.isRequired,
+  loseFocus: PropTypes.func,
 }

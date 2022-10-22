@@ -5,13 +5,11 @@ import {
   Chip,
   Typography,
   Button,
-  IconButton,
   Autocomplete,
   TextField,
   Box,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
-import EditIcon from '@mui/icons-material/Edit'
 import { prop } from 'ramda'
 import LoadingButton from '@mui/lab/LoadingButton'
 import SaveIcon from '@mui/icons-material/Save'
@@ -20,7 +18,7 @@ import { fetchActors } from '../services/actor.service'
 import usePromise from '../services/use-promise'
 import { EditIconButton } from './EditIconButton'
 
-export const VideoActors = ({ actors, updateActors }) => {
+export const VideoActors = ({ actors, updateActors, loseFocus }) => {
   const [editing, setEditing] = useState(false)
   const [allActors, loadingActors] = usePromise(() => fetchActors())
   const [selectedActors, setSelectedActors] = useState([...actors])
@@ -36,11 +34,18 @@ export const VideoActors = ({ actors, updateActors }) => {
   const handleCancel = () => {
     setEditing(false)
   }
+
   const handleSubmit = async () => {
     setSubmitting(true)
     updateActors({ actors: selectedActors })
     setSubmitting(false)
     setEditing(false)
+  }
+
+  const handleKeyUp = (event) => {
+    if (loseFocus && event.code === 'Escape') {
+      loseFocus(() => autocompleteRef.current.focus())
+    }
   }
 
   return (
@@ -85,7 +90,11 @@ export const VideoActors = ({ actors, updateActors }) => {
               defaultValue={actors.map(prop('name'))}
               loading={loadingActors}
               renderInput={(params) => (
-                <TextField inputRef={autocompleteRef} {...params} />
+                <TextField
+                  inputRef={autocompleteRef}
+                  {...params}
+                  onKeyUp={handleKeyUp}
+                />
               )}
             />
             <Stack direction="row" spacing={2}>
@@ -111,9 +120,10 @@ export const VideoActors = ({ actors, updateActors }) => {
 VideoActors.propTypes = {
   actors: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }),
   ).isRequired,
   updateActors: PropTypes.func.isRequired,
+  loseFocus: PropTypes.func,
 }

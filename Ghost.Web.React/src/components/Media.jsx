@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { Container, Grid, IconButton, Skeleton, Box } from '@mui/material'
@@ -40,6 +40,7 @@ const updateProgress = async (id, progress, reduceProgress = false) => {
 export const Media = () => {
   const params = useParams()
   const navigate = useNavigate()
+  const videoRef = useRef()
   const [media, , loadingMedia, setMedia] = usePromise(
     () => fetchMedia(params.id),
     [params.id],
@@ -56,6 +57,7 @@ export const Media = () => {
   const [chapter, setChapter] = useState()
   const videoSource = generateVideoUrl(params.id)
   const [progress, setProgress] = useState()
+  const [refocusFn, setRefocusFn] = useState(() => {})
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
   const handleMenuClose = () => setMenuAnchorEl(null)
@@ -79,6 +81,11 @@ export const Media = () => {
     setMedia(mergeDeepLeft(val))
   }
 
+  const focusVideo = (fn) => {
+    videoRef?.current?.focus()
+    setRefocusFn(() => fn)
+  }
+
   return (
     <>
       {loadingMedia && <Skeleton height="200px" width="100%" />}
@@ -95,6 +102,8 @@ export const Media = () => {
           duration={media.runtime}
           currentProgress={media?.progress}
           progressUpdate={handleProgressUpdate}
+          videoRef={videoRef}
+          loseFocus={refocusFn}
         />
       )}
       <Container sx={{ paddingX: 0, mt: 1 }}>
@@ -127,8 +136,9 @@ export const Media = () => {
         )}
         {loadingMedia && <Skeleton height="50px" width="100%" />}
         {!loadingMedia && (
-          <MediaSection sx={{ justifyContent: '' }}>
+          <MediaSection>
             <TextEdit
+              loseFocus={focusVideo}
               text={media.title}
               update={async (title) => {
                 const video = await updateTitle(params.id, title)
@@ -141,6 +151,7 @@ export const Media = () => {
         {!loadingGenres && (
           <MediaSection>
             <VideoGenres
+              loseFocus={focusVideo}
               genres={genres}
               updateGenres={async (genres) => {
                 const video = await updateGenres(params.id, genres)
@@ -153,6 +164,7 @@ export const Media = () => {
         {!loadingActors && (
           <MediaSection>
             <VideoActors
+              loseFocus={focusVideo}
               actors={actors}
               updateActors={async (actors) => {
                 const video = await updateActors(params.id, actors)

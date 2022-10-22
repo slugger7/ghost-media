@@ -5,74 +5,84 @@ import axios from 'axios'
 import { VideoProgress } from './VideoProgress'
 
 const keyFunctions = {
-  "KeyL": (currentTime) => currentTime + 30,
-  "KeyJ": (currentTime) => currentTime - 10
+  KeyL: (currentTime) => currentTime + 30,
+  KeyJ: (currentTime) => currentTime - 10,
 }
 
-export const Video = ({ 
+export const Video = ({
   source,
   type,
-  poster, 
-  chapter, 
-  duration, 
-  currentProgress, 
-  progressUpdate 
+  poster,
+  chapter,
+  duration,
+  currentProgress,
+  progressUpdate,
+  videoRef,
+  loseFocus,
 }) => {
-  const videoRef = useRef()
-  const [currentTime, setCurrentTime] = useState();
+  const [currentTime, setCurrentTime] = useState()
 
   useEffect(() => {
     videoRef.current?.load()
     videoRef.current?.focus()
     if (videoRef) {
       videoRef.current.ontimeupdate = () => {
-        setCurrentTime(videoRef.current.currentTime);
+        setCurrentTime(videoRef.current.currentTime)
       }
     }
   }, [source])
 
   useEffect(() => {
     if (currentProgress !== undefined) {
-      videoRef.current.currentTime = currentProgress;
+      videoRef.current.currentTime = currentProgress
       setCurrentTime(currentProgress)
     }
   }, [currentProgress])
 
   useEffect(() => {
     if (chapter) {
-      videoRef.current.currentTime = chapter.timestamp / 1000;
-      videoRef.current.play();
+      videoRef.current.currentTime = chapter.timestamp / 1000
+      videoRef.current.play()
     }
   }, [chapter])
 
   useEffect(() => {
     progressUpdate(currentTime)
-  }, [currentTime]);
+  }, [currentTime])
 
   const handleKeystroke = (event) => {
-    const fn = keyFunctions[event.code];
+    const fn = keyFunctions[event.code]
     if (fn) {
-      videoRef.current.currentTime = fn(videoRef.current.currentTime);
+      videoRef.current.currentTime = fn(videoRef.current.currentTime)
+    } else {
+      if (loseFocus && event.code === 'Escape') {
+        console.log('Video losing focus')
+        loseFocus()
+      }
     }
   }
 
-  return (<Box>
-    <video
-      onKeyUp={handleKeystroke}
-      className="ghost-video"
-      autoPlay={!!chapter}
-      controls={true}
-      ref={videoRef}
-      poster={chapter
-        ? `${axios.defaults.baseURL}/image/${chapter.image.id}/${chapter.image.name}`
-        : poster}
-      playsInline={false}
-      src={source}
-      type={type}
-      onPlay={() => videoRef.current.focus()}>
-    </video >
-    <VideoProgress duration={duration} current={currentTime} />
-  </Box>)
+  return (
+    <Box>
+      <video
+        onKeyUp={handleKeystroke}
+        className="ghost-video"
+        autoPlay={!!chapter}
+        controls={true}
+        ref={videoRef}
+        poster={
+          chapter
+            ? `${axios.defaults.baseURL}/image/${chapter.image.id}/${chapter.image.name}`
+            : poster
+        }
+        playsInline={false}
+        src={source}
+        type={type}
+        onPlay={() => videoRef.current.focus()}
+      ></video>
+      <VideoProgress duration={duration} current={currentTime} />
+    </Box>
+  )
 }
 
 Video.propTypes = {
@@ -83,10 +93,12 @@ Video.propTypes = {
     timestamp: PropTypes.number.isRequired,
     image: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired
-    }).isRequired
+      name: PropTypes.string.isRequired,
+    }).isRequired,
   }),
   duration: PropTypes.number.isRequired,
   progressUpdate: PropTypes.func.isRequired,
-  currentProgress: PropTypes.number
+  currentProgress: PropTypes.number,
+  videoRef: PropTypes.object.isRequired,
+  loseFocus: PropTypes.func,
 }
