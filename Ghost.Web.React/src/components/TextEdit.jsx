@@ -13,7 +13,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import SaveIcon from '@mui/icons-material/Save'
 import { EditIconButton } from './EditIconButton'
 
-export const TextEdit = ({ text, update }) => {
+export const TextEdit = ({ text, update, loseFocus }) => {
   const [editing, setEditing] = useState(false)
   const [localText, setText] = useState(text)
   const [submitting, setSubmitting] = useState(false)
@@ -31,9 +31,16 @@ export const TextEdit = ({ text, update }) => {
     setSubmitting(false)
     setEditing(false)
   }
+
   const handleCancel = () => {
     setEditing(false)
     setText(text)
+  }
+
+  const handleKeyUp = (event) => {
+    if (loseFocus && event.code === 'Escape') {
+      loseFocus(() => inputRef.current.focus())
+    }
   }
 
   return (
@@ -64,6 +71,7 @@ export const TextEdit = ({ text, update }) => {
       {editing && (
         <>
           <TextField
+            onKeyUp={handleKeyUp}
             inputRef={inputRef}
             sx={{ mb: 1, width: '100%' }}
             id="ghost-edit-field"
@@ -93,4 +101,5 @@ export const TextEdit = ({ text, update }) => {
 TextEdit.propTypes = {
   text: PropTypes.string.isRequired,
   update: PropTypes.func.isRequired,
+  loseFocus: PropTypes.func,
 }
