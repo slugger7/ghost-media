@@ -15,6 +15,7 @@ import { NothingHere } from './NothingHere.jsx'
 import { WatchState } from './WatchState.jsx'
 import { Sort } from './Sort.jsx'
 import { GenreFilter } from './GenreFilter.jsx'
+import { LimitPicker } from './LimitPicker'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -23,7 +24,7 @@ const removeVideo =
 
 export const VideoView = ({ fetchFn }) => {
   const [page, setPage] = useLocalState('page', 1)
-  const [limit] = useLocalState('limit', 48)
+  const [limit, setLimit] = useLocalState('limit', 48)
   const [search, setSearch] = useLocalState('search', '')
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useLocalState('sortBy', 'date-added')
@@ -33,7 +34,7 @@ export const VideoView = ({ fetchFn }) => {
   )
   const [watchState, setWatchState] = useLocalState(
     'watchState',
-    watchStates.unwatched,
+    watchStates.unwatched.value,
   )
   const [selectedGenres, setSelectedGenres] = useLocalState(
     'selectedGenres',
@@ -106,6 +107,7 @@ export const VideoView = ({ fetchFn }) => {
         }}
       />
       {paginationComponent}
+      <LimitPicker limit={limit} setLimit={setLimit} />
       <Sort
         sortBy={sortBy}
         setSortBy={setSortBy}
