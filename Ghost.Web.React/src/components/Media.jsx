@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
-import {
-  Container,
-  Grid,
-  IconButton,
-  Paper,
-  Skeleton,
-  Box,
-} from '@mui/material'
+import { Container, Grid, IconButton, Skeleton, Box } from '@mui/material'
 import { mergeDeepLeft } from 'ramda'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
@@ -35,9 +28,12 @@ const updateActors = async (id, actors) =>
   (await axios.put(`/media/${id}/actors`, actors)).data
 const updateTitle = async (id, title) =>
   (await axios.put(`/media/${id}/title`, { title })).data
-const updateProgress = async (id, progress) => {
+const updateProgress = async (id, progress, reduceProgress = false) => {
   if (progress !== null && !isNaN(progress)) {
-    await axios.put(`/media/${id}/progress`, { progress })
+    await axios.put(`/media/${id}/progress`, {
+      progress,
+      reduceProgress,
+    })
   }
 }
 
@@ -66,6 +62,11 @@ export const Media = () => {
   const handleProgressUpdate = async (progress) => {
     setProgress(progress)
     await updateProgress(params.id, progress)
+  }
+
+  const handleProgressStatusUpdate = async (progress) => {
+    setProgress(progress)
+    await updateProgress(params.id, progress, true)
   }
 
   useEffect(() => {
@@ -107,7 +108,7 @@ export const Media = () => {
                 update={(favourite) => updateMedia({ favourite })}
               />
               <ProgressIconButton
-                update={handleProgressUpdate}
+                update={handleProgressStatusUpdate}
                 progress={progress || 0}
                 runtime={media?.runtime}
               />

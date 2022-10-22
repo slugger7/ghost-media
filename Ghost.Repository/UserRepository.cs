@@ -1,4 +1,5 @@
 using Ghost.Data;
+using Ghost.Dtos;
 using Ghost.Exceptions;
 using Ghost.Repository.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -104,7 +105,7 @@ namespace Ghost.Repository
             }
         }
 
-        public async Task LogProgress(int id, int userId, double progress)
+        public async Task LogProgress(int id, int userId, ProgressUpdateDto progress)
         {
             var video = videoRepository.FindById(id, new List<string> { "WatchedBy.User" });
             if (video == null) throw new NullReferenceException("Video not found");
@@ -118,7 +119,7 @@ namespace Ghost.Repository
                 var newProgress = new Progress
                 {
                     User = user,
-                    Timestamp = progress,
+                    Timestamp = progress.Progress,
                     Video = video
                 };
                 existingProgress = newProgress;
@@ -126,7 +127,17 @@ namespace Ghost.Repository
             }
             else
             {
-                existingProgress.Timestamp = progress;
+                if (progress.ReduceProgress)
+                {
+                    existingProgress.Timestamp = progress.Progress;
+                }
+                else
+                {
+                    existingProgress.Timestamp = progress.Progress > existingProgress.Timestamp
+                        ? progress.Progress
+                        : existingProgress.Timestamp;
+                }
+
             }
 
 

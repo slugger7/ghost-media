@@ -185,7 +185,7 @@ namespace Ghost.Api.Controllers
         {
             try
             {
-                await videoService.LogProgress(id, userId, progress.Progress);
+                await videoService.LogProgress(id, userId, progress);
                 return Ok();
             }
             catch (NullReferenceException)
