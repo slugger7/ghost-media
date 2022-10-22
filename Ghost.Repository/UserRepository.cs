@@ -172,7 +172,7 @@ namespace Ghost.Repository
 
             return new PageResult<Video>
             {
-                Total = user.FavouriteVideos.Count(),
+                Total = videos.Count(),
                 Page = page,
                 Content = videos
                 .Skip(limit * page)
