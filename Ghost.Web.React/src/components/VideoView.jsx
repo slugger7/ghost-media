@@ -22,7 +22,7 @@ const removeVideo =
   () =>
     setVideos(remove(index, 1))
 
-export const VideoView = ({ fetchFn }) => {
+export const VideoView = ({ fetchFn, children }) => {
   const [page, setPage] = useLocalState('page', 1)
   const [limit, setLimit] = useLocalState('limit', 48)
   const [search, setSearch] = useLocalState('search', '')
@@ -125,6 +125,7 @@ export const VideoView = ({ fetchFn }) => {
   return (
     <Box>
       {paginationAndFiltering}
+      {children}
       <Box>
         <Grid container spacing={2}>
           {loading && (
@@ -170,4 +171,5 @@ export const VideoView = ({ fetchFn }) => {
 
 VideoView.propTypes = {
   fetchFn: PropTypes.func.isRequired,
+  children: PropTypes.node,
 }
