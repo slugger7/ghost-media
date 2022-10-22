@@ -4,6 +4,7 @@ import { Box, Grid, Pagination } from '@mui/material'
 import { remove } from 'ramda'
 
 import usePromise from '../services/use-promise'
+import useLocalState from '../services/use-local-state'
 
 import watchStates from '../constants/watch-states'
 
@@ -21,14 +22,23 @@ const removeVideo =
     setVideos(remove(index, 1))
 
 export const VideoView = ({ fetchFn }) => {
-  const [page, setPage] = useState(1)
-  const [limit] = useState(48)
-  const [search, setSearch] = useState('')
+  const [page, setPage] = useLocalState('page', 1)
+  const [limit] = useLocalState('limit', 48)
+  const [search, setSearch] = useLocalState('search', '')
   const [total, setTotal] = useState(0)
-  const [sortBy, setSortBy] = useState('date-added')
-  const [sortAscending, setSortAscending] = useState(false)
-  const [watchState, setWatchState] = useState(watchStates.unwatched)
-  const [selectedGenres, setSelectedGenres] = useState([])
+  const [sortBy, setSortBy] = useLocalState('sortBy', 'date-added')
+  const [sortAscending, setSortAscending] = useLocalState(
+    'sortAscending',
+    false,
+  )
+  const [watchState, setWatchState] = useLocalState(
+    'watchState',
+    watchStates.unwatched,
+  )
+  const [selectedGenres, setSelectedGenres] = useLocalState(
+    'selectedGenres',
+    [],
+  )
   const [count, setCount] = useState(0)
   const [videos, setVideos] = useState([])
   const [videosPage, error, loading] = usePromise(

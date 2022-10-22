@@ -5,7 +5,7 @@ import { prop } from 'ramda'
 import usePromise from '../services/use-promise'
 import { fetchGenres } from '../services/genre.service'
 
-export const GenreFilter = ({ setSelectedGenres }) => {
+export const GenreFilter = ({ setSelectedGenres, selectedGenres }) => {
   const [allGenres, , loadingAllGenres] = usePromise(() => fetchGenres())
   const autocompleteRef = useRef()
 
@@ -17,10 +17,11 @@ export const GenreFilter = ({ setSelectedGenres }) => {
       onChange={(e, newGenres) => setSelectedGenres(newGenres)}
       options={allGenres?.map(prop('name')) || []}
       loading={loadingAllGenres}
+      defaultValue={selectedGenres}
       renderInput={(params) => (
         <TextField
           size="small"
-          sx={{ mr: 6 }}
+          sx={{ minWidth: '100px' }}
           placeholder="Genres"
           id="genre-filter-text-box"
           inputRef={autocompleteRef}

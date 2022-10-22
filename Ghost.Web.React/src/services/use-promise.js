@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 
 export default function usePromise(f, deps) {
   const [result, setResult] = useState()
@@ -10,13 +10,13 @@ export default function usePromise(f, deps) {
     setLoading(true)
 
     f()
-      .then(r => {
+      .then((r) => {
         if (subscribed) {
           setLoading(false)
           setResult(r)
         }
       })
-      .catch(e => {
+      .catch((e) => {
         if (subscribed) {
           setLoading(false)
           setError(e)
