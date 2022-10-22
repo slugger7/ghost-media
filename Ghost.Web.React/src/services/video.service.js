@@ -50,7 +50,7 @@ export const constructVideoParams = ({
     params.push(`ascending=${ascending}`)
   }
   if (watchState !== undefined && watchState !== null) {
-    params.push(`watchState=${watchState.value}`)
+    params.push(`watchState=${watchState}`)
   }
   if (genres !== undefined && genres !== null && genres.length > 0) {
     params.push(

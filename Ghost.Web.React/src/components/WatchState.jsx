@@ -14,26 +14,26 @@ export const WatchState = ({ watchState, setWatchState }) => {
         value={watchState}
         label={'Watch state'}
         onChange={(e) => setWatchState(e.target.value)}
+        defaultValue={watchState.value}
       >
-        <MenuItem value={watchStates.inProgress}>
+        <MenuItem value={watchStates.inProgress.value}>
           {watchStates.inProgress.name}
         </MenuItem>
-        <MenuItem value={watchStates.watched}>
+        <MenuItem value={watchStates.watched.value}>
           {watchStates.watched.name}
         </MenuItem>
-        <MenuItem value={watchStates.unwatched}>
+        <MenuItem value={watchStates.unwatched.value}>
           {watchStates.unwatched.name}
         </MenuItem>
-        <MenuItem value={watchStates.all}>{watchStates.all.name}</MenuItem>
+        <MenuItem value={watchStates.all.value}>
+          {watchStates.all.name}
+        </MenuItem>
       </Select>
     </FormControl>
   )
 }
 
 WatchState.propTypes = {
-  watchState: PropTypes.shape({
-    value: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired,
+  watchState: PropTypes.string.isRequired,
   setWatchState: PropTypes.func.isRequired,
 }
