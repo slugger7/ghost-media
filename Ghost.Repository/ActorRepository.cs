@@ -58,6 +58,15 @@ namespace Ghost.Repository
               .OrderByDescending(a => a.VideoActors.Count());
         }
 
+        public IEnumerable<Actor> GetFavouriteActors(int userId)
+        {
+            return context.Actors
+              .Include("VideoActors")
+              .Include("FavouritedBy.User")
+              .Where(actor => actor.FavouritedBy.Any(fav => fav.User.Id == userId))
+              .OrderByDescending(a => a.VideoActors.Count());
+        }
+
         public IEnumerable<Actor> GetActorsForVideo(int videoId)
         {
             return context.VideoActors
