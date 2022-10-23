@@ -9,13 +9,13 @@ import useLocalState from '../services/use-local-state'
 import watchStates from '../constants/watch-states'
 
 import { VideoCard } from './VideoCard.jsx'
-import { VideoCardSkeleton } from './VideoCardSkeleton.jsx'
 import { Search } from './Search'
 import { NothingHere } from './NothingHere.jsx'
 import { WatchState } from './WatchState.jsx'
 import { Sort } from './Sort.jsx'
 import { GenreFilter } from './GenreFilter.jsx'
-import { LimitPicker } from './LimitPicker'
+import { LimitPicker } from './LimitPicker.jsx'
+import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -69,6 +69,10 @@ export const VideoView = ({ fetchFn, children }) => {
   useEffect(() => {
     setCount(Math.ceil(total / limit) || 1)
   }, [total, limit])
+
+  useEffect(() => {
+    setPage(1)
+  }, [limit, search, sortBy, sortAscending, watchState, selectedGenres])
 
   const paginationComponent = (
     <>
@@ -128,11 +132,7 @@ export const VideoView = ({ fetchFn, children }) => {
       {children}
       <Box>
         <Grid container spacing={2}>
-          {loading && (
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-              <VideoCardSkeleton />
-            </Grid>
-          )}
+          {loading && <VideoGridSkeleton count={limit} />}
           {!loading && videos.length === 0 && (
             <Grid item xs={12}>
               <NothingHere>
