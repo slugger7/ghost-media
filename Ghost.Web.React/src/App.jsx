@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route,  } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { Layout } from './components/Layout.jsx';
@@ -14,23 +14,30 @@ import { Actors } from './components/Actors.jsx'
 import { Favourites } from './components/Favourites.jsx';
 
 import './styles.scss'
+import { Login } from './components/Login.jsx';
+import { AuthenticationProvider } from './context/Authentication.provider.jsx';
+import { AuthenticatedRoute } from './components/AuthenticatedRoute.jsx';
 
 export const App = ({ baseUrl }) => {
+  const loggedIn = localStorage.getItem('loggedIn');
   return (
     <BrowserRouter basename={baseUrl}>
-      <Layout>
-        <Routes>
-          <Route exact path='/' element={<Home />} />
-          <Route path='/settings' element={<Settings />} />
-          <Route path='/libraries/add' element={<AddLibrary />} />
-          <Route path='/media/:id/:title' element={<Media />} />
-          <Route path='/genres' element={<Genres />} />
-          <Route path='/genres/:name' element={<Genre />} />
-          <Route path='/actors/:id/:name' element={<Actor />} />
-          <Route path='/actors' element={<Actors />} />
-          <Route path='/favourites' element={<Favourites />} />
-        </Routes>
-      </Layout>
+      <AuthenticationProvider>
+        <Layout>
+          <Routes>
+            <Route exact path='/' element={<AuthenticatedRoute><Home /></AuthenticatedRoute>} />
+            <Route path='/settings' element={<AuthenticatedRoute><Settings /></AuthenticatedRoute>} />
+            <Route path='/libraries/add' element={<AuthenticatedRoute><AddLibrary /></AuthenticatedRoute>} />
+            <Route path='/media/:id/:title' element={<AuthenticatedRoute><Media /></AuthenticatedRoute>} />
+            <Route path='/genres' element={<AuthenticatedRoute><Genres /></AuthenticatedRoute>} />
+            <Route path='/genres/:name' element={<AuthenticatedRoute><Genre /></AuthenticatedRoute>} />
+            <Route path='/actors/:id/:name' element={<AuthenticatedRoute><Actor /></AuthenticatedRoute>} />
+            <Route path='/actors' element={<AuthenticatedRoute><Actors /></AuthenticatedRoute>} />
+            <Route path='/favourites' element={<AuthenticatedRoute><Favourites /></AuthenticatedRoute>} />
+            <Route path='/login' element={<Login />} />
+          </Routes>
+        </Layout>
+      </AuthenticationProvider>
     </BrowserRouter>
   );
 }
