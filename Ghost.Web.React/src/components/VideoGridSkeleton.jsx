@@ -9,7 +9,7 @@ export const VideoGridSkeleton = ({ count = 12 }) => {
 
   for (let i = 0; i < count; i++) {
     skeletons.push(
-      <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+      <Grid key={i} item xs={12} sm={6} md={4} lg={3} xl={2}>
         <VideoCardSkeleton />
       </Grid>,
     )
