@@ -49,6 +49,13 @@ namespace Ghost.Services
       };
     }
 
+    public UserDto Login(UserLoginDto userLogin)
+    {
+      var user = userRepository.FindUserByLogin(userLogin.username, userLogin.password);
+
+      return new UserDto(user);
+    }
+
     public async Task<bool> ToggleFavouriteActor(int id, int actorId)
     {
       return await userRepository.ToggleFavouriteActor(id, actorId);

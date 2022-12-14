@@ -63,6 +63,19 @@ namespace Ghost.Api.Controllers
             }
         }
 
+        [HttpPost("login")]
+        public ActionResult<UserDto> Login([FromBody] UserLoginDto userLogin) 
+        {
+            try 
+            {
+                return this.userService.Login(userLogin);
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPut("{id}/video/{videoId}")]
         public async Task<ActionResult<bool>> ToggleFavouriteVideo(int id, int videoId)
         {
