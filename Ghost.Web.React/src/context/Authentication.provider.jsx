@@ -1,15 +1,30 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { AuthenticationContext } from './authentication.context'
 
-export const AuthenticationProvider = ({children}) => {
-    const [authenticated, setAuthenticated] = useState(localStorage.getItem('authenticated').toLocaleLowerCase() === "true");
+export const AuthenticationProvider = ({ children }) => {
+    const userIdString = localStorage.getItem('userId');
+    const [userId, setUserId] = useState(userIdString ? +userIdString : undefined);
+    const [username, setUsername] = useState(localStorage.getItem('username'))
 
     useEffect(() => {
-        localStorage.setItem('authenticated', authenticated)
-    }, [authenticated])
+        if (username) {
+            localStorage.setItem('username', username)
+        }
+    }, [username])
 
-    return <AuthenticationContext.Provider value={{authenticated, setAuthenticated}}>
+    useEffect(() => {
+        if (userId) {
+            localStorage.setItem('userId', userId);
+        }
+    }, [userId])
+
+    const setUser = useCallback((user) => {
+        setUserId(user.id);
+        setUsername(user.username)
+    })
+
+    return <AuthenticationContext.Provider value={{ userId, username, setUser }}>
         {children}
     </AuthenticationContext.Provider>
 }

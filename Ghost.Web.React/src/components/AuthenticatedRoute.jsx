@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 
 import AuthenticationContext from '../context/authentication.context'
 
-export const AuthenticatedRoute = ({children}) => {
-    const { authenticated } = useContext(AuthenticationContext)
-    
+export const AuthenticatedRoute = ({ children }) => {
+    const { userId } = useContext(AuthenticationContext)
+
     return <>
-        {authenticated ? children : <Navigate to='/login' />}
+        {userId ? children : <Navigate to='/login' />}
     </>
 }
 
