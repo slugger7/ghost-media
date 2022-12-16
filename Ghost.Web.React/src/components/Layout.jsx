@@ -13,11 +13,11 @@ const darkTheme = createTheme({
 })
 
 export const Layout = ({ children }) => {
-  const {authenticated} = useContext(AuthenticationContext);
+  const { userId } = useContext(AuthenticationContext);
   return <ThemeProvider theme={darkTheme}>
     <CssBaseline />
     <Container maxWidth={false}>
-      {authenticated && <NavMenu />}
+      {userId && <NavMenu />}
       {children}
     </Container>
   </ThemeProvider>
