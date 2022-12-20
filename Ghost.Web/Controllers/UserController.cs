@@ -2,6 +2,8 @@ using Ghost.Services;
 using Ghost.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Ghost.Exceptions;
+using Ghost.Api.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ghost.Api.Controllers
 {
@@ -63,17 +65,33 @@ namespace Ghost.Api.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
-        public ActionResult<UserDto> Login([FromBody] UserLoginDto userLogin) 
+        public ActionResult<string> Login([FromBody] UserLoginDto userLogin)
         {
-            try 
+            if (userLogin == null) return Unauthorized();
+            string tokenString = string.Empty;
+            try
             {
-                return this.userService.Login(userLogin);
+                var user = this.userService.Login(userLogin);
+
+                if (user == null) return Unauthorized();
+
+                var token = JWTAuthentication.BuildJWTToken(user.Id, user.Username);
+
+                return token;
             }
             catch (NullReferenceException)
             {
                 return NotFound();
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("sym-key")]
+        public ActionResult<string> GenerateSymmetricKey()
+        {
+            return JWTAuthentication.BuildSymKey();
         }
 
         [HttpPut("{id}/video/{videoId}")]

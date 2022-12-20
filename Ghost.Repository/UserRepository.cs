@@ -44,15 +44,13 @@ namespace Ghost.Repository
 
             return user;
         }
-        
-        public User FindUserByLogin(string username, string password)
+
+        public User? FindUserByLogin(string username, string password)
         {
             var user = context.Users
-                .FirstOrDefault(u => u.Username.ToLower().Equals(username.ToLower()) 
+                .FirstOrDefault(u => u.Username.ToLower().Equals(username.ToLower())
                     && u.Password.Equals(password)
                 );
-
-            if (user == null) throw new NullReferenceException("User was not found with username and password combination");
 
             return user;
         }
