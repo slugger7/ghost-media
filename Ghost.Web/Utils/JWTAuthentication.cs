@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Ghost.Api.Utils
@@ -40,6 +41,23 @@ namespace Ghost.Api.Utils
             var hmac = new HMACSHA256();
             var key = Convert.ToBase64String(hmac.Key);
             return key;
+        }
+
+        public static void ConfigureJWTAuthentication(IServiceCollection services)
+        {
+            var key = Convert.FromBase64String(Environment.GetEnvironmentVariable("JWT_SECRET") ?? defaultKey);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
         }
     }
 }
