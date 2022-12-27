@@ -21,7 +21,7 @@ namespace Ghost.Api.Utils
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Sid, userId.ToString())
+                    new Claim(ClaimTypes.PrimarySid, userId.ToString())
                 }),
                 Expires = now.AddMinutes(Convert.ToInt32(Environment.GetEnvironmentVariable("JWT_EXPIRY") ?? "60")),
                 SigningCredentials = new SigningCredentials(
