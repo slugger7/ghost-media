@@ -28,6 +28,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public ActionResult<UserDto> GetById(int id)
         {
             try
@@ -41,6 +42,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserDto createUser)
         {
             try
@@ -54,6 +56,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<UserDto>> Delete(int id)
         {
             try
@@ -68,7 +71,7 @@ namespace Ghost.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public ActionResult<string> Login([FromBody] UserLoginDto userLogin)
+        public ActionResult<TokenDto> Login([FromBody] UserLoginDto userLogin)
         {
             if (userLogin == null) return Unauthorized();
             string tokenString = string.Empty;
@@ -80,7 +83,7 @@ namespace Ghost.Api.Controllers
 
                 var token = JWTAuthentication.BuildJWTToken(user.Id, user.Username);
 
-                return token;
+                return new TokenDto { Token = token };
             }
             catch (NullReferenceException)
             {
@@ -96,12 +99,14 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/video/{videoId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> ToggleFavouriteVideo(int id, int videoId)
         {
             return await userService.ToggleFavouriteVideo(id, videoId);
         }
 
         [HttpPut("{id}/actor/{actorId}")]
+        [Authorize]
         public async Task<ActionResult<bool>> ToggleFavouriteActor(int id, int actorId)
         {
             return await userService.ToggleFavouriteActor(id, actorId);
