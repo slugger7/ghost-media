@@ -7,7 +7,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import AuthenticationContext from '../context/authentication.context';
 
 export const Login = () => {
-    const { userId, setUser } = useContext(AuthenticationContext)
+    const { userId, setToken } = useContext(AuthenticationContext)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('');
     const [loggingIn, setLoggingIn] = useState(false);
@@ -18,13 +18,13 @@ export const Login = () => {
     const handleLogin = async () => {
         setLoggingIn(true)
         try {
-            const user = (await axios.post(
+            const loginResult = (await axios.post(
                 '/user/login',
                 { username, password }
             )).data;
 
-            if (user) {
-                setUser(user)
+            if (loginResult?.token) {
+                setToken(loginResult.token)
             }
         } finally {
             setLoggingIn(false)
