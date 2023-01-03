@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Ghost.Dtos;
 using Ghost.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ghost.Api.Controllers
 {
@@ -19,6 +20,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult<PageResultDto<VideoDto>> SearchVideos(
           [FromQuery] PageRequestDto pageRequest,
           [FromQuery] FilterQueryDto filters,
@@ -28,6 +30,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/title")]
+        [Authorize]
         public async Task<ActionResult<VideoDto>> UpdateTitle(int id, [FromBody] TitleUpdateDto titleUpdate)
         {
             try
@@ -41,6 +44,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet("{id}/info")]
+        [Authorize]
         public ActionResult<VideoDto> GetVideoInfo(int id, [FromHeader(Name = "User-Id")] int userId)
         {
             var video = videoService.GetVideoInfo(id, userId);
@@ -49,6 +53,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/metadata")]
+        [Authorize]
         public async Task<ActionResult<VideoDto>> GetVideoMetaData(int id)
         {
             try
@@ -82,6 +87,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> DeleteVideo(int id)
         {
             try
@@ -97,6 +103,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/genres")]
+        [Authorize]
         public ActionResult<VideoDto> AddGenresByNameToVideo(int id, [FromBody] GenreAddDto genreAddDto)
         {
             try
@@ -110,6 +117,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet("genre/{genre}")]
+        [Authorize]
         public ActionResult<PageResultDto<VideoDto>> GetVideosForGenre(
           string genre,
           [FromQuery] PageRequestDto pageRequest,
@@ -120,6 +128,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/actors")]
+        [Authorize]
         public ActionResult<VideoDto> AddActorsByNameToVideo(int id, [FromBody] ActorAddDto actorAddDto)
         {
             try
@@ -133,6 +142,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet("actor/{id}")]
+        [Authorize]
         public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(
           int id,
           [FromQuery] PageRequestDto pageRequest,
@@ -150,6 +160,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/nfo")]
+        [Authorize]
         public async Task<ActionResult<VideoDto>> UpdateFromNFO(int id)
         {
             try
@@ -164,6 +175,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/chapters")]
+        [Authorize]
         public async Task<ActionResult<VideoDto>> GenerateChapters(int id, bool overwrite = false)
         {
             try
@@ -178,6 +190,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}/progress")]
+        [Authorize]
         public async Task<ActionResult> LogProgress(
           int id,
           [FromHeader(Name = "User-Id")] int userId,
@@ -195,6 +208,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet("favourites")]
+        [Authorize]
         public ActionResult<PageResultDto<VideoDto>> GetFavourites(
           [FromHeader(Name = "User-Id")] int userId,
           [FromQuery] PageRequestDto pageRequest,

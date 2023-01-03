@@ -29,4 +29,16 @@ export const setupAxios = () => {
     },
     (error) => Promise.reject(error),
   )
+
+  axios.interceptors.response.use(res => {
+    console.log({ stauts: res.status })
+    if (+res.status === 401) {
+      console.log('clearing localstorage')
+      localStorage.clear();
+    }
+    return res;
+  }, (error, ...args) => {
+    console.log("Response error", { error, args })
+    return Promise.reject(error)
+  })
 }

@@ -24,6 +24,7 @@ namespace Ghost.Api.Controllers
         [Authorize]
         public ActionResult<PageResultDto<UserDto>> GetUsers()
         {
+            Console.WriteLine("Getting users");
             return this.userService.GetUsers();
         }
 

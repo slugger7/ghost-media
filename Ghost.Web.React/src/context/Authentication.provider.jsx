@@ -30,11 +30,6 @@ export const AuthenticationProvider = ({ children }) => {
         }
     }, [token])
 
-    const setUser = useCallback((user) => {
-        setUserId(user.id);
-        setUsername(user.username)
-    })
-
     return <AuthenticationContext.Provider value={{ userId, username, setToken }}>
         {children}
     </AuthenticationContext.Provider>
