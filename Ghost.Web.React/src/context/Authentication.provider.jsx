@@ -5,22 +5,22 @@ import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthenticationProvider = ({ children }) => {
-    const userIdString = localStorage.getItem('userId');
+    const userIdString = sessionStorage.getItem('userId');
     const [userId, setUserId] = useState(userIdString ? +userIdString : undefined);
-    const [username, setUsername] = useState(localStorage.getItem('username'))
-    const [token, setToken] = useState(localStorage.getItem('token'))
+    const [username, setUsername] = useState(sessionStorage.getItem('username'))
+    const [token, setToken] = useState(sessionStorage.getItem('token'))
 
     const navigate = useNavigate();
 
     useEffect(() => {
         if (username) {
-            localStorage.setItem('username', username)
+            sessionStorage.setItem('username', username)
         }
     }, [username])
 
     useEffect(() => {
         if (userId) {
-            localStorage.setItem('userId', userId);
+            sessionStorage.setItem('userId', userId);
         }
     }, [userId])
 
@@ -29,7 +29,7 @@ export const AuthenticationProvider = ({ children }) => {
             const user = jwtDecode(token);
             setUserId(user.primarysid)
             setUsername(user.name)
-            localStorage.setItem('token', token)
+            sessionStorage.setItem('token', token)
         }
     }, [token])
 
