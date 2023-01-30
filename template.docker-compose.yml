@@ -1,0 +1,23 @@
+services:
+  web:
+    build: ./Ghost.Web.React
+    container_name: ghost-media-web
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_SERVER_URL=http://<ip-address>:5120
+  api:
+    build: .
+    container_name: ghost-media-api
+    ports:
+      - "5120:5120"
+    volumes:
+      - $(pwd)/videos:/media/videos
+      - $(pwd)/data:/data
+      - $(pwd)/assets:/data/assets
+    environment:
+      - DATABASE_PATH=/data/Ghost.db
+      - ASSETS_PATH=/data/assets
+      - JWT_ISSUER=http://<ip-address>:5120
+      - JWT_AUDIENCE=http://<ip-address>:3000
+      - JWT_EXPIRY=60
