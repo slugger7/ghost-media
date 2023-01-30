@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 export default function useLocalState(key, initialState) {
-  let localValue = sessionStorage.getItem(key)
+  let localValue = localStorage.getItem(key)
   if (localValue === undefined || localValue === null) {
     localValue = initialState
   } else {
@@ -15,7 +15,7 @@ export default function useLocalState(key, initialState) {
   const [value, setValue] = useState(localValue)
 
   const setLocalValue = (newValue) => {
-    sessionStorage.setItem(key, JSON.stringify(newValue))
+    localStorage.setItem(key, JSON.stringify(newValue))
     setValue(newValue)
   }
 
