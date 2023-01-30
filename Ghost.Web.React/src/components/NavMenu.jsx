@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
-import { Box, Tabs } from '@mui/material'
+import { Box, Tab, Tabs } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import TheaterComedyIcon from '@mui/icons-material/TheaterComedy'
 import PeopleIcon from '@mui/icons-material/People'
 import SettingsIcon from '@mui/icons-material/Settings'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import { LinkTab } from './LinkTab.jsx'
+import { useContext } from 'react'
+import AuthenticationContext from '../context/authentication.context.js'
 
 export const NavMenu = () => {
   const [value, setValue] = useState(0)
+  const { logout } = useContext(AuthenticationContext);
 
   const handleTabChange = (_, newValue) => {
     setValue(newValue)
@@ -55,6 +59,11 @@ export const NavMenu = () => {
             icon={<SettingsIcon />}
             iconPosition="start"
           />
+          <Tab
+            label="Logout"
+            icon={<LogoutIcon />}
+            iconPosition="start"
+            onClick={logout} />
         </Tabs>
       </Box>
     </header>

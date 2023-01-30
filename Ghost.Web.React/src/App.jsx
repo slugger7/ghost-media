@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route,  } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { Layout } from './components/Layout.jsx';
@@ -19,7 +19,6 @@ import { AuthenticationProvider } from './context/Authentication.provider.jsx';
 import { AuthenticatedRoute } from './components/AuthenticatedRoute.jsx';
 
 export const App = ({ baseUrl }) => {
-  const loggedIn = localStorage.getItem('loggedIn');
   return (
     <BrowserRouter basename={baseUrl}>
       <AuthenticationProvider>

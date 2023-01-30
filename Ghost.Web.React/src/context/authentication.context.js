@@ -4,7 +4,8 @@ export const AuthenticationContext = createContext({
     userId: null,
     useranme: null,
     token: null,
-    setToken: (token) => { }
+    setToken: (token) => { },
+    logout: () => { }
 })
 
 export default AuthenticationContext
