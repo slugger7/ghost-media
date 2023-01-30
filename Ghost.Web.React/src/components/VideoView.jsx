@@ -19,8 +19,8 @@ import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
 
 const removeVideo =
   ({ index, setVideos }) =>
-  () =>
-    setVideos(remove(index, 1))
+    () =>
+      setVideos(remove(index, 1))
 
 export const VideoView = ({ fetchFn, children }) => {
   const [page, setPage] = useLocalState('page', 1)
@@ -70,10 +70,6 @@ export const VideoView = ({ fetchFn, children }) => {
     setCount(Math.ceil(total / limit) || 1)
   }, [total, limit])
 
-  useEffect(() => {
-    setPage(1)
-  }, [limit, search, sortBy, sortAscending, watchState, selectedGenres])
-
   const paginationComponent = (
     <>
       {count > 1 && page && (
@@ -107,11 +103,14 @@ export const VideoView = ({ fetchFn, children }) => {
         search={search}
         setSearch={(...args) => {
           setSearch(...args)
-          onPageChange(null, 1)
+          setPage(1)
         }}
       />
       {paginationComponent}
-      <LimitPicker limit={limit} setLimit={setLimit} />
+      <LimitPicker limit={limit} setLimit={(...args) => {
+        setLimit(...args)
+        setPage(1)
+      }} />
       <Sort
         sortBy={sortBy}
         setSortBy={setSortBy}
@@ -119,10 +118,16 @@ export const VideoView = ({ fetchFn, children }) => {
         setSortDirection={setSortAscending}
       />
       <GenreFilter
-        setSelectedGenres={setSelectedGenres}
+        setSelectedGenres={(...args) => {
+          setSelectedGenres(...args)
+          setPage(1)
+        }}
         selectedGenres={selectedGenres}
       />
-      <WatchState watchState={watchState} setWatchState={setWatchState} />
+      <WatchState watchState={watchState} setWatchState={(...args) => {
+        setWatchState(...args)
+        setPage(1)
+      }} />
     </Box>
   )
 
@@ -148,7 +153,7 @@ export const VideoView = ({ fetchFn, children }) => {
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
                 <VideoCard
                   video={video}
-                  remove={removeVideo({ index, setVideos: () => {} })}
+                  remove={removeVideo({ index, setVideos: () => { } })}
                 />
               </Grid>
             ))}
