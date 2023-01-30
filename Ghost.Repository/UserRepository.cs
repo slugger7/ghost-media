@@ -45,6 +45,16 @@ namespace Ghost.Repository
             return user;
         }
 
+        public User? FindUserByLogin(string username, string password)
+        {
+            var user = context.Users
+                .FirstOrDefault(u => u.Username.ToLower().Equals(username.ToLower())
+                    && u.Password.Equals(password)
+                );
+
+            return user;
+        }
+
         public User? FindById(int id)
         {
             return this.FindById(id, null);

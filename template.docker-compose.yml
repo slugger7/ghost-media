@@ -17,4 +17,7 @@ services:
       - $(pwd)/assets:/data/assets
     environment:
       - DATABASE_PATH=/data/Ghost.db
-    
+      - ASSETS_PATH=/data/assets
+      - JWT_ISSUER=http://<ip-address>:5120
+      - JWT_AUDIENCE=http://<ip-address>:3000
+      - JWT_EXPIRY=60

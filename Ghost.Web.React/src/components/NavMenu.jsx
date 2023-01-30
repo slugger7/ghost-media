@@ -10,7 +10,6 @@ import { LinkTab } from './LinkTab.jsx'
 
 export const NavMenu = () => {
   const [value, setValue] = useState(0)
-  const userId = localStorage.getItem('userId') // needs to be changed to a provider
 
   const handleTabChange = (_, newValue) => {
     setValue(newValue)
@@ -44,14 +43,12 @@ export const NavMenu = () => {
             icon={<PeopleIcon />}
             iconPosition="start"
           />
-          {userId && (
-            <LinkTab
-              to="/favourites"
-              label="Favourites"
-              icon={<FavoriteIcon />}
-              iconPosition="start"
-            />
-          )}
+          <LinkTab
+            to="/favourites"
+            label="Favourites"
+            icon={<FavoriteIcon />}
+            iconPosition="start"
+          />
           <LinkTab
             to="/settings"
             label="Settings"

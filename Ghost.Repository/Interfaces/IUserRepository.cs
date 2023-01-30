@@ -9,6 +9,7 @@ namespace Ghost.Repository
         IEnumerable<User> GetUsers();
         Task<User> Create(User user);
         Task<User> Delete(int id);
+        User? FindUserByLogin(string username, string password);
         Task<bool> ToggleFavouriteVideo(int id, int videoId);
         Task<bool> ToggleFavouriteActor(int id, int actorId);
         Task LogProgress(int id, int userId, ProgressUpdateDto progress);

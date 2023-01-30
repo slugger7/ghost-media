@@ -1,5 +1,6 @@
 using Ghost.Dtos;
 using Ghost.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ghost.Api.Controllers
@@ -18,6 +19,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet("{name}")]
+        [Authorize]
         public ActionResult<ActorDto> GetActorByName(string name, [FromHeader(Name = "User-Id")] int userId)
         {
             try
@@ -31,18 +33,21 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult<List<ActorDto>> GetActors([FromHeader(Name = "User-Id")] int userId)
         {
             return actorService.GetActors(userId);
         }
 
         [HttpGet("favourites")]
+        [Authorize]
         public ActionResult<List<ActorDto>> GetFavouriteActors([FromHeader(Name = "User-Id")] int userId)
         {
             return actorService.GetFavouriteActors(userId);
         }
 
         [HttpGet("video/{videoId}")]
+        [Authorize]
         public ActionResult<List<ActorDto>> GetActorsForVideo(int videoId, [FromHeader(Name = "User-Id")] int userId)
         {
             try
@@ -57,6 +62,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<ActorDto>> UpdateName(int id, [FromBody] ActorNameUpdateDto actorNameUpdateDto)
         {
             try

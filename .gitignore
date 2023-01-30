@@ -238,4 +238,4 @@ assets
 videos
 media
 */**/node_modules
-prod.docker-compose.yml
+docker-compose.yml

@@ -1,15 +1,36 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { AuthenticationContext } from './authentication.context'
+import jwtDecode from 'jwt-decode';
 
-export const AuthenticationProvider = ({children}) => {
-    const [authenticated, setAuthenticated] = useState(localStorage.getItem('authenticated').toLocaleLowerCase() === "true");
+export const AuthenticationProvider = ({ children }) => {
+    const userIdString = localStorage.getItem('userId');
+    const [userId, setUserId] = useState(userIdString ? +userIdString : undefined);
+    const [username, setUsername] = useState(localStorage.getItem('username'))
+    const [token, setToken] = useState(localStorage.getItem('token'))
 
     useEffect(() => {
-        localStorage.setItem('authenticated', authenticated)
-    }, [authenticated])
+        if (username) {
+            localStorage.setItem('username', username)
+        }
+    }, [username])
 
-    return <AuthenticationContext.Provider value={{authenticated, setAuthenticated}}>
+    useEffect(() => {
+        if (userId) {
+            localStorage.setItem('userId', userId);
+        }
+    }, [userId])
+
+    useEffect(() => {
+        if (token) {
+            const user = jwtDecode(token);
+            setUserId(user.primarysid)
+            setUsername(user.name)
+            localStorage.setItem('token', token)
+        }
+    }, [token])
+
+    return <AuthenticationContext.Provider value={{ userId, username, setToken }}>
         {children}
     </AuthenticationContext.Provider>
 }
