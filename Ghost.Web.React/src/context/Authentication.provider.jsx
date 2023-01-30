@@ -14,7 +14,7 @@ export const AuthenticationProvider = ({ children }) => {
 
     useEffect(() => {
         if (username) {
-            sessionStorage.setItem('username', username)
+            localStorage.setItem('username', username)
         }
     }, [username])
 
