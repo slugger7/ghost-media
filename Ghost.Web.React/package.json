@@ -8,7 +8,7 @@
     "@mui/icons-material": "^5.5.1",
     "@mui/lab": "^5.0.0-alpha.78",
     "@mui/material": "^5.5.3",
-    "axios": "^0.26.1",
+    "axios": "^1.2.2",
     "bootstrap": "^5.1.0",
     "copy-to-clipboard": "^3.3.1",
     "http-proxy-middleware": "^0.19.1",
