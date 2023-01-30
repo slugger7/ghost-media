@@ -219,7 +219,7 @@ export const VideoMenu = ({
           </MenuItem>
         )}
         {!hideItems.includes(items.syncNfo) && (
-          <MenuItem onClick={handleSyncFromNfo}>
+          <MenuItem onClick={handleSyncFromNfo} disabled={true}>
             <ListItemIcon>
               {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
               {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}

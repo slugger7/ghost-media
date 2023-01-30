@@ -114,9 +114,8 @@ export const LibraryCard = ({ library, updateLibraries }) => {
             </IconButton>
           }
           title={library.name}
-          subheader={`${library.paths.length} path${
-            library.paths.length === 1 ? '' : 's'
-          }`}
+          subheader={`${library.paths.length} path${library.paths.length === 1 ? '' : 's'
+            }`}
         />
       </Card>
       <Menu
@@ -134,7 +133,7 @@ export const LibraryCard = ({ library, updateLibraries }) => {
           </ListItemIcon>
           <ListItemText>Sync</ListItemText>
         </MenuItem>
-        <MenuItem onClick={syncNfo}>
+        <MenuItem onClick={syncNfo} disabled={true}>
           <ListItemIcon>
             {loadingSyncNfo && (
               <CircularProgress sx={{ mr: 1 }} fontSize="small" />
