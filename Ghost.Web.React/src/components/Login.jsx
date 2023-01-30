@@ -31,10 +31,16 @@ export const Login = () => {
         }
     }
 
+    const handleKeystroke = async (event) => {
+        if (event.code === "Enter") {
+            await handleLogin()
+        }
+    }
+
     return <>
         {userId && <Navigate to="/" />}
         {!userId && <Container sx={{ mt: 1 }}>
-            <FormGroup>
+            <FormGroup onKeyUp={handleKeystroke}>
                 <TextField sx={{ mb: 1 }} label="Username" variant='outlined' value={username} type="text" onChange={handleUsernameChange} />
                 <TextField sx={{ mb: 1 }} label="Password" variant='outlined' value={password} type="password" onChange={handlePasswordChange} />
                 <LoadingButton
