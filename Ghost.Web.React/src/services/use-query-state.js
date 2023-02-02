@@ -16,7 +16,6 @@ export default function useQueryState(key, initialState, parse = true) {
     try {
       localValue = JSON.parse(localValue)
     } catch (err) {
-      console.log("Setting initial value")
       localValue = initialState
     }
   }
