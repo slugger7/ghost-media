@@ -1,13 +1,22 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
-export default function useLocalState(key, initialState) {
+export default function useQueryState(key, initialState, parse = true) {
+  const [searchParams] = useSearchParams()
+  const searchParam = searchParams.get(key)
   let localValue = localStorage.getItem(key)
+
+  if (searchParam !== undefined && searchParam !== null) {
+    localValue = searchParam
+  }
+
   if (localValue === undefined || localValue === null) {
     localValue = initialState
-  } else {
+  } else if (parse) {
     try {
       localValue = JSON.parse(localValue)
     } catch (err) {
+      console.log("Setting initial value")
       localValue = initialState
     }
   }
