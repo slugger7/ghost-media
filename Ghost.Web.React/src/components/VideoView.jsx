@@ -4,7 +4,7 @@ import { Box, Grid, Pagination } from '@mui/material'
 import { remove } from 'ramda'
 
 import usePromise from '../services/use-promise'
-import useLocalState from '../services/use-local-state'
+import useQueryState from '../services/use-query-state'
 
 import watchStates from '../constants/watch-states'
 
@@ -16,6 +16,7 @@ import { Sort } from './Sort.jsx'
 import { GenreFilter } from './GenreFilter.jsx'
 import { LimitPicker } from './LimitPicker.jsx'
 import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
+import { useSearchParams } from 'react-router-dom'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -23,20 +24,20 @@ const removeVideo =
       setVideos(remove(index, 1))
 
 export const VideoView = ({ fetchFn, children }) => {
-  const [page, setPage] = useLocalState('page', 1)
-  const [limit, setLimit] = useLocalState('limit', 48)
-  const [search, setSearch] = useLocalState('search', '')
+  const [page, setPage] = useQueryState('page', 1)
+  const [limit, setLimit] = useQueryState('limit', 48)
+  const [search, setSearch] = useQueryState('search', '')
   const [total, setTotal] = useState(0)
-  const [sortBy, setSortBy] = useLocalState('sortBy', 'date-added')
-  const [sortAscending, setSortAscending] = useLocalState(
+  const [sortBy, setSortBy] = useQueryState('sortBy', 'date-added')
+  const [sortAscending, setSortAscending] = useQueryState(
     'sortAscending',
     false,
   )
-  const [watchState, setWatchState] = useLocalState(
+  const [watchState, setWatchState] = useQueryState(
     'watchState',
     watchStates.unwatched.value,
   )
-  const [selectedGenres, setSelectedGenres] = useLocalState(
+  const [selectedGenres, setSelectedGenres] = useQueryState(
     'selectedGenres',
     [],
   )
@@ -55,6 +56,12 @@ export const VideoView = ({ fetchFn, children }) => {
       }),
     [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
   )
+
+  const [, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    setSearchParams({ page, limit, search, sortBy, sortAscending, watchState })
+  }, [page, limit, search, sortBy, sortAscending, watchState])
 
   useEffect(() => {
     if (!loading && !error) {
