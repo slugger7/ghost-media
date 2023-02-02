@@ -4,7 +4,7 @@ import { Box, Grid, Pagination } from '@mui/material'
 import { remove } from 'ramda'
 
 import usePromise from '../services/use-promise'
-import useLocalState from '../services/use-local-state'
+import useQueryState from '../services/use-query-state'
 
 import watchStates from '../constants/watch-states'
 
@@ -16,27 +16,28 @@ import { Sort } from './Sort.jsx'
 import { GenreFilter } from './GenreFilter.jsx'
 import { LimitPicker } from './LimitPicker.jsx'
 import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
+import { useSearchParams } from 'react-router-dom'
 
 const removeVideo =
   ({ index, setVideos }) =>
-  () =>
-    setVideos(remove(index, 1))
+    () =>
+      setVideos(remove(index, 1))
 
 export const VideoView = ({ fetchFn, children }) => {
-  const [page, setPage] = useLocalState('page', 1)
-  const [limit, setLimit] = useLocalState('limit', 48)
-  const [search, setSearch] = useLocalState('search', '')
+  const [page, setPage] = useQueryState('page', 1)
+  const [limit, setLimit] = useQueryState('limit', 48)
+  const [search, setSearch] = useQueryState('search', '')
   const [total, setTotal] = useState(0)
-  const [sortBy, setSortBy] = useLocalState('sortBy', 'date-added')
-  const [sortAscending, setSortAscending] = useLocalState(
+  const [sortBy, setSortBy] = useQueryState('sortBy', 'date-added')
+  const [sortAscending, setSortAscending] = useQueryState(
     'sortAscending',
     false,
   )
-  const [watchState, setWatchState] = useLocalState(
+  const [watchState, setWatchState] = useQueryState(
     'watchState',
     watchStates.unwatched.value,
   )
-  const [selectedGenres, setSelectedGenres] = useLocalState(
+  const [selectedGenres, setSelectedGenres] = useQueryState(
     'selectedGenres',
     [],
   )
@@ -56,6 +57,12 @@ export const VideoView = ({ fetchFn, children }) => {
     [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
   )
 
+  const [, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    setSearchParams({ page, limit, search, sortBy, sortAscending, watchState })
+  }, [page, limit, search, sortBy, sortAscending, watchState])
+
   useEffect(() => {
     if (!loading && !error) {
       setTotal(videosPage.total)
@@ -69,10 +76,6 @@ export const VideoView = ({ fetchFn, children }) => {
   useEffect(() => {
     setCount(Math.ceil(total / limit) || 1)
   }, [total, limit])
-
-  useEffect(() => {
-    setPage(1)
-  }, [limit, search, sortBy, sortAscending, watchState, selectedGenres])
 
   const paginationComponent = (
     <>
@@ -107,11 +110,14 @@ export const VideoView = ({ fetchFn, children }) => {
         search={search}
         setSearch={(...args) => {
           setSearch(...args)
-          onPageChange(null, 1)
+          setPage(1)
         }}
       />
       {paginationComponent}
-      <LimitPicker limit={limit} setLimit={setLimit} />
+      <LimitPicker limit={limit} setLimit={(...args) => {
+        setLimit(...args)
+        setPage(1)
+      }} />
       <Sort
         sortBy={sortBy}
         setSortBy={setSortBy}
@@ -119,10 +125,16 @@ export const VideoView = ({ fetchFn, children }) => {
         setSortDirection={setSortAscending}
       />
       <GenreFilter
-        setSelectedGenres={setSelectedGenres}
+        setSelectedGenres={(...args) => {
+          setSelectedGenres(...args)
+          setPage(1)
+        }}
         selectedGenres={selectedGenres}
       />
-      <WatchState watchState={watchState} setWatchState={setWatchState} />
+      <WatchState watchState={watchState} setWatchState={(...args) => {
+        setWatchState(...args)
+        setPage(1)
+      }} />
     </Box>
   )
 
@@ -148,7 +160,7 @@ export const VideoView = ({ fetchFn, children }) => {
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
                 <VideoCard
                   video={video}
-                  remove={removeVideo({ index, setVideos: () => {} })}
+                  remove={removeVideo({ index, setVideos: () => { } })}
                 />
               </Grid>
             ))}
