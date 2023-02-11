@@ -224,5 +224,23 @@ namespace Ghost.Api.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet("random")]
+        [Authorize]
+        public ActionResult<VideoDto> RandomVideo(
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromQuery] string watchState,
+            [FromQuery] string? search = ""
+        )
+        {
+            try
+            {
+                return videoService.Random(userId, watchState, search ?? "");
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ import { GenreFilter } from './GenreFilter.jsx'
 import { LimitPicker } from './LimitPicker.jsx'
 import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
 import { useSearchParams } from 'react-router-dom'
+import { RandomVideoButton } from './RandomVideoButton'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -135,6 +136,7 @@ export const VideoView = ({ fetchFn, children }) => {
         setWatchState(...args)
         setPage(1)
       }} />
+      <RandomVideoButton />
     </Box>
   )
 

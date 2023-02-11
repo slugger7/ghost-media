@@ -1,7 +1,6 @@
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Ghost.Data.Enums;
 using Ghost.Repository.Extensions;
 
 namespace Ghost.Repository
@@ -383,6 +382,24 @@ namespace Ghost.Repository
             logger.LogDebug("Batch updating {0} videos", videos.Count());
             context.UpdateRange(videos);
             await context.SaveChangesAsync();
+        }
+
+        public Video Random(int userId, string watchState, string search)
+        {
+            Random rnd = new Random();
+            var videos = context.Videos
+                .Include("WatchedBy.User")
+                .FilterWatchedState(watchState, userId)
+                .Where(v => v.Title.ToUpper().Contains(search.ToUpper()));
+
+            if (search != null)
+            {
+                videos.Where(videoSearch(search));
+            }
+
+            var count = videos.Count();
+
+            return videos.ElementAt(rnd.Next(0, count));
         }
     }
 }

@@ -358,5 +358,13 @@ namespace Ghost.Services
                 Content = videoPage.Content.Select(v => new VideoDto(v, userId)).ToList()
             };
         }
+
+        public VideoDto Random(int userId, string watchState, string search)
+        {
+            var video = videoRepository.Random(userId, watchState, search);
+
+            if (video == null) throw new NullReferenceException();
+            return new VideoDto(video);
+        }
     }
 }
