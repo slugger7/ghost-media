@@ -412,5 +412,24 @@ namespace Ghost.Repository
 
             return video;
         }
+
+        public Video GetRandomVideoForActor(int id, int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var actorIncludes = new List<string> {
+                "VideoActors.Video",
+                "VideoActors.Video.WatchedBy.User",
+                "VideoActors.Video.VideoGenres.Genre"
+            };
+
+            var actor = actorRepository.FindById(id, actorIncludes);
+
+            if (actor == null) throw new NullReferenceException("Genre not found");
+
+            var video = actor.VideoActors
+                .Select(vg => vg.Video)
+                .RandomVideo(userId, randomVideoRequest);
+
+            return video;
+        }
     }
 }

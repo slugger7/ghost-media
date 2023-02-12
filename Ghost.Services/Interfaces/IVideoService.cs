@@ -24,5 +24,6 @@ namespace Ghost.Services
         PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest, FilterQueryDto filters);
         VideoDto Random(int userId, RandomVideoRequestDto randomVideoRequest);
         VideoDto GetRandomVideoForGenre(string genre, int userId, RandomVideoRequestDto randomVideoRequest);
+        VideoDto GetRandomVideoForActor(int id, int userId, RandomVideoRequestDto randomVideoRequest);
     }
 }

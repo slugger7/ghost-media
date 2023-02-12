@@ -170,6 +170,24 @@ namespace Ghost.Api.Controllers
             }
         }
 
+        [HttpGet("actor/{id}/random")]
+        [Authorize]
+        public ActionResult<VideoDto> GetRandomVideoForActor(
+            int id,
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
+        )
+        {
+            try
+            {
+                return videoService.GetRandomVideoForActor(id, userId, randomVideoRequest);
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPut("{id}/nfo")]
         [Authorize]
         public async Task<ActionResult<VideoDto>> UpdateFromNFO(int id)
