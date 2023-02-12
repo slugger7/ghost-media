@@ -2,6 +2,7 @@ using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Ghost.Repository.Extensions;
+using Ghost.Dtos;
 
 namespace Ghost.Repository
 {
@@ -12,7 +13,6 @@ namespace Ghost.Repository
         private readonly IActorRepository actorRepository;
         private readonly IGenreRepository genreRepository;
         private readonly IImageRepository imageRepository;
-        public static Func<String, Func<Video, bool>> videoSearch = search => v => v.Title.ToUpper().Contains(search.Trim().ToUpper());
 
         public VideoRepository(
           GhostContext context,
@@ -94,7 +94,7 @@ namespace Ghost.Repository
             if (genre == null) throw new NullReferenceException("Genre not found");
             var videos = genre.VideoGenres
                 .Select(vg => vg.Video)
-                .Where(videoSearch(search))
+                .TitleSearch(search)
                 .FilterWatchedState(watchState, userId)
                 .FilterGenres(genresFilter)
                 .SortAndOrderVideos(sortBy, ascending);
@@ -131,7 +131,7 @@ namespace Ghost.Repository
             if (actor == null) throw new NullReferenceException("Actor not found");
             var videos = actor.VideoActors
                 .Select(va => va.Video)
-                .Where(videoSearch(search))
+                .TitleSearch(search)
                 .FilterWatchedState(watchState, userId)
                 .FilterGenres(genresFilter)
                 .SortAndOrderVideos(sortBy, ascending);
@@ -180,10 +180,11 @@ namespace Ghost.Repository
                 videosQueryable = videosQueryable.Include("VideoGenres.Genre");
             }
 
-            var videos = videosQueryable.Where(videoSearch(search))
-              .FilterWatchedState(watchState, userId)
-              .FilterGenres(genres)
-              .SortAndOrderVideos(sortBy, ascending);
+            var videos = videosQueryable
+                .TitleSearch(search)
+                .FilterWatchedState(watchState, userId)
+                .FilterGenres(genres)
+                .SortAndOrderVideos(sortBy, ascending);
 
             return new PageResult<Video>
             {
@@ -384,18 +385,12 @@ namespace Ghost.Repository
             await context.SaveChangesAsync();
         }
 
-        public Video Random(int userId, string watchState, string search)
+        public Video Random(int userId, RandomVideoRequestDto randomVideoRequest)
         {
             Random rnd = new Random();
             var videos = context.Videos
                 .Include("WatchedBy.User")
-                .FilterWatchedState(watchState, userId)
-                .Where(v => v.Title.ToUpper().Contains(search.ToUpper()));
-
-            if (search != null)
-            {
-                videos.Where(videoSearch(search));
-            }
+                .RandomVideo(userId, randomVideoRequest);
 
             var count = videos.Count();
 

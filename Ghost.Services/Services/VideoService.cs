@@ -359,9 +359,9 @@ namespace Ghost.Services
             };
         }
 
-        public VideoDto Random(int userId, string watchState, string search)
+        public VideoDto Random(int userId, RandomVideoRequestDto randomVideoRequest)
         {
-            var video = videoRepository.Random(userId, watchState, search);
+            var video = videoRepository.Random(userId, randomVideoRequest);
 
             if (video == null) throw new NullReferenceException();
             return new VideoDto(video);

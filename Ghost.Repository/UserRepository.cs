@@ -175,7 +175,7 @@ namespace Ghost.Repository
             if (user == null) throw new NullReferenceException("User not found");
             var videos = user.FavouriteVideos
                 .Select(fv => fv.Video)
-                .Where(VideoRepository.videoSearch(search))
+                .TitleSearch(search)
                 .FilterWatchedState(watchState, userId)
                 .FilterGenres(genresFilter)
                 .SortAndOrderVideos(sortBy, ascending);

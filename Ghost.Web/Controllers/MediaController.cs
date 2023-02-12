@@ -229,13 +229,12 @@ namespace Ghost.Api.Controllers
         [Authorize]
         public ActionResult<VideoDto> RandomVideo(
             [FromHeader(Name = "User-Id")] int userId,
-            [FromQuery] string watchState,
-            [FromQuery] string? search = ""
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
         )
         {
             try
             {
-                return videoService.Random(userId, watchState, search ?? "");
+                return videoService.Random(userId, randomVideoRequest);
             }
             catch (Exception)
             {

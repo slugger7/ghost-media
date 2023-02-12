@@ -1,4 +1,5 @@
 using Ghost.Data;
+using Ghost.Dtos;
 
 namespace Ghost.Repository
 {
@@ -17,6 +18,6 @@ namespace Ghost.Repository
         Task<Video> UpdateVideo(Video video, List<string>? includes);
         Task BatchUpdateFromNFO(IEnumerable<Video> videos, Dictionary<int, List<VideoGenre>> videoGenreDictionary, Dictionary<int, List<VideoActor>> videoActorDictionary);
         Task BatchUpdate(IEnumerable<Video> videos);
-        Video Random(int userId, string watchState, string search);
+        Video Random(int userId, RandomVideoRequestDto randomVideoRequest);
     }
 }
