@@ -18,6 +18,7 @@ import { LimitPicker } from './LimitPicker.jsx'
 import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
 import { useSearchParams } from 'react-router-dom'
 import { RandomVideoButton } from './RandomVideoButton'
+import useLocalState from '../services/use-local-state'
 
 const removeVideo =
   ({ index, setVideos }) =>
@@ -38,8 +39,8 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
     'watchState',
     watchStates.unwatched.value,
   )
-  const [selectedGenres, setSelectedGenres] = useQueryState(
-    'selectedGenres',
+  const [selectedGenres, setSelectedGenres] = useLocalState(
+    'genres',
     [],
   )
   const [count, setCount] = useState(0)
