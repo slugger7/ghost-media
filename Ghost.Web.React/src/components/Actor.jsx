@@ -13,20 +13,26 @@ const fetchActor = async (name) =>
   (await axios.get(`/actor/${encodeURIComponent(name)}`)).data
 const fetchVideos =
   (id) =>
-  async ({ page, limit, search, sortBy, ascending, watchState, genres }) => {
-    const videosResult = await axios.get(
-      `/media/actor/${encodeURIComponent(id)}?${constructVideoParams({
-        page,
-        limit,
-        search,
-        sortBy,
-        ascending,
-        watchState,
-        genres,
-      })}`,
-    )
-    return videosResult.data
-  }
+    async ({ page, limit, search, sortBy, ascending, watchState, genres }) => {
+      const videosResult = await axios.get(
+        `/media/actor/${encodeURIComponent(id)}?${constructVideoParams({
+          page,
+          limit,
+          search,
+          sortBy,
+          ascending,
+          watchState,
+          genres,
+        })}`,
+      )
+      return videosResult.data
+    }
+
+const fetchRandomVideo = (id) => async (params) => {
+  const videoResult = await axios.get(`/media/actor/${encodeURIComponent(id)}/random?${constructVideoParams(params)}`)
+
+  return videoResult.data;
+}
 const updateActorName = async (id, name) =>
   (await axios.put(`/actor/${id}`, { name })).data
 
@@ -64,7 +70,7 @@ export const Actor = () => {
           <TextEdit text={actorsPage.name} update={handleUpdateActorName} />
         </Stack>
       )}
-      <VideoView fetchFn={fetchVideos(params.id)} />
+      <VideoView fetchFn={fetchVideos(params.id)} fetchRandomVideoFn={fetchRandomVideo(params.id)} />
     </>
   )
 }
