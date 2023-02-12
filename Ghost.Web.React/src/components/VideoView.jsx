@@ -24,7 +24,7 @@ const removeVideo =
     () =>
       setVideos(remove(index, 1))
 
-export const VideoView = ({ fetchFn, children }) => {
+export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
   const [page, setPage] = useQueryState('page', 1)
   const [limit, setLimit] = useQueryState('limit', 48)
   const [search, setSearch] = useQueryState('search', '')
@@ -136,7 +136,7 @@ export const VideoView = ({ fetchFn, children }) => {
         setWatchState(...args)
         setPage(1)
       }} />
-      <RandomVideoButton />
+      <RandomVideoButton fetchFn={fetchRandomVideoFn} />
     </Box>
   )
 
@@ -185,5 +185,6 @@ export const VideoView = ({ fetchFn, children }) => {
 
 VideoView.propTypes = {
   fetchFn: PropTypes.func.isRequired,
+  fetchRandomVideoFn: PropTypes.func.isRequired,
   children: PropTypes.node,
 }

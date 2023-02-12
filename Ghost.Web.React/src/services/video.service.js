@@ -24,6 +24,8 @@ export const fetchVideos = async ({
   return videosResult.data
 }
 
+export const fetchRandomMedia = async (params) => (await axios.get(`/media/random?${constructVideoParams(params)}`)).data
+
 export const constructVideoParams = ({
   page,
   limit,
