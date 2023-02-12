@@ -363,6 +363,18 @@ namespace Ghost.Services
         {
             var video = videoRepository.Random(userId, randomVideoRequest);
 
+            if (video == null)
+            {
+                Console.WriteLine("Video Service: Random videos was not found");
+                throw new NullReferenceException("Video was not found");
+            }
+            return new VideoDto(video);
+        }
+
+        public VideoDto GetRandomVideoForGenre(string genre, int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var video = videoRepository.GetRandomVideoForGenre(genre, userId, randomVideoRequest);
+
             if (video == null) throw new NullReferenceException();
             return new VideoDto(video);
         }

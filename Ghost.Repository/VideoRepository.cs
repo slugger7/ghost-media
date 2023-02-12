@@ -387,14 +387,30 @@ namespace Ghost.Repository
 
         public Video Random(int userId, RandomVideoRequestDto randomVideoRequest)
         {
-            Random rnd = new Random();
             var videos = context.Videos
-                .Include("WatchedBy.User")
+                 .Include("WatchedBy.User")
+                 .Include("VideoGenres.Genre");
+
+            return videos.RandomVideo(userId, randomVideoRequest);
+        }
+
+        public Video GetRandomVideoForGenre(string name, int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var genreIncludes = new List<string> {
+                "VideoGenres.Video",
+                "VideoGenres.Video.WatchedBy.User",
+                "VideoGenres.Video.VideoGenres.Genre"
+            };
+
+            var genre = genreRepository.GetByName(name, genreIncludes);
+
+            if (genre == null) throw new NullReferenceException("Genre not found");
+
+            var video = genre.VideoGenres
+                .Select(vg => vg.Video)
                 .RandomVideo(userId, randomVideoRequest);
 
-            var count = videos.Count();
-
-            return videos.ElementAt(rnd.Next(0, count));
+            return video;
         }
     }
 }

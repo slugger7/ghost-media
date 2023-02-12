@@ -127,6 +127,17 @@ namespace Ghost.Api.Controllers
             return videoService.GetVideosForGenre(genre, userId, pageRequest, filters);
         }
 
+        [HttpGet("genre/{genre}/random")]
+        [Authorize]
+        public ActionResult<VideoDto> GetRandomVideoForGenre(
+            string genre,
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
+        )
+        {
+            return videoService.GetRandomVideoForGenre(genre, userId, randomVideoRequest);
+        }
+
         [HttpPut("{id}/actors")]
         [Authorize]
         public ActionResult<VideoDto> AddActorsByNameToVideo(int id, [FromBody] ActorAddDto actorAddDto)
@@ -234,10 +245,12 @@ namespace Ghost.Api.Controllers
         {
             try
             {
+                //Console.WriteLine(randomVideoRequest.Genres.ToString());
                 return videoService.Random(userId, randomVideoRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogWarning(ex, "Random video not found");
                 return NotFound();
             }
         }

@@ -23,5 +23,6 @@ namespace Ghost.Services
         Task LogProgress(int id, int userId, ProgressUpdateDto progress);
         PageResultDto<VideoDto> Favourites(int userId, PageRequestDto pageRequest, FilterQueryDto filters);
         VideoDto Random(int userId, RandomVideoRequestDto randomVideoRequest);
+        VideoDto GetRandomVideoForGenre(string genre, int userId, RandomVideoRequestDto randomVideoRequest);
     }
 }

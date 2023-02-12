@@ -19,5 +19,6 @@ namespace Ghost.Repository
         Task BatchUpdateFromNFO(IEnumerable<Video> videos, Dictionary<int, List<VideoGenre>> videoGenreDictionary, Dictionary<int, List<VideoActor>> videoActorDictionary);
         Task BatchUpdate(IEnumerable<Video> videos);
         Video Random(int userId, RandomVideoRequestDto randomVideoRequest);
+        Video GetRandomVideoForGenre(string genre, int userId, RandomVideoRequestDto randomVideoRequest);
     }
 }

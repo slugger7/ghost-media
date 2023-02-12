@@ -5,16 +5,22 @@ namespace Ghost.Repository.Extensions
 {
     public static class RandomVideoExtension
     {
-        public static IEnumerable<Video> RandomVideo(
-            this IQueryable<Video> videos,
+        public static Video RandomVideo(
+            this IEnumerable<Video> videos,
             int userId,
             RandomVideoRequestDto randomVideoRequest
         )
         {
-            return videos
+            Random rnd = new Random();
+
+            var result = videos
                 .FilterWatchedState(randomVideoRequest.WatchState, userId)
                 .TitleSearch(randomVideoRequest.Search)
                 .FilterGenres(randomVideoRequest.Genres);
+
+            var count = result.Count();
+
+            return result.ElementAt(rnd.Next(0, count));
         }
     }
 }
