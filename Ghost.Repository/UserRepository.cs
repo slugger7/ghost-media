@@ -223,5 +223,24 @@ namespace Ghost.Repository
                 return false;
             }
         }
+
+        public Video GetRandomVideoFromFavourites(int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var userIncludes = new List<string> {
+                "FavouriteVideos.Video",
+                "FavouriteVideos.Video.WatchedBy.User",
+                "FavouriteVideos.Video.VideoGenres.Genre"
+            };
+
+            var user = this.FindById(userId, userIncludes);
+
+            if (user == null) throw new NullReferenceException("User not found when searching for random video");
+
+            var video = user.FavouriteVideos
+                .Select(vg => vg.Video)
+                .RandomVideo(userId, randomVideoRequest);
+
+            return video;
+        }
     }
 }

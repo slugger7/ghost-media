@@ -386,5 +386,14 @@ namespace Ghost.Services
 
             return new VideoDto(video);
         }
+
+        public VideoDto GetRandomVideoFromFavourites(int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var video = userRepository.GetRandomVideoFromFavourites(userId, randomVideoRequest);
+
+            if (video == null) throw new NullReferenceException("Random video from favourites was not found");
+
+            return new VideoDto(video);
+        }
     }
 }

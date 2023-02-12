@@ -254,6 +254,23 @@ namespace Ghost.Api.Controllers
             }
         }
 
+        [HttpGet("favourites/random")]
+        [Authorize]
+        public ActionResult<VideoDto> GetRandomVideoFromFavourites(
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
+        )
+        {
+            try
+            {
+                return videoService.GetRandomVideoFromFavourites(userId, randomVideoRequest);
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet("random")]
         [Authorize]
         public ActionResult<VideoDto> RandomVideo(
@@ -263,12 +280,10 @@ namespace Ghost.Api.Controllers
         {
             try
             {
-                //Console.WriteLine(randomVideoRequest.Genres.ToString());
                 return videoService.Random(userId, randomVideoRequest);
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "Random video not found");
                 return NotFound();
             }
         }
