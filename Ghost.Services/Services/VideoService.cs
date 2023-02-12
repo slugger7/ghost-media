@@ -359,11 +359,40 @@ namespace Ghost.Services
             };
         }
 
-        public VideoDto Random(int userId, string watchState, string search)
+        public VideoDto Random(int userId, RandomVideoRequestDto randomVideoRequest)
         {
-            var video = videoRepository.Random(userId, watchState, search);
+            var video = videoRepository.Random(userId, randomVideoRequest);
 
-            if (video == null) throw new NullReferenceException();
+            if (video == null)
+            {
+                throw new NullReferenceException("Random video was not found");
+            }
+            return new VideoDto(video);
+        }
+
+        public VideoDto GetRandomVideoForGenre(string genre, int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var video = videoRepository.GetRandomVideoForGenre(genre, userId, randomVideoRequest);
+
+            if (video == null) throw new NullReferenceException("Random video for genre was not found");
+            return new VideoDto(video);
+        }
+
+        public VideoDto GetRandomVideoForActor(int id, int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var video = videoRepository.GetRandomVideoForActor(id, userId, randomVideoRequest);
+
+            if (video == null) throw new NullReferenceException("Random video for actor was not found");
+
+            return new VideoDto(video);
+        }
+
+        public VideoDto GetRandomVideoFromFavourites(int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var video = userRepository.GetRandomVideoFromFavourites(userId, randomVideoRequest);
+
+            if (video == null) throw new NullReferenceException("Random video from favourites was not found");
+
             return new VideoDto(video);
         }
     }

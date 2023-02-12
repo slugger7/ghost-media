@@ -18,13 +18,14 @@ import { LimitPicker } from './LimitPicker.jsx'
 import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
 import { useSearchParams } from 'react-router-dom'
 import { RandomVideoButton } from './RandomVideoButton'
+import useLocalState from '../services/use-local-state'
 
 const removeVideo =
   ({ index, setVideos }) =>
     () =>
       setVideos(remove(index, 1))
 
-export const VideoView = ({ fetchFn, children }) => {
+export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
   const [page, setPage] = useQueryState('page', 1)
   const [limit, setLimit] = useQueryState('limit', 48)
   const [search, setSearch] = useQueryState('search', '')
@@ -38,8 +39,8 @@ export const VideoView = ({ fetchFn, children }) => {
     'watchState',
     watchStates.unwatched.value,
   )
-  const [selectedGenres, setSelectedGenres] = useQueryState(
-    'selectedGenres',
+  const [selectedGenres, setSelectedGenres] = useLocalState(
+    'genres',
     [],
   )
   const [count, setCount] = useState(0)
@@ -136,7 +137,7 @@ export const VideoView = ({ fetchFn, children }) => {
         setWatchState(...args)
         setPage(1)
       }} />
-      <RandomVideoButton />
+      <RandomVideoButton fetchFn={fetchRandomVideoFn} />
     </Box>
   )
 
@@ -185,5 +186,6 @@ export const VideoView = ({ fetchFn, children }) => {
 
 VideoView.propTypes = {
   fetchFn: PropTypes.func.isRequired,
+  fetchRandomVideoFn: PropTypes.func.isRequired,
   children: PropTypes.node,
 }

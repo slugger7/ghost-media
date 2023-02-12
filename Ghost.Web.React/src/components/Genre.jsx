@@ -11,21 +11,27 @@ const fetchGenre = async (name) =>
   (await axios.get(`/genre/${encodeURIComponent(name)}`)).data
 const fetchVideos =
   (genre) =>
-  async ({ page, limit, search, sortBy, ascending, watchState, genres }) => {
-    const videosResult = await axios.get(
-      `/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({
-        page,
-        limit,
-        search,
-        sortBy,
-        ascending,
-        watchState,
-        genres,
-      })}`,
-    )
+    async ({ page, limit, search, sortBy, ascending, watchState, genres }) => {
+      const videosResult = await axios.get(
+        `/media/genre/${encodeURIComponent(genre)}?${constructVideoParams({
+          page,
+          limit,
+          search,
+          sortBy,
+          ascending,
+          watchState,
+          genres,
+        })}`,
+      )
 
-    return videosResult.data
-  }
+      return videosResult.data
+    }
+const fetchRandomVideo = (genre) => async (params) => {
+  const videosResult = await axios.get(
+    `/media/genre/${encodeURIComponent(genre)}/random?${constructVideoParams(params)}`
+  )
+  return videosResult.data;
+}
 const updateGenreName = async (id, name) =>
   (await axios.put(`/genre/${id}`, { name })).data
 
@@ -46,7 +52,7 @@ export const Genre = () => {
       {!loadingGenre && (
         <TextEdit text={genre.name} update={handleGenreUpdate} />
       )}
-      <VideoView fetchFn={fetchVideos(params.name)} />
+      <VideoView fetchFn={fetchVideos(params.name)} fetchRandomVideoFn={fetchRandomVideo(params.name)} />
     </>
   )
 }

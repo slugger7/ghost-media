@@ -127,6 +127,17 @@ namespace Ghost.Api.Controllers
             return videoService.GetVideosForGenre(genre, userId, pageRequest, filters);
         }
 
+        [HttpGet("genre/{genre}/random")]
+        [Authorize]
+        public ActionResult<VideoDto> GetRandomVideoForGenre(
+            string genre,
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
+        )
+        {
+            return videoService.GetRandomVideoForGenre(genre, userId, randomVideoRequest);
+        }
+
         [HttpPut("{id}/actors")]
         [Authorize]
         public ActionResult<VideoDto> AddActorsByNameToVideo(int id, [FromBody] ActorAddDto actorAddDto)
@@ -152,6 +163,24 @@ namespace Ghost.Api.Controllers
             try
             {
                 return videoService.GetVideosForActor(id, userId, pageRequest, filters);
+            }
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("actor/{id}/random")]
+        [Authorize]
+        public ActionResult<VideoDto> GetRandomVideoForActor(
+            int id,
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
+        )
+        {
+            try
+            {
+                return videoService.GetRandomVideoForActor(id, userId, randomVideoRequest);
             }
             catch (NullReferenceException)
             {
@@ -225,19 +254,35 @@ namespace Ghost.Api.Controllers
             }
         }
 
-        [HttpGet("random")]
+        [HttpGet("favourites/random")]
         [Authorize]
-        public ActionResult<VideoDto> RandomVideo(
+        public ActionResult<VideoDto> GetRandomVideoFromFavourites(
             [FromHeader(Name = "User-Id")] int userId,
-            [FromQuery] string watchState,
-            [FromQuery] string? search = ""
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
         )
         {
             try
             {
-                return videoService.Random(userId, watchState, search ?? "");
+                return videoService.GetRandomVideoFromFavourites(userId, randomVideoRequest);
             }
-            catch (Exception)
+            catch (NullReferenceException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("random")]
+        [Authorize]
+        public ActionResult<VideoDto> RandomVideo(
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromQuery] RandomVideoRequestDto randomVideoRequest
+        )
+        {
+            try
+            {
+                return videoService.Random(userId, randomVideoRequest);
+            }
+            catch (Exception ex)
             {
                 return NotFound();
             }

@@ -175,7 +175,7 @@ namespace Ghost.Repository
             if (user == null) throw new NullReferenceException("User not found");
             var videos = user.FavouriteVideos
                 .Select(fv => fv.Video)
-                .Where(VideoRepository.videoSearch(search))
+                .TitleSearch(search)
                 .FilterWatchedState(watchState, userId)
                 .FilterGenres(genresFilter)
                 .SortAndOrderVideos(sortBy, ascending);
@@ -222,6 +222,25 @@ namespace Ghost.Repository
 
                 return false;
             }
+        }
+
+        public Video GetRandomVideoFromFavourites(int userId, RandomVideoRequestDto randomVideoRequest)
+        {
+            var userIncludes = new List<string> {
+                "FavouriteVideos.Video",
+                "FavouriteVideos.Video.WatchedBy.User",
+                "FavouriteVideos.Video.VideoGenres.Genre"
+            };
+
+            var user = this.FindById(userId, userIncludes);
+
+            if (user == null) throw new NullReferenceException("User not found when searching for random video");
+
+            var video = user.FavouriteVideos
+                .Select(vg => vg.Video)
+                .RandomVideo(userId, randomVideoRequest);
+
+            return video;
         }
     }
 }
