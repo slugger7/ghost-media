@@ -31,6 +31,12 @@ const fetchFavouriteVideos = async ({
     )
   ).data
 
+const fetchRandomVideo = async (params) => {
+  const videoResult = await axios.get(`/media/favourites/random?${constructVideoParams(params)}`)
+
+  return videoResult.data;
+}
+
 const fetchFavouriteActors = async (userId) =>
   (await axios.get('/actor/favourites')).data
 
@@ -39,7 +45,7 @@ export const Favourites = () => {
     usePromise(fetchFavouriteActors)
 
   return (
-    <VideoView fetchFn={fetchFavouriteVideos}>
+    <VideoView fetchFn={fetchFavouriteVideos} fetchRandomVideoFn={fetchRandomVideo}>
       <Box sx={{ mb: 1 }}>
         {loadingFavouriteActors && <ChipSkeleton />}
         {!loadingFavouriteActors &&
