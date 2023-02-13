@@ -61,7 +61,7 @@ export const VideoCard = ({ video, remove, onClick, selected = false, disableAct
       className="ghost-video-card-header"
       title={<Tooltip title={localVideo.title}><Typography variant="h6" noWrap={true}>
         <Typography
-          sx={{ cursor: disabled ? "default" : "auto" }}
+          sx={{ cursor: disabled ? "default" : "pointer" }}
           component={Link}
           to={urlToMedia}
           color="white"
