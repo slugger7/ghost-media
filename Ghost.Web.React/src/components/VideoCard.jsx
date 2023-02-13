@@ -10,7 +10,7 @@ import { mergeDeepLeft } from 'ramda'
 import { VideoProgress } from './VideoProgress.jsx'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 
-export const VideoCard = ({ video, remove, onClick, selected = false, disableActions = false, disabled = false }) => {
+export const VideoCard = ({ video, remove, onClick, overrideLeftAction, selected = false, disableActions = false, disabled = false }) => {
   const [localVideo, setLocalVideo] = useState(video);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -93,13 +93,14 @@ export const VideoCard = ({ video, remove, onClick, selected = false, disableAct
       onClick={onClickOverride}
       disableSpacing
     >
-      <FavouriteIconButton
+      {!overrideLeftAction && <FavouriteIconButton
         id={localVideo.id}
         state={localVideo.favourite}
         toggleFn={toggleFavourite}
         update={favourite => setLocalVideo(mergeDeepLeft({ favourite }))}
         disabled={disableActions}
-      />
+      />}
+      {overrideLeftAction}
       <IconButton
         sx={{ marginLeft: "auto" }}
         onClick={handleMenuClick}
@@ -139,5 +140,6 @@ VideoCard.propTypes = {
   onClick: PropTypes.func,
   selected: PropTypes.bool,
   disableActions: PropTypes.bool,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  overrideLeftAction: PropTypes.node
 } 

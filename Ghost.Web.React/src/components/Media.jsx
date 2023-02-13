@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
-import { Container, Grid, IconButton, Skeleton, Box } from '@mui/material'
+import { Container, Grid, IconButton, Skeleton, Box, Tooltip } from '@mui/material'
 import { mergeDeepLeft } from 'ramda'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import CallSplitIcon from '@mui/icons-material/CallSplit';
 
 import { Video } from './Video.jsx'
 import { VideoGenres } from './VideoGenres.jsx'
@@ -38,6 +39,7 @@ const updateProgress = async (id, progress, reduceProgress = false) => {
     })
   }
 }
+const removeRelation = async (id, relatedTo) => (await axios.delete(`/media/${id}/relations/${relatedTo}`)).data
 
 export const Media = () => {
   const params = useParams()
@@ -86,6 +88,12 @@ export const Media = () => {
   const focusVideo = (fn) => {
     videoRef?.current?.focus()
     setRefocusFn(() => fn)
+  }
+
+  const handleRelationRemoval = (id, relatedTo) => async () => {
+    const relatedVideos = await removeRelation(id, relatedTo)
+
+    updateMedia({ relatedVideos })
   }
 
   return (
@@ -202,7 +210,10 @@ export const Media = () => {
           <Grid container spacing={2}>
             {media.relatedVideos.map(video =>
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={4} xl={4}>
-                <VideoCard key={video.id} video={video} />
+                <VideoCard
+                  key={video.id}
+                  video={video}
+                  overrideLeftAction={<Tooltip title="Remove relationship"><IconButton onClick={handleRelationRemoval(media.id, video.id)}><CallSplitIcon /></IconButton></Tooltip>} />
               </Grid>
             )}
             <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
