@@ -332,7 +332,17 @@ namespace Ghost.Services
 
         public VideoDto GetVideoInfo(int id, int userId)
         {
-            var includes = new List<string> { "VideoImages.Image", "Chapters.Image", "FavouritedBy.User", "WatchedBy.User", "RelatedVideos.RelatedTo" };
+            var includes = new List<string> {
+                "VideoImages.Image",
+                "Chapters.Image",
+                "FavouritedBy.User",
+                "WatchedBy.User",
+                "RelatedVideos.RelatedTo.VideoImages.Image",
+                "RelatedVideos.RelatedTo.FavouritedBy.User",
+                "RelatedVideos.RelatedTo.WatchedBy.User",
+                "RelatedVideos.RelatedTo.VideoActors.Actor.VideoActors",
+                "RelatedVideos.RelatedTo.VideoActors.Actor.FavouritedBy.User"
+            };
             var video = videoRepository.FindById(id, includes);
             if (video == null) throw new NullReferenceException("Video not found");
 
