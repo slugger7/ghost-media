@@ -44,6 +44,12 @@ namespace Ghost.Dtos
                   .Select(va => new ActorDto(va.Actor, userId))
                   .ToList();
             }
+            if (video.RelatedVideos != null)
+            {
+                this.RelatedVideos = video.RelatedVideos
+                  .Select(v => new VideoDto(v.RelatedTo, userId))
+                  .ToList();
+            }
         }
 
         private void initialize(Video video)
@@ -94,12 +100,6 @@ namespace Ghost.Dtos
                     this.Chapters = video.Chapters
                       .OrderBy(c => c.Timestamp)
                       .Select(c => new ChapterDto(c))
-                      .ToList();
-                }
-                if (video.RelatedVideos != null)
-                {
-                    this.RelatedVideos = video.RelatedVideos
-                      .Select(v => new VideoDto(v.RelatedTo))
                       .ToList();
                 }
             }
