@@ -240,7 +240,14 @@ export const Media = () => {
           handleClose={handleMenuClose}
           videoId={+params.id}
           title={media.title}
-          removeVideo={() => navigate(-1)}
+          removeVideo={() => {
+            const historyLength = history.length;
+            if (historyLength === 1) {
+              navigate("/")
+            } else {
+              navigate(-1);
+            }
+          }}
           setVideo={updateMedia}
           favourite={!!media.favourite}
           progress={progress}
