@@ -10,7 +10,7 @@ import { mergeDeepLeft } from 'ramda'
 import { VideoProgress } from './VideoProgress.jsx'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 
-export const VideoCard = ({ video, remove }) => {
+export const VideoCard = ({ video, remove, onClick, selected = false, disableActions = false, disabled = false }) => {
   const [localVideo, setLocalVideo] = useState(video);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -22,6 +22,17 @@ export const VideoCard = ({ video, remove }) => {
     setAnchorEl(null)
   }
 
+  const onClickOverride = (e) => {
+    if (disabled) {
+      e.preventDefault()
+    } else {
+      if (onClick) {
+        e.preventDefault()
+        onClick(video)
+      }
+    }
+  }
+
   const actors = localVideo.actors.length > 0 ? localVideo.actors.map(a => <Chip
     size='small'
     key={a.id}
@@ -30,7 +41,9 @@ export const VideoCard = ({ video, remove }) => {
     color={a.favourite ? "success" : "primary"}
     component={Link}
     to={`/actors/${a.id}/${encodeURIComponent(a.name.toLowerCase())}`}
-    clickable />) : <Chip variant="outlined" label="Unknown" size='small'></Chip>
+    disabled={disableActions || disabled}
+    onClick={onClickOverride}
+    clickable />) : <Chip variant="outlined" label="Unknown" size='small' disabled={disableActions || disabled}></Chip>
 
   const urlToMedia = `/media/${localVideo.id}/${localVideo.title}`;
   return (<Card sx={{
@@ -39,18 +52,33 @@ export const VideoCard = ({ video, remove }) => {
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'column'
-  }}>
+  }}
+    raised={selected}
+    disabled={disabled}>
     <CardHeader
+      sx={{ cursor: onClick && !disabled ? "pointer" : "auto" }}
+      onClick={onClickOverride}
       className="ghost-video-card-header"
       title={<Tooltip title={localVideo.title}><Typography variant="h6" noWrap={true}>
-        <Typography component={Link} to={urlToMedia} color="white">{localVideo.title}</Typography>
+        <Typography
+          sx={{ cursor: disabled ? "default" : "auto" }}
+          component={Link}
+          to={urlToMedia}
+          color="white"
+          onClick={onClickOverride}
+          disabled={disabled}>
+          {localVideo.title}
+        </Typography>
       </Typography></Tooltip>}
       subheader={<Stack direction="row" spacing={0.5}>{actors}</Stack >}
       disableTypography={true}
+      disabled={disabled}
     />
     <CardActionArea
       LinkComponent={Link}
       to={urlToMedia}
+      onClick={onClickOverride}
+      disabled={disabled}
     >
       {localVideo.thumbnail && <CardMedia sx={{ height: "200px" }}
         component="img"
@@ -60,12 +88,18 @@ export const VideoCard = ({ video, remove }) => {
       {!localVideo.thumbnail && <Skeleton animation={false} variant="rectangle" height="150px" />}
       <VideoProgress duration={localVideo.runtime} current={localVideo.progress} />
     </CardActionArea>
-    <CardActions disableSpacing>
+    <CardActions
+      sx={{ cursor: onClick && !disabled ? "pointer" : "auto" }}
+      onClick={onClickOverride}
+      disableSpacing
+    >
       <FavouriteIconButton
         id={localVideo.id}
         state={localVideo.favourite}
         toggleFn={toggleFavourite}
-        update={favourite => setLocalVideo(mergeDeepLeft({ favourite }))} />
+        update={favourite => setLocalVideo(mergeDeepLeft({ favourite }))}
+        disabled={disableActions}
+      />
       <IconButton
         sx={{ marginLeft: "auto" }}
         onClick={handleMenuClick}
@@ -73,6 +107,7 @@ export const VideoCard = ({ video, remove }) => {
         aria-controls={!!anchorEl ? 'video-card-menu' : undefined}
         aria-haspopup={true}
         aria-expanded={!!anchorEl}
+        disabled={disableActions}
       >
         <MoreVertIcon />
       </IconButton>
@@ -100,5 +135,9 @@ VideoCard.propTypes = {
       id: PropTypes.number.isRequired
     })
   }).isRequired,
-  remove: PropTypes.func
+  remove: PropTypes.func,
+  onClick: PropTypes.func,
+  selected: PropTypes.bool,
+  disableActions: PropTypes.bool,
+  disabled: PropTypes.bool
 } 
