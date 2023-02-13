@@ -19,6 +19,7 @@ import usePromise from '../services/use-promise.js'
 import { ProgressIconButton } from './ProgressIconButton.jsx'
 import { MediaSection } from './MediaSection.jsx'
 import { VideoCard } from './VideoCard.jsx'
+import { AddVideoCard } from './AddVideoCard.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -201,8 +202,12 @@ export const Media = () => {
           <Grid container spacing={2}>
             {media.relatedVideos.map(video =>
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={4} xl={4}>
-                <VideoCard key={video.id} video={video} remove={() => { }} />
-              </Grid>)}
+                <VideoCard key={video.id} video={video} />
+              </Grid>
+            )}
+            <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
+              <AddVideoCard />
+            </Grid>
           </Grid>
         )}
         {!loadingMedia && (
