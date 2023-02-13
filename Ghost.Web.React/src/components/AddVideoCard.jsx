@@ -48,7 +48,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
     try {
       const relatedVideos = await relateVideos({ id, relateToId: selectedVideo.id });
       if (relateBothWays) {
-        await relateVideos(selectedVideo.id, id);
+        await relateVideos({ id: selectedVideo.id, relateToId: id });
       }
       setVideos(relatedVideos)
     } finally {
