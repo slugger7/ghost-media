@@ -163,7 +163,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
                 <VideoCard
                   video={video}
-                  remove={removeVideo({ index, setVideos: () => { } })}
+                  remove={removeVideo({ index, setVideos })}
                 />
               </Grid>
             ))}
