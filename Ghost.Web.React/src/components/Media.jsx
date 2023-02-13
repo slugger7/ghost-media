@@ -18,6 +18,7 @@ import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 import usePromise from '../services/use-promise.js'
 import { ProgressIconButton } from './ProgressIconButton.jsx'
 import { MediaSection } from './MediaSection.jsx'
+import { VideoCard } from './VideoCard.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -57,7 +58,7 @@ export const Media = () => {
   const [chapter, setChapter] = useState()
   const videoSource = generateVideoUrl(params.id)
   const [progress, setProgress] = useState()
-  const [refocusFn, setRefocusFn] = useState(() => {})
+  const [refocusFn, setRefocusFn] = useState(() => { })
 
   const handleMenuClick = (event) => setMenuAnchorEl(event.target)
   const handleMenuClose = () => setMenuAnchorEl(null)
@@ -195,6 +196,14 @@ export const Media = () => {
               </Grid>
             </Grid>
           </MediaSection>
+        )}
+        {!loadingMedia && (
+          <Grid container spacing={2}>
+            {media.relatedVideos.map(video =>
+              <Grid key={video.id} item xs={12} sm={6} md={4} lg={4} xl={4}>
+                <VideoCard key={video.id} video={video} remove={() => { }} />
+              </Grid>)}
+          </Grid>
         )}
         {!loadingMedia && (
           <MediaSection>
