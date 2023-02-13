@@ -435,11 +435,19 @@ namespace Ghost.Repository
 
         public async Task<List<Video>> RelateVideo(int id, int relateTo)
         {
-            var video = this.FindById(id, new List<string> { "RelatedVideos.RelatedTo" });
+            if (id == relateTo)
+            {
+                throw new VideoRelationException(id, relateTo);
+            }
+            var video = this.FindById(id, new List<string> {
+                "RelatedVideos.RelatedTo"
+            });
 
             if (video == null) throw new NullReferenceException("Video to relate to was not found");
 
-            var relatedVideo = this.FindById(relateTo, null);
+            var relatedVideo = this.FindById(relateTo, new List<string> {
+                "VideoImages.Image"
+            });
 
             if (relatedVideo == null) throw new NullReferenceException("Related video was not found");
 
