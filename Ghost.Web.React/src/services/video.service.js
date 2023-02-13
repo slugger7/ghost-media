@@ -24,6 +24,12 @@ export const fetchVideos = async ({
   return videosResult.data
 }
 
+export const relateVideos = async ({ id, relateToId }) => {
+  const videosResult = await axios.put(`media/${id}/relations/${relateToId}`)
+
+  return videosResult.data
+}
+
 export const fetchRandomMedia = async (params) => (await axios.get(`/media/random?${constructVideoParams(params)}`)).data
 
 export const constructVideoParams = ({

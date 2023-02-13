@@ -21,5 +21,7 @@ namespace Ghost.Repository
         Video Random(int userId, RandomVideoRequestDto randomVideoRequest);
         Video GetRandomVideoForGenre(string genre, int userId, RandomVideoRequestDto randomVideoRequest);
         Video GetRandomVideoForActor(int id, int userId, RandomVideoRequestDto randomVideoRequest);
+        Task<List<Video>> RelateVideo(int id, int relateTo);
+        Task<List<Video>> DeleteRelation(int id, int relatedTo);
     }
 }

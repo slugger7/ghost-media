@@ -14,7 +14,6 @@ const modalStyle = {
 };
 
 export const DeleteConfirmationModal = ({ title, open, onClose, onConfirm, loadingConfirm = false, ...props }) => <Modal
-  hideBackdrop
   open={open}
   onClose={onClose}
   aria-labelledby="ghost-delete-confirmation-modal-title"
@@ -29,7 +28,7 @@ export const DeleteConfirmationModal = ({ title, open, onClose, onConfirm, loadi
       You are about to permanently delete <strong>{title}</strong> from the library and your hard drive.
     </Typography>
     <Stack direction="row" justifyContent="flex-end" spacing={1} >
-      <Button variant="contained" color="primary" onClick={onClose} disabled={loadingConfirm}>Cancel</Button>
+      <Button variant="outlined" color="primary" onClick={onClose} disabled={loadingConfirm}>Cancel</Button>
       <LoadingButton
         variant="contained"
         color="error"

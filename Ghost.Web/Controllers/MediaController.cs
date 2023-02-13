@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ghost.Dtos;
 using Ghost.Services;
 using Microsoft.AspNetCore.Authorization;
+using Ghost.Exceptions;
 
 namespace Ghost.Api.Controllers
 {
@@ -37,9 +38,9 @@ namespace Ghost.Api.Controllers
             {
                 return await videoService.UpdateTitle(id, titleUpdate.Title);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -62,9 +63,9 @@ namespace Ghost.Api.Controllers
                 if (videoInfo == null) return NoContent();
                 return videoInfo;
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -80,9 +81,9 @@ namespace Ghost.Api.Controllers
                 }
                 return NotFound();
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -95,10 +96,9 @@ namespace Ghost.Api.Controllers
                 await videoService.DeletePermanently(id);
                 return NoContent();
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                logger.LogWarning("Video was not found: {id}", id);
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -110,9 +110,9 @@ namespace Ghost.Api.Controllers
             {
                 return this.videoService.SetGenresByNameToVideo(id, genreAddDto.Genres);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -146,9 +146,9 @@ namespace Ghost.Api.Controllers
             {
                 return this.videoService.SetActorsByNameToVideo(id, actorAddDto.Actors);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -164,9 +164,9 @@ namespace Ghost.Api.Controllers
             {
                 return videoService.GetVideosForActor(id, userId, pageRequest, filters);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -182,9 +182,9 @@ namespace Ghost.Api.Controllers
             {
                 return videoService.GetRandomVideoForActor(id, userId, randomVideoRequest);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -196,10 +196,9 @@ namespace Ghost.Api.Controllers
             {
                 return await videoService.SyncWithNFO(id);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                logger.LogWarning("Video was not found when updating from NFO {0}", id);
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -211,10 +210,9 @@ namespace Ghost.Api.Controllers
             {
                 return await videoService.GenerateChapters(id, overwrite);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                logger.LogWarning("Video was not found when generating chapters {0}", id);
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -230,9 +228,9 @@ namespace Ghost.Api.Controllers
                 await videoService.LogProgress(id, userId, progress);
                 return Ok();
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -248,9 +246,9 @@ namespace Ghost.Api.Controllers
             {
                 return videoService.Favourites(userId, pageRequest, filterQueryDto);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -265,9 +263,9 @@ namespace Ghost.Api.Controllers
             {
                 return videoService.GetRandomVideoFromFavourites(userId, randomVideoRequest);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -282,9 +280,41 @@ namespace Ghost.Api.Controllers
             {
                 return videoService.Random(userId, randomVideoRequest);
             }
-            catch (Exception ex)
+            catch (NullReferenceException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}/relations/{relateTo}")]
+        [Authorize]
+        public async Task<ActionResult<List<VideoDto>>> RelateVideo(int id, int relateTo)
+        {
+            try
+            {
+                return await videoService.RelateVideo(id, relateTo);
+            }
+            catch (NullReferenceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (VideoRelationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}/relations/{relatedTo}")]
+        [Authorize]
+        public async Task<ActionResult<List<VideoDto>>> DeleteRelation(int id, int relatedTo)
+        {
+            try
+            {
+                return await videoService.DeleteRelation(id, relatedTo);
+            }
+            catch (NullReferenceException ex)
+            {
+                return NotFound(ex.Message);
             }
         }
     }

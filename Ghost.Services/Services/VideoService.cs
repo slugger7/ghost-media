@@ -332,7 +332,17 @@ namespace Ghost.Services
 
         public VideoDto GetVideoInfo(int id, int userId)
         {
-            var includes = new List<string> { "VideoImages.Image", "Chapters.Image", "FavouritedBy.User", "WatchedBy.User" };
+            var includes = new List<string> {
+                "VideoImages.Image",
+                "Chapters.Image",
+                "FavouritedBy.User",
+                "WatchedBy.User",
+                "RelatedVideos.RelatedTo.VideoImages.Image",
+                "RelatedVideos.RelatedTo.FavouritedBy.User",
+                "RelatedVideos.RelatedTo.WatchedBy.User",
+                "RelatedVideos.RelatedTo.VideoActors.Actor.VideoActors",
+                "RelatedVideos.RelatedTo.VideoActors.Actor.FavouritedBy.User"
+            };
             var video = videoRepository.FindById(id, includes);
             if (video == null) throw new NullReferenceException("Video not found");
 
@@ -394,6 +404,20 @@ namespace Ghost.Services
             if (video == null) throw new NullReferenceException("Random video from favourites was not found");
 
             return new VideoDto(video);
+        }
+
+        public async Task<List<VideoDto>> RelateVideo(int id, int relateTo)
+        {
+            var videos = await videoRepository.RelateVideo(id, relateTo);
+
+            return videos.Select(v => new VideoDto(v)).ToList();
+        }
+
+        public async Task<List<VideoDto>> DeleteRelation(int id, int relatedTo)
+        {
+            var videos = await videoRepository.DeleteRelation(id, relatedTo);
+
+            return videos.Select(v => new VideoDto(v)).ToList();
         }
     }
 }

@@ -27,7 +27,7 @@ const removeVideo =
 
 export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
   const [page, setPage] = useQueryState('page', 1)
-  const [limit, setLimit] = useQueryState('limit', 48)
+  const [limit, setLimit] = useLocalState('limit', 48)
   const [search, setSearch] = useQueryState('search', '')
   const [total, setTotal] = useState(0)
   const [sortBy, setSortBy] = useQueryState('sortBy', 'date-added')
@@ -62,7 +62,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
   const [, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    setSearchParams({ page, limit, search, sortBy, sortAscending, watchState })
+    setSearchParams({ page, search, sortBy, sortAscending, watchState })
   }, [page, limit, search, sortBy, sortAscending, watchState])
 
   useEffect(() => {

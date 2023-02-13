@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Ghost.Repository.Extensions;
 using Ghost.Dtos;
+using Ghost.Exceptions;
 
 namespace Ghost.Repository
 {
@@ -430,6 +431,49 @@ namespace Ghost.Repository
                 .RandomVideo(userId, randomVideoRequest);
 
             return video;
+        }
+
+        public async Task<List<Video>> RelateVideo(int id, int relateTo)
+        {
+            if (id == relateTo)
+            {
+                throw new VideoRelationException(id, relateTo);
+            }
+            var video = this.FindById(id, new List<string> {
+                "RelatedVideos.RelatedTo"
+            });
+
+            if (video == null) throw new NullReferenceException("Video to relate to was not found");
+
+            var relatedVideo = this.FindById(relateTo, new List<string> {
+                "VideoImages.Image"
+            });
+
+            if (relatedVideo == null) throw new NullReferenceException("Related video was not found");
+
+            if (video.RelatedVideos.Find(v => v.RelatedTo.Id == relatedVideo.Id) != null) throw new VideoRelationException(video, relatedVideo);
+            video.RelatedVideos.Add(new RelatedVideo { RelatedTo = relatedVideo });
+
+            await context.SaveChangesAsync();
+
+            return video.RelatedVideos.Select(v => v.RelatedTo).ToList();
+        }
+
+        public async Task<List<Video>> DeleteRelation(int id, int relatedTo)
+        {
+            var video = this.FindById(id, new List<string> { "RelatedVideos.RelatedTo" });
+
+            if (video == null) throw new NullReferenceException("Video with relation was not found");
+
+            var relation = video.RelatedVideos.Find(v => v.RelatedTo.Id == relatedTo);
+
+            if (relation == null) throw new NullReferenceException("Relation for video was not found");
+
+            video.RelatedVideos.Remove(relation);
+
+            await context.SaveChangesAsync();
+
+            return video.RelatedVideos.Select(v => v.RelatedTo).ToList();
         }
     }
 }

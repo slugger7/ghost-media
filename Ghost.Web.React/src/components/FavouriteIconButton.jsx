@@ -4,7 +4,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PropTypes from 'prop-types'
 
-export const FavouriteIconButton = ({ state, update, id, toggleFn }) => {
+export const FavouriteIconButton = ({ state, update, id, toggleFn, disabled = false }) => {
   const [loading, setLoading] = useState(false);
 
   const handleToggleFavourite = async () => {
@@ -18,7 +18,7 @@ export const FavouriteIconButton = ({ state, update, id, toggleFn }) => {
     }
   }
   return <Tooltip title={state ? "Unfavourite" : "Favourite"}>
-    <IconButton aria-label="add to favourites" onClick={handleToggleFavourite} disabled={loading}>
+    <IconButton aria-label="add to favourites" onClick={handleToggleFavourite} disabled={loading || disabled}>
       {state ? <FavoriteIcon /> : <FavoriteBorderIcon />}
     </IconButton>
   </Tooltip>
@@ -28,5 +28,6 @@ FavouriteIconButton.propTypes = {
   state: PropTypes.bool.isRequired,
   update: PropTypes.func,
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  toggleFn: PropTypes.func
+  toggleFn: PropTypes.func,
+  disabled: PropTypes.bool
 }
