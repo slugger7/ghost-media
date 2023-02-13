@@ -82,7 +82,7 @@ export const VideoCard = ({ video, remove }) => {
       videoId={localVideo.id}
       anchorEl={anchorEl}
       handleClose={handleMenuClose}
-      removeVideo={remove}
+      removeVideo={remove || null}
       setVideo={video => setLocalVideo(mergeDeepLeft(video))}
       title={localVideo.title}
       favourite={!!localVideo.favourite}
@@ -100,5 +100,5 @@ VideoCard.propTypes = {
       id: PropTypes.number.isRequired
     })
   }).isRequired,
-  remove: PropTypes.func.isRequired
+  remove: PropTypes.func
 } 

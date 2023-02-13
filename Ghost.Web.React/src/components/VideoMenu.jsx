@@ -95,7 +95,9 @@ export const VideoMenu = ({
     setLoadingDelete(true)
     try {
       await deleteVideo(videoId)
-      removeVideo()
+      if (removeVideo) {
+        removeVideo()
+      }
     } finally {
       setLoadingDelete(false)
       handleModalClose()
@@ -251,7 +253,7 @@ VideoMenu.propTypes = {
   anchorEl: PropTypes.any,
   handleClose: PropTypes.func.isRequired,
   videoId: PropTypes.number.isRequired,
-  removeVideo: PropTypes.func.isRequired,
+  removeVideo: PropTypes.func,
   setVideo: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   source: PropTypes.string.isRequired,
