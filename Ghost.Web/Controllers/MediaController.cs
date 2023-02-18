@@ -317,5 +317,19 @@ namespace Ghost.Api.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpPost("{id}/sub-video")]
+        [Authorize]
+        public async Task<ActionResult<VideoDto>> CreateSubVideo(int id, [FromBody] SubVideoRequestDto subVideoRequest)
+        {
+            try
+            {
+                return await videoService.CreateSubVideo(id, subVideoRequest);
+            }
+            catch (NullReferenceException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }
