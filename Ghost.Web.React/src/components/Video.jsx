@@ -67,7 +67,7 @@ export const Video = ({
     }
     if (keysDown.ShiftLeft || keysDown.ShiftRight) {
       if (setEndMark && event.code === "KeyM") {
-        setEndMark(videoRef.current.currentTime)
+        setEndMark()
         return;
       }
       const fn = shiftedKeyFunctions[event.code]
@@ -76,7 +76,7 @@ export const Video = ({
       }
     } else {
       if (setStartMark && event.code === "KeyM") {
-        setStartMark(videoRef.current.currentTime)
+        setStartMark()
         return;
       }
       const fn = keyFunctions[event.code]

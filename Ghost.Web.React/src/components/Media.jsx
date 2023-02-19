@@ -118,14 +118,20 @@ export const Media = () => {
   })
 
   const handleStartMarkerClick = useCallback(() => {
-    setStartMarker(progress);
+    if (editMode) {
+      setStartMarker(progress);
+    }
   })
   const handleEndMarkerClick = useCallback(() => {
-    setEndMarker(progress);
+    if (editMode) {
+      setEndMarker(progress);
+    }
   })
 
   const handleSubVideoClick = useCallback(() => {
-    setSubVideoNameModalOpen(true);
+    if (editMode) {
+      setSubVideoNameModalOpen(true);
+    }
   })
 
   const handleSubVideoSubmit = useCallback(async (newVideoName) => {
@@ -154,8 +160,8 @@ export const Media = () => {
           progressUpdate={handleProgressUpdate}
           videoRef={videoRef}
           loseFocus={refocusFn}
-          setStartMark={setStartMarker}
-          setEndMark={setEndMarker}
+          setStartMark={handleStartMarkerClick}
+          setEndMark={handleEndMarkerClick}
           createSubVideo={handleSubVideoClick}
         />
       )}
