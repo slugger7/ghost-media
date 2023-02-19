@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { Container, Grid, IconButton, Skeleton, Box, Tooltip } from '@mui/material'
@@ -77,60 +77,67 @@ export const Media = () => {
   const [endMarker, setEndMarker] = useState(null);
   const [subVideoNameModalOpen, setSubVideoNameModalOpen] = useState(false);
 
-  const handleMenuClick = (event) => setMenuAnchorEl(event.target)
-  const handleMenuClose = () => setMenuAnchorEl(null)
-  const handleProgressUpdate = async (progress) => {
-    setProgress(progress)
-    await updateProgress(params.id, progress)
-  }
-
-  const handleProgressStatusUpdate = async (progress) => {
-    setProgress(progress)
-    await updateProgress(params.id, progress, true)
-  }
-
   useEffect(() => {
     if (media?.progress !== undefined) {
       setProgress(media.progress)
     }
   }, [media?.progress])
 
-  const updateMedia = (val) => {
-    setMedia(mergeDeepLeft(val))
-  }
+  useEffect(() => {
+    if (!editMode) {
+      setStartMarker(null);
+      setEndMarker(null);
+    }
+  }, [editMode])
 
-  const focusVideo = (fn) => {
+  const handleMenuClick = useCallback((event) => setMenuAnchorEl(event.target))
+  const handleMenuClose = useCallback(() => setMenuAnchorEl(null))
+  const handleProgressUpdate = useCallback(async (progress) => {
+    setProgress(progress)
+    await updateProgress(params.id, progress)
+  })
+
+  const handleProgressStatusUpdate = useCallback(async (progress) => {
+    setProgress(progress)
+    await updateProgress(params.id, progress, true)
+  })
+
+  const updateMedia = useCallback((val) => {
+    setMedia(mergeDeepLeft(val))
+  })
+
+  const focusVideo = useCallback((fn) => {
     videoRef?.current?.focus()
     setRefocusFn(() => fn)
-  }
+  })
 
-  const handleRelationRemoval = (id, relatedTo) => async () => {
+  const handleRelationRemoval = useCallback((id, relatedTo) => async () => {
     const relatedVideos = await removeRelation(id, relatedTo)
 
     updateMedia({ relatedVideos })
-  }
+  })
 
-  const handleStartMarkerClick = () => {
+  const handleStartMarkerClick = useCallback(() => {
     setStartMarker(progress);
-  }
-  const handleEndMarkerClick = () => {
+  })
+  const handleEndMarkerClick = useCallback(() => {
     setEndMarker(progress);
-  }
+  })
 
-  const handleSubVideoClick = () => {
+  const handleSubVideoClick = useCallback(() => {
     setSubVideoNameModalOpen(true);
-  }
+  })
 
-  const handleSubVideoSubmit = async (newVideoName) => {
+  const handleSubVideoSubmit = useCallback(async (newVideoName) => {
     await createSubVideo(media.id, newVideoName, startMarker, endMarker);
 
     const updatedVideo = await fetchMedia(media.id);
     updateMedia({ relatedVideos: updatedVideo.relatedVideos })
     setSubVideoNameModalOpen(false)
-  }
+  })
 
   return (
-    <>
+    <Box>
       {loadingMedia && <Skeleton height="200px" width="100%" />}
       {!loadingMedia && (
         <Video
@@ -147,6 +154,9 @@ export const Media = () => {
           progressUpdate={handleProgressUpdate}
           videoRef={videoRef}
           loseFocus={refocusFn}
+          setStartMark={setStartMarker}
+          setEndMark={setEndMarker}
+          createSubVideo={handleSubVideoClick}
         />
       )}
       <Container sx={{ paddingX: 0, mt: 1 }}>
@@ -314,6 +324,6 @@ export const Media = () => {
         onSubmit={handleSubVideoSubmit}
         onCancel={() => setSubVideoNameModalOpen(false)}
       />}
-    </>
+    </Box>
   )
 }
