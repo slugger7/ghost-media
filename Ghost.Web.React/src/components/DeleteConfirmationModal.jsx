@@ -21,7 +21,7 @@ export const DeleteConfirmationModal = ({ title, open, onClose, onConfirm, loadi
   {...props}
 >
   <Paper sx={modalStyle}>
-    <Typography id="ghost-delete-confirmation-modal-title" variant="h6" component="h2">
+    <Typography id="ghost-delete-confirmation-modal-title" variant="h6" component="h6">
       Permanently delete video?
     </Typography>
     <Typography id="ghost-delete-confirmation-modal-description" sx={{ my: 2 }}>
