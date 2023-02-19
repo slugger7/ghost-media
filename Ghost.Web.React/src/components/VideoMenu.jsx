@@ -16,6 +16,7 @@ import OfflineShareIcon from '@mui/icons-material/OfflineShare'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import ImageIcon from '@mui/icons-material/Image'
+import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { toggleFavourite } from '../services/video.service'
@@ -46,6 +47,7 @@ export const items = {
   sync: 'sync',
   syncNfo: 'syncNfo',
   delete: 'delete',
+  edit: 'edit'
 }
 
 export const VideoMenu = ({
@@ -59,6 +61,8 @@ export const VideoMenu = ({
   source,
   progress,
   hideItems = [],
+  editing = false,
+  setEditing = () => { }
 }) => {
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
@@ -157,6 +161,11 @@ export const VideoMenu = ({
     }
   }
 
+  const handleEditMenuClick = () => {
+    handleClose()
+    setEditing(!editing)
+  }
+
   return (
     <>
       <Menu
@@ -229,6 +238,14 @@ export const VideoMenu = ({
             <ListItemText>Sync from NFO</ListItemText>
           </MenuItem>
         )}
+        {!hideItems.includes(items.edit) && (
+          <MenuItem onClick={handleEditMenuClick}>
+            <ListItemIcon>
+              <EditIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{editing ? "Finished Edit" : "Edit"}</ListItemText>
+          </MenuItem>
+        )}
         {!hideItems.includes(items.delete) && (
           <MenuItem onClick={handleDeleteMenuClick}>
             <ListItemIcon>
@@ -260,4 +277,6 @@ VideoMenu.propTypes = {
   favourite: PropTypes.bool.isRequired,
   progress: PropTypes.number,
   hideItems: PropTypes.arrayOf(PropTypes.string),
+  editing: PropTypes.bool,
+  setEditing: PropTypes.func
 }
