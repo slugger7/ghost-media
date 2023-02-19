@@ -420,7 +420,7 @@ namespace Ghost.Services
             return videos.Select(v => new VideoDto(v)).ToList();
         }
 
-        public async Task<VideoDto> CreateSubVideo(int id, SubVideoRequestDto subVideoRequest)
+        public async Task CreateSubVideo(int id, int userId, SubVideoRequestDto subVideoRequest)
         {
             var video = videoRepository.FindById(id);
             if (video == null) throw new NullReferenceException("Video was not found to create sub video from");
@@ -430,7 +430,7 @@ namespace Ghost.Services
                 video.Path,
                 newVideoPath,
                 TimeSpan.FromMilliseconds(subVideoRequest.StartMillis),
-                TimeSpan.FromMilliseconds(subVideoRequest.EndMillis - subVideoRequest.StartMillis)
+                TimeSpan.FromMilliseconds(subVideoRequest.EndMillis)
             );
 
             var metaData = VideoFns.GetVideoInformation(newVideoPath);
@@ -455,8 +455,6 @@ namespace Ghost.Services
             {
                 VideoId = newVideo.Id
             });
-
-            return new VideoDto(video);
         }
     }
 }

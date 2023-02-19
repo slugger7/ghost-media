@@ -320,11 +320,19 @@ namespace Ghost.Api.Controllers
 
         [HttpPost("{id}/sub-video")]
         [Authorize]
-        public async Task<ActionResult<VideoDto>> CreateSubVideo(int id, [FromBody] SubVideoRequestDto subVideoRequest)
+        public async Task<ActionResult> CreateSubVideo(
+            int id,
+            [FromHeader(Name = "User-Id")] int userId,
+            [FromBody] SubVideoRequestDto subVideoRequest)
         {
+            if (subVideoRequest.EndMillis <= subVideoRequest.StartMillis)
+            {
+                return BadRequest("End is smaller than start");
+            }
             try
             {
-                return await videoService.CreateSubVideo(id, subVideoRequest);
+                await videoService.CreateSubVideo(id, userId, subVideoRequest);
+                return Ok();
             }
             catch (NullReferenceException ex)
             {

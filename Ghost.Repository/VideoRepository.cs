@@ -499,9 +499,6 @@ namespace Ghost.Repository
 
             await context.SaveChangesAsync();
 
-            video = this.FindById(id);
-            if (video == null) throw new NullReferenceException("Video was not found to create sub video on");
-
             return video;
         }
     }
