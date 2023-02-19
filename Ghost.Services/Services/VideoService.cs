@@ -419,5 +419,42 @@ namespace Ghost.Services
 
             return videos.Select(v => new VideoDto(v)).ToList();
         }
+
+        public async Task CreateSubVideo(int id, int userId, SubVideoRequestDto subVideoRequest)
+        {
+            var video = videoRepository.FindById(id);
+            if (video == null) throw new NullReferenceException("Video was not found to create sub video from");
+
+            var newVideoPath = Path.Combine(Path.GetDirectoryName(video.Path), subVideoRequest.Name + Path.GetExtension(video.Path));
+            await VideoFns.CreateSubVideoAsync(
+                video.Path,
+                newVideoPath,
+                TimeSpan.FromMilliseconds(subVideoRequest.StartMillis),
+                TimeSpan.FromMilliseconds(subVideoRequest.EndMillis)
+            );
+
+            var metaData = VideoFns.GetVideoInformation(newVideoPath);
+            if (metaData == null) throw new NullReferenceException("Video information came back as null");
+
+            var newVideo = new Video
+            {
+                Path = newVideoPath,
+                FileName = Path.GetFileName(newVideoPath),
+                Title = Path.GetFileNameWithoutExtension(newVideoPath),
+                Created = metaData.Created,
+                Size = metaData.Size,
+                Height = metaData.Height,
+                Width = metaData.Width,
+                Runtime = metaData.Duration.TotalMilliseconds,
+                LastMetadataUpdate = DateTime.UtcNow
+            };
+
+            video = await videoRepository.CreateSubVideo(id, newVideo);
+
+            imageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
+            {
+                VideoId = newVideo.Id
+            });
+        }
     }
 }

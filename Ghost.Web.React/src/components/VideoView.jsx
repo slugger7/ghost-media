@@ -79,6 +79,11 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
     setCount(Math.ceil(total / limit) || 1)
   }, [total, limit])
 
+  const handlePageChange = (e, newPage) => {
+    setPage(newPage)
+    setVideos(null)
+  }
+
   const paginationComponent = (
     <>
       {count > 1 && page && (
@@ -91,7 +96,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
             count={count}
             showFirstButton
             showLastButton
-            onChange={(e, newPage) => setPage(newPage)}
+            onChange={handlePageChange}
           />
         </Box>
       )}
@@ -148,7 +153,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       <Box>
         <Grid container spacing={2}>
           {loading && <VideoGridSkeleton count={limit} />}
-          {!loading && videos.length === 0 && (
+          {!loading && videos && videos.length === 0 && (
             <Grid item xs={12}>
               <NothingHere>
                 Nothing here. Add a library and sync it to have videos appear

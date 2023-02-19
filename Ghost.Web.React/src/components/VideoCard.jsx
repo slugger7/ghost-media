@@ -123,7 +123,7 @@ export const VideoCard = ({ video, remove, onClick, overrideLeftAction, selected
       title={localVideo.title}
       favourite={!!localVideo.favourite}
       progress={localVideo.progress}
-      hideItems={[items.favourite, items.chooseThumbnail]}
+      hideItems={[items.favourite, items.chooseThumbnail, items.edit]}
     />
   </Card>)
 }

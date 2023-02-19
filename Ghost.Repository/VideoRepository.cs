@@ -475,5 +475,31 @@ namespace Ghost.Repository
 
             return video.RelatedVideos.Select(v => v.RelatedTo).ToList();
         }
+
+        public async Task<Video> CreateSubVideo(int id, Video newVideo)
+        {
+            var video = this.FindById(id, new List<string> {
+                "LibraryPath",
+                "RelatedVideos"
+            });
+            if (video == null) throw new NullReferenceException("Video was not found to create sub video on");
+
+            newVideo.LibraryPath = video.LibraryPath;
+            newVideo.RelatedVideos.Add(new RelatedVideo
+            {
+                RelatedTo = video
+            });
+
+            context.Videos.Add(newVideo);
+
+            video.RelatedVideos.Add(new RelatedVideo
+            {
+                RelatedTo = newVideo
+            });
+
+            await context.SaveChangesAsync();
+
+            return video;
+        }
     }
 }

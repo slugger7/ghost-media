@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { Container, Grid, IconButton, Skeleton, Box, Tooltip } from '@mui/material'
 import { mergeDeepLeft } from 'ramda'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import CallSplitIcon from '@mui/icons-material/CallSplit';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import TheatersIcon from '@mui/icons-material/Theaters';
 
 import { Video } from './Video.jsx'
 import { VideoGenres } from './VideoGenres.jsx'
@@ -21,6 +24,7 @@ import { ProgressIconButton } from './ProgressIconButton.jsx'
 import { MediaSection } from './MediaSection.jsx'
 import { VideoCard } from './VideoCard.jsx'
 import { AddVideoCard } from './AddVideoCard.jsx'
+import { TextInputModal } from './TextInputModal.jsx'
 
 const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
@@ -39,6 +43,11 @@ const updateProgress = async (id, progress, reduceProgress = false) => {
     })
   }
 }
+const createSubVideo = async (id, name, start, end) => (await axios.post(`/media/${id}/sub-video`, {
+  name,
+  startMillis: parseInt(start * 1000),
+  endMillis: parseInt(end * 1000)
+})).data
 const removeRelation = async (id, relatedTo) => (await axios.delete(`/media/${id}/relations/${relatedTo}`)).data
 
 export const Media = () => {
@@ -63,17 +72,10 @@ export const Media = () => {
   const [progress, setProgress] = useState()
   const [refocusFn, setRefocusFn] = useState(() => { })
 
-  const handleMenuClick = (event) => setMenuAnchorEl(event.target)
-  const handleMenuClose = () => setMenuAnchorEl(null)
-  const handleProgressUpdate = async (progress) => {
-    setProgress(progress)
-    await updateProgress(params.id, progress)
-  }
-
-  const handleProgressStatusUpdate = async (progress) => {
-    setProgress(progress)
-    await updateProgress(params.id, progress, true)
-  }
+  const [editMode, setEditMode] = useState(false)
+  const [startMarker, setStartMarker] = useState(null);
+  const [endMarker, setEndMarker] = useState(null);
+  const [subVideoNameModalOpen, setSubVideoNameModalOpen] = useState(false);
 
   useEffect(() => {
     if (media?.progress !== undefined) {
@@ -81,23 +83,67 @@ export const Media = () => {
     }
   }, [media?.progress])
 
-  const updateMedia = (val) => {
-    setMedia(mergeDeepLeft(val))
-  }
+  useEffect(() => {
+    if (!editMode) {
+      setStartMarker(null);
+      setEndMarker(null);
+    }
+  }, [editMode])
 
-  const focusVideo = (fn) => {
+  const handleMenuClick = useCallback((event) => setMenuAnchorEl(event.target))
+  const handleMenuClose = useCallback(() => setMenuAnchorEl(null))
+  const handleProgressUpdate = useCallback(async (progress) => {
+    setProgress(progress)
+    await updateProgress(params.id, progress)
+  })
+
+  const handleProgressStatusUpdate = useCallback(async (progress) => {
+    setProgress(progress)
+    await updateProgress(params.id, progress, true)
+  })
+
+  const updateMedia = useCallback((val) => {
+    setMedia(mergeDeepLeft(val))
+  })
+
+  const focusVideo = useCallback((fn) => {
     videoRef?.current?.focus()
     setRefocusFn(() => fn)
-  }
+  })
 
-  const handleRelationRemoval = (id, relatedTo) => async () => {
+  const handleRelationRemoval = useCallback((id, relatedTo) => async () => {
     const relatedVideos = await removeRelation(id, relatedTo)
 
     updateMedia({ relatedVideos })
-  }
+  })
+
+  const handleStartMarkerClick = useCallback(() => {
+    if (editMode) {
+      setStartMarker(progress);
+    }
+  })
+  const handleEndMarkerClick = useCallback(() => {
+    if (editMode) {
+      setEndMarker(progress);
+    }
+  })
+
+  const handleSubVideoClick = useCallback(() => {
+    if (editMode) {
+      setSubVideoNameModalOpen(true);
+    }
+  })
+
+  const handleSubVideoSubmit = useCallback(async (newVideoName) => {
+    await createSubVideo(media.id, newVideoName, startMarker, endMarker);
+
+    const updatedVideo = await fetchMedia(media.id);
+    updateMedia({ relatedVideos: updatedVideo.relatedVideos })
+    setSubVideoNameModalOpen(false)
+  })
 
   return (
-    <>
+    <Box>
       {loadingMedia && <Skeleton height="200px" width="100%" />}
       {!loadingMedia && (
         <Video
@@ -114,12 +160,15 @@ export const Media = () => {
           progressUpdate={handleProgressUpdate}
           videoRef={videoRef}
           loseFocus={refocusFn}
+          setStartMark={handleStartMarkerClick}
+          setEndMark={handleEndMarkerClick}
+          createSubVideo={handleSubVideoClick}
         />
       )}
       <Container sx={{ paddingX: 0, mt: 1 }}>
         {!loadingMedia && (
           <MediaSection>
-            <Box>
+            {!editMode && <Box>
               <FavouriteIconButton
                 id={params.id}
                 state={media.favourite}
@@ -131,17 +180,35 @@ export const Media = () => {
                 progress={progress || 0}
                 runtime={media?.runtime}
               />
+            </Box>}
+            {editMode && <Box>
+              <IconButton onClick={handleStartMarkerClick}>
+                <FirstPageIcon color={startMarker !== null ? "primary" : "inherit"} />
+              </IconButton>
+              <IconButton onClick={handleEndMarkerClick}>
+                <LastPageIcon color={endMarker !== null ? "primary" : "inherit"} />
+              </IconButton>
+            </Box>}
+            <Box>
+              {editMode
+                && startMarker !== null
+                && endMarker !== null
+                && <IconButton
+                  onClick={handleSubVideoClick}
+                >
+                  <TheatersIcon />
+                </IconButton>}
+              <IconButton
+                sx={{ marginLeft: 'auto' }}
+                onClick={handleMenuClick}
+                id={`${params.id}-video-card-menu-button`}
+                aria-controls={!!menuAnchorEl ? 'video-card-menu' : undefined}
+                aria-haspopup={true}
+                aria-expanded={!!menuAnchorEl}
+              >
+                <MoreVertIcon />
+              </IconButton>
             </Box>
-            <IconButton
-              sx={{ marginLeft: 'auto' }}
-              onClick={handleMenuClick}
-              id={`${params.id}-video-card-menu-button`}
-              aria-controls={!!menuAnchorEl ? 'video-card-menu' : undefined}
-              aria-haspopup={true}
-              aria-expanded={!!menuAnchorEl}
-            >
-              <MoreVertIcon />
-            </IconButton>
           </MediaSection>
         )}
         {loadingMedia && <Skeleton height="50px" width="100%" />}
@@ -252,8 +319,17 @@ export const Media = () => {
           favourite={!!media.favourite}
           progress={progress}
           hideItems={[items.favourite, items.resetProgress]}
+          editing={editMode}
+          setEditing={setEditMode}
         />
       )}
-    </>
+      {!loadingMedia && <TextInputModal
+        open={subVideoNameModalOpen}
+        title="Please name your new sub video"
+        defaultValue={media?.title}
+        onSubmit={handleSubVideoSubmit}
+        onCancel={() => setSubVideoNameModalOpen(false)}
+      />}
+    </Box>
   )
 }

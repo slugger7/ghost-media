@@ -3,10 +3,16 @@ import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 import axios from 'axios'
 import { VideoProgress } from './VideoProgress'
+import { mergeDeepLeft } from 'ramda'
 
 const keyFunctions = {
   KeyL: (currentTime) => currentTime + 30,
   KeyJ: (currentTime) => currentTime - 10,
+}
+
+const shiftedKeyFunctions = {
+  KeyL: (currentTime) => currentTime + 5,
+  KeyJ: (currentTime) => currentTime - 5,
 }
 
 export const Video = ({
@@ -19,8 +25,12 @@ export const Video = ({
   progressUpdate,
   videoRef,
   loseFocus,
+  setStartMark,
+  setEndMark,
+  createSubVideo
 }) => {
   const [currentTime, setCurrentTime] = useState()
+  const [keysDown, setKeysDown] = useState({});
 
   useEffect(() => {
     videoRef.current?.load()
@@ -50,21 +60,47 @@ export const Video = ({
     progressUpdate(currentTime)
   }, [currentTime])
 
-  const handleKeystroke = (event) => {
-    const fn = keyFunctions[event.code]
-    if (fn) {
-      videoRef.current.currentTime = fn(videoRef.current.currentTime)
+  const handleKeyUp = (event) => {
+    if ((keysDown.ControlLeft || keysDown.ControlRight) && event.code === "Enter") {
+      createSubVideo()
+      return
+    }
+    if (keysDown.ShiftLeft || keysDown.ShiftRight) {
+      if (setEndMark && event.code === "KeyM") {
+        setEndMark()
+        return;
+      }
+      const fn = shiftedKeyFunctions[event.code]
+      if (fn) {
+        videoRef.current.currentTime = fn(videoRef.current.currentTime)
+      }
     } else {
-      if (loseFocus && event.code === 'Escape') {
-        loseFocus()
+      if (setStartMark && event.code === "KeyM") {
+        setStartMark()
+        return;
+      }
+      const fn = keyFunctions[event.code]
+      if (fn) {
+        videoRef.current.currentTime = fn(videoRef.current.currentTime)
+      } else {
+        if (loseFocus && event.code === 'Escape') {
+          loseFocus()
+        }
       }
     }
+
+    setKeysDown(mergeDeepLeft({ [event.code]: false }))
+  }
+
+  const handleKeyDown = (event) => {
+    setKeysDown(mergeDeepLeft({ [event.code]: true }))
   }
 
   return (
     <Box>
       <video
-        onKeyUp={handleKeystroke}
+        onKeyUp={handleKeyUp}
+        onKeyDown={handleKeyDown}
         className="ghost-video"
         autoPlay={!!chapter}
         controls={true}
@@ -100,4 +136,7 @@ Video.propTypes = {
   currentProgress: PropTypes.number,
   videoRef: PropTypes.object.isRequired,
   loseFocus: PropTypes.func,
+  setStartMark: PropTypes.func,
+  setEndMark: PropTypes.func,
+  createSubVideo: PropTypes.func
 }
