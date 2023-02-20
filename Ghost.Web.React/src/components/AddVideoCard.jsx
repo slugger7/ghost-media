@@ -19,9 +19,13 @@ const modalStyle = {
   transform: 'translate(-50%, -50%)',
   boxShadow: 24,
   p: 4,
-  width: '90%'
+  width: '90%',
+  height: '90%',
+  overflow: 'scroll',
+  borderRadius: '8px'
 };
 
+const pageLimit = 12;
 export const AddVideoCard = ({ id, setVideos }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('')
@@ -30,7 +34,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
   const [selectedVideos, setSelectedVideos] = useState([]);
   const [relateBothWays, setRelateBothWays] = useState(true)
   const [videosPage, error, loading] = usePromise(() => fetchVideos({
-    limit: 4,
+    limit: pageLimit,
     search,
     page,
     watchState: watchStates.all.value
@@ -39,7 +43,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
 
   useEffect(() => {
     if (!loading && !error) {
-      setCount(Math.ceil(videosPage.total / 4) || 1)
+      setCount(Math.ceil(videosPage.total / pageLimit) || 1)
     }
   }, [videosPage, error, loading])
 
@@ -107,7 +111,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
         {!loading && <>
           <Grid container spacing={2}>
             {videosPage.content.map(video =>
-              <Grid key={video.id} item xs={12} sm={6} md={3} lg={3} xl={3}>
+              <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
                 <VideoCard
                   disabled={loadingConfirm || video.id === id}
                   video={video}
