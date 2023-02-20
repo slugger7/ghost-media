@@ -10,6 +10,7 @@ import { fetchVideos, relateVideos } from '../services/video.service';
 import { VideoCardSkeleton } from './VideoCardSkeleton';
 import { VideoCard } from './VideoCard';
 import watchStates from '../constants/watch-states';
+import { append, remove } from 'ramda';
 
 const modalStyle = {
   position: 'absolute',
@@ -18,50 +19,69 @@ const modalStyle = {
   transform: 'translate(-50%, -50%)',
   boxShadow: 24,
   p: 4,
-  width: '90%'
+  width: '90%',
+  height: '90%',
+  overflow: 'scroll',
+  borderRadius: '8px'
 };
 
+const pageLimit = 12;
 export const AddVideoCard = ({ id, setVideos }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [count, setCount] = useState(0)
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [relateBothWays, setRelateBothWays] = useState(false)
+  const [selectedVideos, setSelectedVideos] = useState([]);
+  const [relateBothWays, setRelateBothWays] = useState(true)
   const [videosPage, error, loading] = usePromise(() => fetchVideos({
-    limit: 4,
+    limit: pageLimit,
     search,
     page,
     watchState: watchStates.all.value
   }), [search, page])
   const [loadingConfirm, setLoadingConfirm] = useState(false)
 
+  useEffect(() => {
+    if (!loading && !error) {
+      setCount(Math.ceil(videosPage.total / pageLimit) || 1)
+    }
+  }, [videosPage, error, loading])
+
+
   const onClose = () => {
     setSearch('')
     setPage(1)
-    setSelectedVideo(null)
+    setSelectedVideos([])
     setOpen(false)
   }
 
   const onConfirm = async () => {
     setLoadingConfirm(true)
     try {
-      const relatedVideos = await relateVideos({ id, relateToId: selectedVideo.id });
-      if (relateBothWays) {
-        await relateVideos({ id: selectedVideo.id, relateToId: id });
+      for (let i = 0; i < selectedVideos.length; i++) {
+        const selectedVideo = selectedVideos[i];
+        const relatedVideos = await relateVideos({ id, relateToId: selectedVideo.id });
+        if (relateBothWays) {
+          try {
+            await relateVideos({ id: selectedVideo.id, relateToId: id });
+          } catch { }
+        }
+        setVideos(relatedVideos)
       }
-      setVideos(relatedVideos)
     } finally {
       setLoadingConfirm(false);
       onClose();
     }
   }
 
-  useEffect(() => {
-    if (!loading && !error) {
-      setCount(Math.ceil(videosPage.total / 4) || 1)
+  const handleVideoClick = (video) => () => {
+    const existingVideoIndex = selectedVideos.findIndex(v => v.id === video.id);
+    if (existingVideoIndex >= 0) {
+      setSelectedVideos(remove(existingVideoIndex, 1))
+    } else {
+      setSelectedVideos(append(video))
     }
-  }, [videosPage, error, loading])
+  }
 
   return (<>
     <Card sx={{
@@ -91,13 +111,12 @@ export const AddVideoCard = ({ id, setVideos }) => {
         {!loading && <>
           <Grid container spacing={2}>
             {videosPage.content.map(video =>
-              <Grid key={video.id} item xs={12} sm={6} md={3} lg={3} xl={3}>
+              <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={3}>
                 <VideoCard
-                  disabled={loadingConfirm}
-                  key={video.id}
+                  disabled={loadingConfirm || video.id === id}
                   video={video}
-                  onClick={setSelectedVideo}
-                  selected={selectedVideo?.id === video.id}
+                  onClick={handleVideoClick(video)}
+                  selected={selectedVideos.find(selectedVideo => selectedVideo.id === video.id)}
                   disableActions={true}
                 />
               </Grid>
@@ -121,7 +140,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
         <Stack direction="row" justifyContent="flex-end" spacing={1} >
           <FormControlLabel
             control={<Checkbox
-              value={relateBothWays}
+              checked={relateBothWays}
               onChange={(e) => {
                 setRelateBothWays(e.target.checked)
               }} title='Relate Both Ways'>Relate both ways</Checkbox>}

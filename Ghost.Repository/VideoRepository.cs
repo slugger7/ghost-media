@@ -480,7 +480,7 @@ namespace Ghost.Repository
         {
             var video = this.FindById(id, new List<string> {
                 "LibraryPath",
-                "RelatedVideos"
+                "RelatedVideos.RelatedTo.RelatedVideos"
             });
             if (video == null) throw new NullReferenceException("Video was not found to create sub video on");
 
@@ -489,6 +489,17 @@ namespace Ghost.Repository
             {
                 RelatedTo = video
             });
+            foreach (var relatedVideo in video.RelatedVideos)
+            {
+                newVideo.RelatedVideos.Add(new RelatedVideo
+                {
+                    RelatedTo = relatedVideo.RelatedTo
+                });
+                relatedVideo.RelatedTo.RelatedVideos.Add(new RelatedVideo
+                {
+                    RelatedTo = newVideo
+                });
+            }
 
             context.Videos.Add(newVideo);
 
