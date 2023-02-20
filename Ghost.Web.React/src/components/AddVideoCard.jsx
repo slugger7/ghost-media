@@ -10,6 +10,7 @@ import { fetchVideos, relateVideos } from '../services/video.service';
 import { VideoCardSkeleton } from './VideoCardSkeleton';
 import { VideoCard } from './VideoCard';
 import watchStates from '../constants/watch-states';
+import { append, remove } from 'ramda';
 
 const modalStyle = {
   position: 'absolute',
@@ -26,8 +27,8 @@ export const AddVideoCard = ({ id, setVideos }) => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [count, setCount] = useState(0)
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [relateBothWays, setRelateBothWays] = useState(false)
+  const [selectedVideos, setSelectedVideos] = useState([]);
+  const [relateBothWays, setRelateBothWays] = useState(true)
   const [videosPage, error, loading] = usePromise(() => fetchVideos({
     limit: 4,
     search,
@@ -36,32 +37,47 @@ export const AddVideoCard = ({ id, setVideos }) => {
   }), [search, page])
   const [loadingConfirm, setLoadingConfirm] = useState(false)
 
+  useEffect(() => {
+    if (!loading && !error) {
+      setCount(Math.ceil(videosPage.total / 4) || 1)
+    }
+  }, [videosPage, error, loading])
+
+
   const onClose = () => {
     setSearch('')
     setPage(1)
-    setSelectedVideo(null)
+    setSelectedVideos([])
     setOpen(false)
   }
 
   const onConfirm = async () => {
     setLoadingConfirm(true)
     try {
-      const relatedVideos = await relateVideos({ id, relateToId: selectedVideo.id });
-      if (relateBothWays) {
-        await relateVideos({ id: selectedVideo.id, relateToId: id });
+      for (let i = 0; i < selectedVideos.length; i++) {
+        const selectedVideo = selectedVideos[i];
+        const relatedVideos = await relateVideos({ id, relateToId: selectedVideo.id });
+        if (relateBothWays) {
+          try {
+            await relateVideos({ id: selectedVideo.id, relateToId: id });
+          } catch { }
+        }
+        setVideos(relatedVideos)
       }
-      setVideos(relatedVideos)
     } finally {
       setLoadingConfirm(false);
       onClose();
     }
   }
 
-  useEffect(() => {
-    if (!loading && !error) {
-      setCount(Math.ceil(videosPage.total / 4) || 1)
+  const handleVideoClick = (video) => () => {
+    const existingVideoIndex = selectedVideos.findIndex(v => v.id === video.id);
+    if (existingVideoIndex >= 0) {
+      setSelectedVideos(remove(existingVideoIndex, 1))
+    } else {
+      setSelectedVideos(append(video))
     }
-  }, [videosPage, error, loading])
+  }
 
   return (<>
     <Card sx={{
@@ -94,10 +110,9 @@ export const AddVideoCard = ({ id, setVideos }) => {
               <Grid key={video.id} item xs={12} sm={6} md={3} lg={3} xl={3}>
                 <VideoCard
                   disabled={loadingConfirm}
-                  key={video.id}
                   video={video}
-                  onClick={setSelectedVideo}
-                  selected={selectedVideo?.id === video.id}
+                  onClick={handleVideoClick(video)}
+                  selected={selectedVideos.find(selectedVideo => selectedVideo.id === video.id)}
                   disableActions={true}
                 />
               </Grid>
