@@ -109,7 +109,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
             {videosPage.content.map(video =>
               <Grid key={video.id} item xs={12} sm={6} md={3} lg={3} xl={3}>
                 <VideoCard
-                  disabled={loadingConfirm}
+                  disabled={loadingConfirm || video.id === id}
                   video={video}
                   onClick={handleVideoClick(video)}
                   selected={selectedVideos.find(selectedVideo => selectedVideo.id === video.id)}
@@ -136,7 +136,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
         <Stack direction="row" justifyContent="flex-end" spacing={1} >
           <FormControlLabel
             control={<Checkbox
-              value={relateBothWays}
+              checked={relateBothWays}
               onChange={(e) => {
                 setRelateBothWays(e.target.checked)
               }} title='Relate Both Ways'>Relate both ways</Checkbox>}
