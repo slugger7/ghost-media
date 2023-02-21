@@ -451,10 +451,12 @@ namespace Ghost.Repository
 
             if (relatedVideo == null) throw new NullReferenceException("Related video was not found");
 
-            if (video.RelatedVideos.Find(v => v.RelatedTo.Id == relatedVideo.Id) != null) throw new VideoRelationException(video, relatedVideo);
-            video.RelatedVideos.Add(new RelatedVideo { RelatedTo = relatedVideo });
+            if (video.RelatedVideos.Find(v => v.RelatedTo.Id == relatedVideo.Id) == null)
+            {
+                video.RelatedVideos.Add(new RelatedVideo { RelatedTo = relatedVideo });
 
-            await context.SaveChangesAsync();
+                await context.SaveChangesAsync();
+            }
 
             return video.RelatedVideos.Select(v => v.RelatedTo).ToList();
         }
