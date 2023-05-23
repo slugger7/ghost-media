@@ -33,6 +33,7 @@ export const AddVideoCard = ({ id, setVideos }) => {
   const [count, setCount] = useState(0)
   const [selectedVideos, setSelectedVideos] = useState([]);
   const [relateBothWays, setRelateBothWays] = useState(true)
+  const [interRelate, setInterRelate] = useState(false)
   const [videosPage, error, loading] = usePromise(() => fetchVideos({
     limit: pageLimit,
     search,
@@ -46,6 +47,12 @@ export const AddVideoCard = ({ id, setVideos }) => {
       setCount(Math.ceil(videosPage.total / pageLimit) || 1)
     }
   }, [videosPage, error, loading])
+
+  useEffect(() => {
+    if (!relateBothWays) {
+      setInterRelate(false)
+    }
+  }, [relateBothWays])
 
 
   const onClose = () => {
@@ -61,10 +68,21 @@ export const AddVideoCard = ({ id, setVideos }) => {
       for (let i = 0; i < selectedVideos.length; i++) {
         const selectedVideo = selectedVideos[i];
         const relatedVideos = await relateVideos({ id, relateToId: selectedVideo.id });
-        if (relateBothWays) {
+        if (interRelate) {
+          for (let j = 0; j < selectedVideos.length; j++) {
+            const secondaryVideo = selectedVideos[j];
+            try {
+              await relateVideos({ id: selectedVideo.id, relateToId: secondaryVideo.id })
+            } catch { /* will not stop operation if relation already exists */ }
+            try {
+              await relateVideos({ id: secondaryVideo.id, relateToId: selectedVideo.id })
+            } catch { /* will not stop operation if relation already exists */ }
+          }
+        }
+        if (relateBothWays || interRelate) {
           try {
             await relateVideos({ id: selectedVideo.id, relateToId: id });
-          } catch { }
+          } catch { /* will not stop operation if relation already exists */ }
         }
         setVideos(relatedVideos)
       }
@@ -145,6 +163,14 @@ export const AddVideoCard = ({ id, setVideos }) => {
                 setRelateBothWays(e.target.checked)
               }} title='Relate Both Ways'>Relate both ways</Checkbox>}
             label="Relate both ways" />
+          <FormControlLabel
+            control={<Checkbox
+              disabled={!relateBothWays}
+              checked={interRelate}
+              onChange={(e) => {
+                setInterRelate(e.target.checked)
+              }} title='Interrelate'>Interrelate</Checkbox>}
+            label="Interrelate" />
           <Button variant="outlined" color="primary" onClick={onClose} disabled={loadingConfirm}>Cancel</Button>
           <LoadingButton
             variant="contained"
