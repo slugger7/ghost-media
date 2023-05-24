@@ -22,7 +22,6 @@ import axios from 'axios'
 
 export const LibraryCard = ({ library, updateLibraries }) => {
   const [anchorEl, setAnchorEl] = useState(null)
-  const [loadingFullSync, setLoadingFullSync] = useState(false)
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
@@ -95,12 +94,12 @@ export const LibraryCard = ({ library, updateLibraries }) => {
   }
 
   const fullSync = async () => {
-    setLoadingFullSync(true);
+    setLoadingSync(true);
     try {
       await axios.put(`/library/${library.id}/sync`)
       await axios.put(`/library/${library.id}/generate-thumbnails`)
     } finally {
-      setLoadingFullSync(false)
+      setLoadingSync(false)
       handleMenuClose()
     }
   }
@@ -138,10 +137,10 @@ export const LibraryCard = ({ library, updateLibraries }) => {
       >
         <MenuItem onClick={fullSync}>
           <ListItemIcon>
-            {loadingFullSync && (
+            {loadingSync && (
               <CircularProgress sx={{ mr: 1 }} fontSize="small" />
             )}
-            {!loadingFullSync && <SyncIcon fontSize="small" />}
+            {!loadingSync && <SyncIcon fontSize="small" />}
           </ListItemIcon>
           <ListItemText>Full Sync</ListItemText>
         </MenuItem>
