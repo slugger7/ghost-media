@@ -33,26 +33,26 @@ export const Video = ({
   const [keysDown, setKeysDown] = useState({});
 
   useEffect(() => {
-    videoRef.current?.load()
-    videoRef.current?.focus()
-    if (videoRef) {
+    videoRef?.current?.load()
+    videoRef?.current?.focus()
+    if (videoRef && videoRef.current) {
       videoRef.current.ontimeupdate = () => {
-        setCurrentTime(videoRef.current.currentTime)
+        setCurrentTime(videoRef?.current?.currentTime) // <-- this was the problem not any of the others (that I know of)
       }
     }
   }, [source])
 
   useEffect(() => {
-    if (currentProgress !== undefined) {
+    if (videoRef && videoRef.current && currentProgress !== undefined) {
       videoRef.current.currentTime = currentProgress
       setCurrentTime(currentProgress)
     }
   }, [currentProgress])
 
   useEffect(() => {
-    if (chapter) {
+    if (chapter && videoRef && videoRef.current) {
       videoRef.current.currentTime = chapter.timestamp / 1000
-      videoRef.current.play()
+      videoRef?.current.play()
     }
   }, [chapter])
 
@@ -113,7 +113,7 @@ export const Video = ({
         playsInline={false}
         src={source}
         type={type}
-        onPlay={() => videoRef.current.focus()}
+        onPlay={() => videoRef?.current.focus()}
       ></video>
       <VideoProgress duration={duration} current={currentTime} />
     </Box>
