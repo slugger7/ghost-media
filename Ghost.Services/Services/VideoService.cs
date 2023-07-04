@@ -2,6 +2,7 @@ using Ghost.Data;
 using Ghost.Dtos;
 using Ghost.Media;
 using Ghost.Repository;
+using Ghost.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services
@@ -455,6 +456,42 @@ namespace Ghost.Services
             {
                 VideoId = newVideo.Id
             });
+        }
+
+        public async Task Convert(int id, ConvertRequestDto convertRequest)
+        {
+            var video = videoRepository.FindById(id, new List<string> { "LibraryPath" });
+            if (video == null) throw new NullReferenceException("Video was not found to convert");
+
+            var root = Path.GetDirectoryName(video.Path) ?? "";
+            var newPath = Path.Combine(root, convertRequest.Name);
+
+            if (!convertRequest.Overwrite && File.Exists(newPath))
+            {
+                throw new FileExistsException();
+            }
+
+            await VideoFns.ConvertVideo(video.Path, newPath);
+
+            var newVideoInfo = VideoFns.GetVideoInformation(newPath);
+            if (newVideoInfo == null) throw new NullReferenceException("Could not find video info");
+
+            // if overwirite make sure not to create another entity
+            var newVideoEntity = await videoRepository.CreateVideo(newPath, newVideoInfo, video.LibraryPath);
+
+            imageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
+            {
+                VideoId = newVideoEntity.Id
+            });
+
+            // copy actors
+            // copy genres
+
+            await videoRepository.RelateVideo(video.Id, newVideoEntity.Id);
+            await videoRepository.RelateVideo(newVideoEntity.Id, video.Id);
+
+            // Optional: create thread
+            // Optional: create jobs entity
         }
     }
 }

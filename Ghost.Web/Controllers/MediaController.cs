@@ -339,5 +339,20 @@ namespace Ghost.Api.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpPost("{id}/convert")]
+        public async Task<ActionResult> ConvertVideo(int id, [FromBody] ConvertRequestDto convertRequest)
+        {
+            try
+            {
+                await videoService.Convert(id, convertRequest);
+
+                return Ok();
+            }
+            catch (FileExistsException)
+            {
+                return BadRequest("File already exists and was not marked to overwrite");
+            }
+        }
     }
 }

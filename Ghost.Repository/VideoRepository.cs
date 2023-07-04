@@ -29,6 +29,28 @@ namespace Ghost.Repository
             this.imageRepository = imageRepository;
         }
 
+        public async Task<Video> CreateVideo(string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath)
+        {
+            var video = new Video
+            {
+                Path = path,
+                FileName = Path.GetFileName(path),
+                Title = Path.GetFileNameWithoutExtension(path),
+                Height = videoMetaData.Height,
+                Width = videoMetaData.Width,
+                Runtime = videoMetaData.Duration.TotalMilliseconds,
+                Size = videoMetaData.Size,
+                LastMetadataUpdate = DateTime.UtcNow,
+                LibraryPath = libraryPath
+            };
+
+            context.Videos.Add(video);
+
+            await context.SaveChangesAsync();
+
+            return video;
+        }
+
         public Video SetActors(int id, IEnumerable<Actor> actors)
         {
             var video = context.Videos.Find(id);
