@@ -1,4 +1,5 @@
 using FFMpegCore;
+using FFMpegCore.Enums;
 using Ghost.Dtos;
 
 namespace Ghost.Media
@@ -25,6 +26,17 @@ namespace Ghost.Media
         public static async Task<bool> CreateSubVideoAsync(string inputPath, string outputPath, TimeSpan start, TimeSpan end)
         {
             return await FFMpeg.SubVideoAsync(inputPath, outputPath, start, end);
+        }
+
+        public static async Task ConvertVideo(string inputPath, string outputPath)
+        {
+            await FFMpegArguments
+                .FromFileInput(inputPath)
+                .OutputToFile(outputPath, true, options => options
+                    .WithVideoCodec(VideoCodec.LibX264)
+                    .WithAudioCodec(AudioCodec.Aac)
+                    .WithFastStart())
+                .ProcessAsynchronously();
         }
     }
 }

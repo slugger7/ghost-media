@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-
 using Ghost.Dtos;
 using Ghost.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -337,6 +336,21 @@ namespace Ghost.Api.Controllers
             catch (NullReferenceException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/convert")]
+        public async Task<ActionResult> ConvertVideo(int id, [FromBody] ConvertRequestDto convertRequest)
+        {
+            try
+            {
+                videoService.Convert(id, convertRequest);
+
+                return Ok();
+            }
+            catch (FileExistsException)
+            {
+                return BadRequest("File already exists and was not marked to overwrite");
             }
         }
     }

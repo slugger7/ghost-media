@@ -17,11 +17,13 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import ImageIcon from '@mui/icons-material/Image'
 import EditIcon from '@mui/icons-material/Edit';
+import CompareIcon from '@mui/icons-material/Compare';
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { toggleFavourite } from '../services/video.service'
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
+import { ConvertVideoModal } from './ConvertVideoModal'
 
 const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) =>
@@ -38,6 +40,7 @@ const chooseThumbnail = async (videoId, progress) => {
     )
   }
 }
+const convertVideo = async (id, convertRequest) => (await axios.post(`/media/${id}/convert`, convertRequest))
 
 export const items = {
   favourite: 'favourite',
@@ -46,6 +49,7 @@ export const items = {
   copyStreamUrl: 'copyStreamUrl',
   sync: 'sync',
   syncNfo: 'syncNfo',
+  convert: 'convert',
   delete: 'delete',
   edit: 'edit'
 }
@@ -71,11 +75,16 @@ export const VideoMenu = ({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [loadingFavourite, setLoadingFavourite] = useState(false)
   const [loadingChooseThumbnail, setLoadingChooseThumbnail] = useState(false)
+  const [convertVideoModalOpen, setConvertVideoModalOpen] = useState(false);
 
-  const handleModalClose = () => {
+  const handleDeleteModalClose = () => {
     if (!loadingDelete) {
       setDeleteModalOpen(false)
     }
+  }
+
+  const handleConvertModalClose = () => {
+    setConvertVideoModalOpen(false);
   }
 
   const handleSyncFromNfo = async () => {
@@ -104,7 +113,7 @@ export const VideoMenu = ({
       }
     } finally {
       setLoadingDelete(false)
-      handleModalClose()
+      handleDeleteModalClose()
       handleClose()
     }
   }
@@ -164,6 +173,19 @@ export const VideoMenu = ({
   const handleEditMenuClick = () => {
     handleClose()
     setEditing(!editing)
+  }
+
+  const handleConvertMenuClick = () => {
+    setConvertVideoModalOpen(true);
+  }
+
+  const handleConvertVideo = async (convertRequest) => {
+    try {
+      convertVideo(videoId, convertRequest)
+    } finally {
+      setConvertVideoModalOpen(false)
+      handleClose()
+    }
   }
 
   return (
@@ -238,6 +260,15 @@ export const VideoMenu = ({
             <ListItemText>Sync from NFO</ListItemText>
           </MenuItem>
         )}
+        {!hideItems.includes(items.convert) && (
+          <MenuItem onClick={handleConvertMenuClick}>
+            <ListItemIcon>
+              {!loadingSyncNfo && <CompareIcon fontSize="small" />}
+              {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
+            </ListItemIcon>
+            <ListItemText>Convert Video</ListItemText>
+          </MenuItem>
+        )}
         {!hideItems.includes(items.edit) && (
           <MenuItem onClick={handleEditMenuClick}>
             <ListItemIcon>
@@ -257,10 +288,16 @@ export const VideoMenu = ({
       </Menu>
       <DeleteConfirmationModal
         open={deleteModalOpen}
-        onClose={handleModalClose}
+        onClose={handleDeleteModalClose}
         title={title}
         loadingConfirm={loadingDelete}
         onConfirm={handleDelete}
+      />
+      <ConvertVideoModal
+        open={convertVideoModalOpen}
+        title={title}
+        onClose={handleConvertModalClose}
+        onConfirm={handleConvertVideo}
       />
     </>
   )

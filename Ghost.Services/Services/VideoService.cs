@@ -3,6 +3,8 @@ using Ghost.Dtos;
 using Ghost.Media;
 using Ghost.Repository;
 using Microsoft.Extensions.Logging;
+using Ghost.Services.Jobs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ghost.Services
 {
@@ -18,6 +20,7 @@ namespace Ghost.Services
         private readonly IImageIoService imageIoService;
         private readonly IImageService imageService;
         private readonly INfoService nfoService;
+        private readonly DbContextOptions<GhostContext> contextOptions;
 
         public VideoService(
           ILogger<VideoService> logger,
@@ -29,7 +32,8 @@ namespace Ghost.Services
           IUserRepository userRepository,
           IImageIoService imageIoService,
           IImageService imageService,
-          INfoService nfoService)
+          INfoService nfoService,
+          DbContextOptions<GhostContext> contextOptions)
         {
             this.logger = logger;
             this.genreService = genreService;
@@ -41,6 +45,7 @@ namespace Ghost.Services
             this.imageService = imageService;
             this.nfoService = nfoService;
             this.userRepository = userRepository;
+            this.contextOptions = contextOptions;
         }
 
         public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, FilterQueryDto filterQuery, int userId)
@@ -455,6 +460,15 @@ namespace Ghost.Services
             {
                 VideoId = newVideo.Id
             });
+        }
+
+        public void Convert(int id, ConvertRequestDto convertRequest)
+        {
+            var convertJob = new ConvertVideoJob(id, convertRequest, contextOptions);
+
+            Thread convertThread = new Thread(new ThreadStart(convertJob.Run));
+            convertThread.Start();
+            convertThread.Join();
         }
     }
 }

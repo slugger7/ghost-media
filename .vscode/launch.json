@@ -5,24 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Core Launch (web)",
+      "name": "Launch",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/Ghost.Web/bin/Debug/net6.0/Ghost.Web.dll",
-      "args": ["--urls=http://0.0.0.0:5120"],
+      "args": [
+        "--urls=http://0.0.0.0:5120"
+      ],
       "cwd": "${workspaceFolder}/Ghost.Web",
       "stopAtEntry": false,
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
     },
     {
-      "name": ".NET Core Attach",
+      "name": "Attach",
       "type": "coreclr",
       "request": "attach"
     }
