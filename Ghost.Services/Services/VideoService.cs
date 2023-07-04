@@ -464,7 +464,7 @@ namespace Ghost.Services
             if (video == null) throw new NullReferenceException("Video was not found to convert");
 
             var root = Path.GetDirectoryName(video.Path) ?? "";
-            var newPath = Path.Combine(root, convertRequest.Name);
+            var newPath = Path.Combine(root, convertRequest.Title + ".mp4");
 
             if (!convertRequest.Overwrite && File.Exists(newPath))
             {
