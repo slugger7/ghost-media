@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-
 using Ghost.Dtos;
 using Ghost.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -345,7 +344,7 @@ namespace Ghost.Api.Controllers
         {
             try
             {
-                await videoService.Convert(id, convertRequest);
+                videoService.Convert(id, convertRequest);
 
                 return Ok();
             }

@@ -29,6 +29,6 @@ namespace Ghost.Services
         Task<List<VideoDto>> RelateVideo(int id, int relateTo);
         Task<List<VideoDto>> DeleteRelation(int id, int relatedTo);
         Task CreateSubVideo(int id, int userId, SubVideoRequestDto subVideoRequest);
-        Task Convert(int id, ConvertRequestDto convertRequest);
+        void Convert(int id, ConvertRequestDto convertRequest);
     }
 }

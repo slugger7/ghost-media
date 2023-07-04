@@ -22,6 +22,8 @@ namespace Ghost.Data
         public DbSet<Progress> Progress { get; set; }
         public DbSet<RelatedVideo> RelatedVideos { get; set; }
 
+        public GhostContext(DbContextOptions<GhostContext> options) : base(options) { }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var dbPath = Environment.GetEnvironmentVariable("DATABASE_PATH") ?? $"..{Path.DirectorySeparatorChar}data{Path.DirectorySeparatorChar}Ghost.db";

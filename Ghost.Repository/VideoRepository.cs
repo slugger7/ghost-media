@@ -31,6 +31,11 @@ namespace Ghost.Repository
 
         public async Task<Video> CreateVideo(string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath)
         {
+            return await VideoRepository.CreateVideo(this.context, path, videoMetaData, libraryPath);
+        }
+
+        public static async Task<Video> CreateVideo(GhostContext context, string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath)
+        {
             var video = new Video
             {
                 Path = path,
@@ -84,7 +89,12 @@ namespace Ghost.Repository
 
         public Video? FindById(int id, List<string>? includes)
         {
-            var videos = context.Videos;
+            return VideoRepository.FindById(this.context, id, includes);
+        }
+
+        public static Video? FindById(GhostContext dbContext, int id, List<string>? includes)
+        {
+            var videos = dbContext.Videos;
             if (includes != null && includes.Count() > 0)
             {
                 var videoQueryable = videos.Include(includes.ElementAt(0));
@@ -457,17 +467,22 @@ namespace Ghost.Repository
 
         public async Task<List<Video>> RelateVideo(int id, int relateTo)
         {
+            return await VideoRepository.RelateVideo(this.context, id, relateTo);
+        }
+
+        public static async Task<List<Video>> RelateVideo(GhostContext context, int id, int relateTo)
+        {
             if (id == relateTo)
             {
                 throw new VideoRelationException(id, relateTo);
             }
-            var video = this.FindById(id, new List<string> {
+            var video = VideoRepository.FindById(context, id, new List<string> {
                 "RelatedVideos.RelatedTo"
             });
 
             if (video == null) throw new NullReferenceException("Video to relate to was not found");
 
-            var relatedVideo = this.FindById(relateTo, new List<string> {
+            var relatedVideo = VideoRepository.FindById(context, relateTo, new List<string> {
                 "VideoImages.Image"
             });
 

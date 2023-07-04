@@ -2,8 +2,9 @@ using Ghost.Data;
 using Ghost.Dtos;
 using Ghost.Media;
 using Ghost.Repository;
-using Ghost.Exceptions;
 using Microsoft.Extensions.Logging;
+using Ghost.Services.Jobs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ghost.Services
 {
@@ -19,6 +20,7 @@ namespace Ghost.Services
         private readonly IImageIoService imageIoService;
         private readonly IImageService imageService;
         private readonly INfoService nfoService;
+        private readonly DbContextOptions<GhostContext> contextOptions;
 
         public VideoService(
           ILogger<VideoService> logger,
@@ -30,7 +32,8 @@ namespace Ghost.Services
           IUserRepository userRepository,
           IImageIoService imageIoService,
           IImageService imageService,
-          INfoService nfoService)
+          INfoService nfoService,
+          DbContextOptions<GhostContext> contextOptions)
         {
             this.logger = logger;
             this.genreService = genreService;
@@ -42,6 +45,7 @@ namespace Ghost.Services
             this.imageService = imageService;
             this.nfoService = nfoService;
             this.userRepository = userRepository;
+            this.contextOptions = contextOptions;
         }
 
         public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, FilterQueryDto filterQuery, int userId)
@@ -458,40 +462,13 @@ namespace Ghost.Services
             });
         }
 
-        public async Task Convert(int id, ConvertRequestDto convertRequest)
+        public void Convert(int id, ConvertRequestDto convertRequest)
         {
-            var video = videoRepository.FindById(id, new List<string> { "LibraryPath" });
-            if (video == null) throw new NullReferenceException("Video was not found to convert");
+            var convertJob = new ConvertVideoJob(id, convertRequest, contextOptions);
 
-            var root = Path.GetDirectoryName(video.Path) ?? "";
-            var newPath = Path.Combine(root, convertRequest.Title + ".mp4");
-
-            if (!convertRequest.Overwrite && File.Exists(newPath))
-            {
-                throw new FileExistsException();
-            }
-
-            await VideoFns.ConvertVideo(video.Path, newPath);
-
-            var newVideoInfo = VideoFns.GetVideoInformation(newPath);
-            if (newVideoInfo == null) throw new NullReferenceException("Could not find video info");
-
-            // if overwirite make sure not to create another entity
-            var newVideoEntity = await videoRepository.CreateVideo(newPath, newVideoInfo, video.LibraryPath);
-
-            imageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
-            {
-                VideoId = newVideoEntity.Id
-            });
-
-            // copy actors
-            // copy genres
-
-            await videoRepository.RelateVideo(video.Id, newVideoEntity.Id);
-            await videoRepository.RelateVideo(newVideoEntity.Id, video.Id);
-
-            // Optional: create thread
-            // Optional: create jobs entity
+            Thread convertThread = new Thread(new ThreadStart(convertJob.Run));
+            convertThread.Start();
+            convertThread.Join();
         }
     }
 }
