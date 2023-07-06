@@ -5,6 +5,7 @@ using Ghost.Repository;
 using Microsoft.Extensions.Logging;
 using Ghost.Services.Jobs;
 using Microsoft.EntityFrameworkCore;
+using Ghost.Exceptions;
 
 namespace Ghost.Services
 {
@@ -462,11 +463,45 @@ namespace Ghost.Services
             });
         }
 
-        public void Convert(int id, ConvertRequestDto convertRequest)
+        public async void Convert(int id, ConvertRequestDto convertRequest)
         {
-            var convertJob = new ConvertVideoJob(id, convertRequest, contextOptions);
+            int JobId;
+            var threadName = $"ConvertVideo {convertRequest.Title}";
 
-            Thread convertThread = new Thread(new ThreadStart(convertJob.Run));
+            using (var context = new GhostContext(contextOptions))
+            {
+                var video = await context.Videos.FirstOrDefaultAsync(v => v.Id == id);
+                if (video == null) throw new NullReferenceException("Video was not found to convert");
+
+                var root = Path.GetDirectoryName(video.Path) ?? "";
+                var newPath = Path.Combine(root, convertRequest.Title + ".mp4");
+
+                if (!convertRequest.Overwrite && File.Exists(newPath))
+                {
+                    throw new FileExistsException();
+                }
+
+                var convertJob = new ConvertJob
+                {
+                    Video = video,
+                    Title = convertRequest.Title,
+                    Path = newPath,
+                    Job = new Job
+                    {
+                        ThreadName = threadName
+                    }
+                };
+
+                context.ConvertJobs.Add(convertJob);
+
+                await context.SaveChangesAsync();
+
+                JobId = convertJob.Id;
+            }
+            var convertVideoJob = new ConvertVideoJob(id, threadName, JobId, convertRequest, contextOptions);
+
+            Thread convertThread = new Thread(new ThreadStart(convertVideoJob.Run));
+            convertThread.Name = convertVideoJob.ThreadName;
             convertThread.Start();
             convertThread.Join();
         }
