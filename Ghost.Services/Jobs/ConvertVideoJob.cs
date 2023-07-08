@@ -5,36 +5,46 @@ using Ghost.Exceptions;
 using Ghost.Media;
 using Ghost.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ghost.Services.Jobs
 {
     public class ConvertVideoJob
     {
-        private readonly DbContextOptions<GhostContext> contextOptions;
+        private readonly IServiceScopeFactory scopeFactory;
         private int Id;
         private ConvertRequestDto convertRequest;
         public string ThreadName { get; }
         private int JobId;
 
-        public ConvertVideoJob(int id, string threadName, int jobId, ConvertRequestDto convertRequestDto, DbContextOptions<GhostContext> contextOptions)
+        public ConvertVideoJob(
+            int id,
+            string threadName,
+            int jobId,
+            ConvertRequestDto convertRequestDto,
+            IServiceScopeFactory scopeFactory)
         {
             this.Id = id;
             this.convertRequest = convertRequestDto;
-            this.contextOptions = contextOptions;
             this.ThreadName = threadName;
             this.JobId = jobId;
+            this.scopeFactory = scopeFactory;
         }
 
         public async void Run()
         {
             Console.WriteLine("Conversion job starting");
-            string videoPath = string.Empty;
-            string newPath = string.Empty;
-            int libPathId;
-
-            using (var context = new GhostContext(contextOptions))
+            using (var scope = scopeFactory.CreateScope())
             {
-                var video = VideoRepository.FindById(context, Id, new List<string> { "LibraryPath" });
+                var context = scope.ServiceProvider.GetRequiredService<GhostContext>();
+                string videoPath = string.Empty;
+                string newPath = string.Empty;
+                int libPathId;
+
+                var videoRepository = scope.ServiceProvider.GetRequiredService<IVideoRepository>();
+                var imageService = scope.ServiceProvider.GetRequiredService<IImageService>();
+
+                var video = videoRepository.FindById(Id, new List<string> { "LibraryPath" });
                 if (video == null) throw new NullReferenceException("Could not find video before conversion job");
                 videoPath = video.Path;
                 libPathId = video.LibraryPath.Id;
@@ -56,21 +66,21 @@ namespace Ghost.Services.Jobs
                 var libraryPath = await context.LibraryPaths.FirstOrDefaultAsync(l => l.Id == libPathId);
                 if (libraryPath == null) throw new NullReferenceException("Library path for converted video was not found");
 
-                var newVideoEntity = await VideoRepository.CreateVideo(context, newPath, newVideoInfo, libraryPath);
+                var newVideoEntity = await videoRepository.CreateVideo(newPath, newVideoInfo, libraryPath);
 
-                // ImageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
-                // {
-                //     VideoId = newVideoEntity.Id
-                // });
+                imageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
+                {
+                    VideoId = newVideoEntity.Id
+                });
 
                 // copy actors
                 // copy genres
 
-                video = VideoRepository.FindById(context, Id, null);
+                video = videoRepository.FindById(Id, null);
                 if (video != null)
                 {
-                    await VideoRepository.RelateVideo(context, Id, newVideoEntity.Id);
-                    await VideoRepository.RelateVideo(context, newVideoEntity.Id, Id);
+                    await videoRepository.RelateVideo(Id, newVideoEntity.Id);
+                    await videoRepository.RelateVideo(newVideoEntity.Id, Id);
                 }
 
                 //consider using transactions to create all of these things together
@@ -78,12 +88,8 @@ namespace Ghost.Services.Jobs
                 if (job == null) throw new NullReferenceException("Colud not find job after conversion completed");
 
                 job.Status = JobStatus.Completed;
-
-                await context.SaveChangesAsync();
             }
 
-            // Optional: create thread
-            // Optional: create jobs entity
             Console.WriteLine("Finished converting video in thread");
         }
     }

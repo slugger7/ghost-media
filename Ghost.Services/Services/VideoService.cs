@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Ghost.Services.Jobs;
 using Microsoft.EntityFrameworkCore;
 using Ghost.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ghost.Services
 {
@@ -22,6 +23,7 @@ namespace Ghost.Services
         private readonly IImageService imageService;
         private readonly INfoService nfoService;
         private readonly DbContextOptions<GhostContext> contextOptions;
+        private readonly IServiceScopeFactory scopeFactory;
 
         public VideoService(
           ILogger<VideoService> logger,
@@ -34,7 +36,9 @@ namespace Ghost.Services
           IImageIoService imageIoService,
           IImageService imageService,
           INfoService nfoService,
-          DbContextOptions<GhostContext> contextOptions)
+          DbContextOptions<GhostContext> contextOptions,
+          IServiceScopeFactory scopeFactory,
+          IServiceProvider serviceProvider)
         {
             this.logger = logger;
             this.genreService = genreService;
@@ -47,6 +51,7 @@ namespace Ghost.Services
             this.nfoService = nfoService;
             this.userRepository = userRepository;
             this.contextOptions = contextOptions;
+            this.scopeFactory = scopeFactory;
         }
 
         public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, FilterQueryDto filterQuery, int userId)
@@ -500,7 +505,13 @@ namespace Ghost.Services
             var threadName = $"ConvertVideo {convertRequest.Title}";
             var convertJobId = await CreateConvertJobEntry(id, convertRequest, threadName);
 
-            var convertVideoJob = new ConvertVideoJob(id, threadName, convertJobId, convertRequest, contextOptions);
+            var convertVideoJob = new ConvertVideoJob(
+                id,
+                threadName,
+                convertJobId,
+                convertRequest,
+                scopeFactory
+            );
 
             Thread convertThread = new Thread(new ThreadStart(convertVideoJob.Run));
             convertThread.Name = convertVideoJob.ThreadName;
