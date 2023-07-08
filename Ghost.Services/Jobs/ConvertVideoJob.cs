@@ -30,12 +30,14 @@ namespace Ghost.Services.Jobs
             Console.WriteLine("Conversion job starting");
             string videoPath = string.Empty;
             string newPath = string.Empty;
+            int libPathId;
 
             using (var context = new GhostContext(contextOptions))
             {
-                var video = VideoRepository.FindById(context, Id, null);
+                var video = VideoRepository.FindById(context, Id, new List<string> { "LibraryPath" });
                 if (video == null) throw new NullReferenceException("Could not find video before conversion job");
                 videoPath = video.Path;
+                libPathId = video.LibraryPath.Id;
 
                 var convertJob = await context.ConvertJobs.Include("Job").FirstOrDefaultAsync(j => j.Job.Id == JobId);
                 if (convertJob == null) throw new NullReferenceException("Conversion job was not found");
@@ -51,13 +53,10 @@ namespace Ghost.Services.Jobs
                 var newVideoInfo = VideoFns.GetVideoInformation(newPath);
                 if (newVideoInfo == null) throw new NullReferenceException("Could not find video info");
 
-                // what to do if the original video has already been deleted
-                // probably need to save the library path somewhere for if the original video has been deleted.
-                video = VideoRepository.FindById(context, Id, new List<string> { "LibraryPath" });
-                if (video == null) throw new NullReferenceException("Could not find video before conversion job");
+                var libraryPath = await context.LibraryPaths.FirstOrDefaultAsync(l => l.Id == libPathId);
+                if (libraryPath == null) throw new NullReferenceException("Library path for converted video was not found");
 
-                // if overwirite make sure not to create another entity
-                var newVideoEntity = await VideoRepository.CreateVideo(context, newPath, newVideoInfo, video.LibraryPath);
+                var newVideoEntity = await VideoRepository.CreateVideo(context, newPath, newVideoInfo, libraryPath);
 
                 // ImageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
                 // {
@@ -67,9 +66,12 @@ namespace Ghost.Services.Jobs
                 // copy actors
                 // copy genres
 
-                // rehidrate video before relating
-                await VideoRepository.RelateVideo(context, video.Id, newVideoEntity.Id);
-                await VideoRepository.RelateVideo(context, newVideoEntity.Id, video.Id);
+                video = VideoRepository.FindById(context, Id, null);
+                if (video != null)
+                {
+                    await VideoRepository.RelateVideo(context, Id, newVideoEntity.Id);
+                    await VideoRepository.RelateVideo(context, newVideoEntity.Id, Id);
+                }
 
                 //consider using transactions to create all of these things together
                 var job = await context.Jobs.FirstOrDefaultAsync(j => j.Id == JobId);

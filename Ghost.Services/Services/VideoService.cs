@@ -431,7 +431,8 @@ namespace Ghost.Services
             var video = videoRepository.FindById(id);
             if (video == null) throw new NullReferenceException("Video was not found to create sub video from");
 
-            var newVideoPath = Path.Combine(Path.GetDirectoryName(video.Path), subVideoRequest.Name + Path.GetExtension(video.Path));
+            var root = Path.GetDirectoryName(video.Path) ?? "";
+            var newVideoPath = Path.Combine(root, subVideoRequest.Name + Path.GetExtension(video.Path));
             await VideoFns.CreateSubVideoAsync(
                 video.Path,
                 newVideoPath,
@@ -463,28 +464,22 @@ namespace Ghost.Services
             });
         }
 
-        public async void Convert(int id, ConvertRequestDto convertRequest)
+        private async Task<int> CreateConvertJobEntry(int id, ConvertRequestDto convertRequestDto, string threadName)
         {
-            int JobId;
-            var threadName = $"ConvertVideo {convertRequest.Title}";
-
             using (var context = new GhostContext(contextOptions))
             {
                 var video = await context.Videos.FirstOrDefaultAsync(v => v.Id == id);
                 if (video == null) throw new NullReferenceException("Video was not found to convert");
 
                 var root = Path.GetDirectoryName(video.Path) ?? "";
-                var newPath = Path.Combine(root, convertRequest.Title + ".mp4");
+                var newPath = Path.Combine(root, convertRequestDto.Title + ".mp4");
 
-                if (!convertRequest.Overwrite && File.Exists(newPath))
-                {
-                    throw new FileExistsException();
-                }
+                if (File.Exists(newPath)) throw new FileExistsException("Path to save converted video already exists");
 
                 var convertJob = new ConvertJob
                 {
                     Video = video,
-                    Title = convertRequest.Title,
+                    Title = convertRequestDto.Title,
                     Path = newPath,
                     Job = new Job
                     {
@@ -496,9 +491,16 @@ namespace Ghost.Services
 
                 await context.SaveChangesAsync();
 
-                JobId = convertJob.Id;
+                return convertJob.Id;
             }
-            var convertVideoJob = new ConvertVideoJob(id, threadName, JobId, convertRequest, contextOptions);
+        }
+
+        public async void Convert(int id, ConvertRequestDto convertRequest)
+        {
+            var threadName = $"ConvertVideo {convertRequest.Title}";
+            var convertJobId = await CreateConvertJobEntry(id, convertRequest, threadName);
+
+            var convertVideoJob = new ConvertVideoJob(id, threadName, convertJobId, convertRequest, contextOptions);
 
             Thread convertThread = new Thread(new ThreadStart(convertVideoJob.Run));
             convertThread.Name = convertVideoJob.ThreadName;
