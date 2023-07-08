@@ -344,13 +344,13 @@ namespace Ghost.Api.Controllers
         {
             try
             {
-                videoService.Convert(id, convertRequest);
+                await videoService.Convert(id, convertRequest);
 
                 return Ok();
             }
             catch (FileExistsException)
             {
-                return BadRequest("File already exists and was not marked to overwrite");
+                return BadRequest("File already exists");
             }
         }
     }

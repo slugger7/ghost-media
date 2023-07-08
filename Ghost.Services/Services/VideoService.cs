@@ -495,7 +495,7 @@ namespace Ghost.Services
             }
         }
 
-        public async void Convert(int id, ConvertRequestDto convertRequest)
+        public async Task Convert(int id, ConvertRequestDto convertRequest)
         {
             var threadName = $"ConvertVideo {convertRequest.Title}";
             var convertJobId = await CreateConvertJobEntry(id, convertRequest, threadName);
