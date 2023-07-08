@@ -31,11 +31,6 @@ namespace Ghost.Repository
 
         public async Task<Video> CreateVideo(string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath)
         {
-            return await VideoRepository.CreateVideo(this.context, path, videoMetaData, libraryPath);
-        }
-
-        public static async Task<Video> CreateVideo(GhostContext context, string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath)
-        {
             var video = new Video
             {
                 Path = path,

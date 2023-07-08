@@ -6,6 +6,7 @@ using Ghost.Media;
 using Ghost.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services.Jobs
 {
@@ -13,57 +14,49 @@ namespace Ghost.Services.Jobs
     {
         private readonly IServiceScopeFactory scopeFactory;
         private int Id;
-        private ConvertRequestDto convertRequest;
-        public string ThreadName { get; }
         private int JobId;
 
         public ConvertVideoJob(
             int id,
-            string threadName,
             int jobId,
-            ConvertRequestDto convertRequestDto,
             IServiceScopeFactory scopeFactory)
         {
             this.Id = id;
-            this.convertRequest = convertRequestDto;
-            this.ThreadName = threadName;
             this.JobId = jobId;
             this.scopeFactory = scopeFactory;
         }
 
         public async void Run()
         {
-            Console.WriteLine("Conversion job starting");
             using (var scope = scopeFactory.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<GhostContext>();
-                string videoPath = string.Empty;
-                string newPath = string.Empty;
-                int libPathId;
-
+                var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+                var logger = new Logger<ConvertJob>(loggerFactory);
                 var videoRepository = scope.ServiceProvider.GetRequiredService<IVideoRepository>();
                 var imageService = scope.ServiceProvider.GetRequiredService<IImageService>();
+                var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+                var libraryRepository = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
+
+                logger.LogInformation("Starting conversion job: {0}", JobId);
 
                 var video = videoRepository.FindById(Id, new List<string> { "LibraryPath" });
                 if (video == null) throw new NullReferenceException("Could not find video before conversion job");
-                videoPath = video.Path;
-                libPathId = video.LibraryPath.Id;
 
-                var convertJob = await context.ConvertJobs.Include("Job").FirstOrDefaultAsync(j => j.Job.Id == JobId);
+                var convertJob = await jobRepository.GetConvertJob(JobId);
                 if (convertJob == null) throw new NullReferenceException("Conversion job was not found");
-                convertJob.Job.Status = JobStatus.InProgress;
-                newPath = convertJob.Path;
 
-                await context.SaveChangesAsync();
+                var newPath = convertJob.Path;
 
-                if (String.IsNullOrEmpty(videoPath)) throw new NullReferenceException("Video to convert had no path");
+                convertJob.Job = await jobRepository.UpdateJobStatus(convertJob.Id, JobStatus.InProgress);
+
+                if (String.IsNullOrEmpty(video.Path)) throw new NullReferenceException("Video to convert had no path");
                 if (String.IsNullOrEmpty(newPath)) throw new NullReferenceException("Path for converted video was null or empty");
-                await VideoFns.ConvertVideo(videoPath, newPath);
+                await VideoFns.ConvertVideo(video.Path, newPath);
 
                 var newVideoInfo = VideoFns.GetVideoInformation(newPath);
                 if (newVideoInfo == null) throw new NullReferenceException("Could not find video info");
 
-                var libraryPath = await context.LibraryPaths.FirstOrDefaultAsync(l => l.Id == libPathId);
+                var libraryPath = await libraryRepository.GetLibraryPathById(video.LibraryPath.Id);
                 if (libraryPath == null) throw new NullReferenceException("Library path for converted video was not found");
 
                 var newVideoEntity = await videoRepository.CreateVideo(newPath, newVideoInfo, libraryPath);
@@ -73,9 +66,6 @@ namespace Ghost.Services.Jobs
                     VideoId = newVideoEntity.Id
                 });
 
-                // copy actors
-                // copy genres
-
                 video = videoRepository.FindById(Id, null);
                 if (video != null)
                 {
@@ -83,14 +73,11 @@ namespace Ghost.Services.Jobs
                     await videoRepository.RelateVideo(newVideoEntity.Id, Id);
                 }
 
-                //consider using transactions to create all of these things together
-                var job = await context.Jobs.FirstOrDefaultAsync(j => j.Id == JobId);
-                if (job == null) throw new NullReferenceException("Colud not find job after conversion completed");
+                // TODO: onsider using transactions to create all of these things together
+                await jobRepository.UpdateJobStatus(convertJob.Job.Id, JobStatus.Completed);
 
-                job.Status = JobStatus.Completed;
+                logger.LogInformation("Completed conversion job: {0}", JobId);
             }
-
-            Console.WriteLine("Finished converting video in thread");
         }
     }
 }

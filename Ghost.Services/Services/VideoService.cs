@@ -22,7 +22,7 @@ namespace Ghost.Services
         private readonly IImageIoService imageIoService;
         private readonly IImageService imageService;
         private readonly INfoService nfoService;
-        private readonly DbContextOptions<GhostContext> contextOptions;
+        private readonly IJobRepository jobRepository;
         private readonly IServiceScopeFactory scopeFactory;
 
         public VideoService(
@@ -36,7 +36,7 @@ namespace Ghost.Services
           IImageIoService imageIoService,
           IImageService imageService,
           INfoService nfoService,
-          DbContextOptions<GhostContext> contextOptions,
+          IJobRepository jobRepository,
           IServiceScopeFactory scopeFactory,
           IServiceProvider serviceProvider)
         {
@@ -50,7 +50,7 @@ namespace Ghost.Services
             this.imageService = imageService;
             this.nfoService = nfoService;
             this.userRepository = userRepository;
-            this.contextOptions = contextOptions;
+            this.jobRepository = jobRepository;
             this.scopeFactory = scopeFactory;
         }
 
@@ -469,52 +469,19 @@ namespace Ghost.Services
             });
         }
 
-        private async Task<int> CreateConvertJobEntry(int id, ConvertRequestDto convertRequestDto, string threadName)
-        {
-            using (var context = new GhostContext(contextOptions))
-            {
-                var video = await context.Videos.FirstOrDefaultAsync(v => v.Id == id);
-                if (video == null) throw new NullReferenceException("Video was not found to convert");
-
-                var root = Path.GetDirectoryName(video.Path) ?? "";
-                var newPath = Path.Combine(root, convertRequestDto.Title + ".mp4");
-
-                if (File.Exists(newPath)) throw new FileExistsException("Path to save converted video already exists");
-
-                var convertJob = new ConvertJob
-                {
-                    Video = video,
-                    Title = convertRequestDto.Title,
-                    Path = newPath,
-                    Job = new Job
-                    {
-                        ThreadName = threadName
-                    }
-                };
-
-                context.ConvertJobs.Add(convertJob);
-
-                await context.SaveChangesAsync();
-
-                return convertJob.Id;
-            }
-        }
-
         public async Task Convert(int id, ConvertRequestDto convertRequest)
         {
             var threadName = $"ConvertVideo {convertRequest.Title}";
-            var convertJobId = await CreateConvertJobEntry(id, convertRequest, threadName);
+            var convertJobId = await jobRepository.CreateConvertJob(id, threadName, convertRequest);
 
             var convertVideoJob = new ConvertVideoJob(
                 id,
-                threadName,
                 convertJobId,
-                convertRequest,
                 scopeFactory
             );
 
             Thread convertThread = new Thread(new ThreadStart(convertVideoJob.Run));
-            convertThread.Name = convertVideoJob.ThreadName;
+            convertThread.Name = threadName;
             convertThread.Start();
             convertThread.Join();
         }
