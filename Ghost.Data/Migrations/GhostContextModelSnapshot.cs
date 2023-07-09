@@ -69,10 +69,6 @@ namespace Ghost.Data.Migrations
                     b.Property<int>("JobId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
