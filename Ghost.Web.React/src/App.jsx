@@ -17,6 +17,7 @@ import './styles.scss'
 import { Login } from './components/Login.jsx';
 import { AuthenticationProvider } from './context/Authentication.provider.jsx';
 import { AuthenticatedRoute } from './components/AuthenticatedRoute.jsx';
+import { Jobs } from './components/Jobs.jsx';
 
 export const App = ({ baseUrl }) => {
   return (
@@ -33,6 +34,7 @@ export const App = ({ baseUrl }) => {
             <Route path='/actors/:id/:name' element={<AuthenticatedRoute><Actor /></AuthenticatedRoute>} />
             <Route path='/actors' element={<AuthenticatedRoute><Actors /></AuthenticatedRoute>} />
             <Route path='/favourites' element={<AuthenticatedRoute><Favourites /></AuthenticatedRoute>} />
+            <Route path='/jobs' element={<AuthenticatedRoute><Jobs /></AuthenticatedRoute>} />
             <Route path='/login' element={<Login />} />
           </Routes>
         </Layout>
