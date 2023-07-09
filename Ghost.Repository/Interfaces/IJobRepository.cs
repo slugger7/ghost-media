@@ -9,5 +9,7 @@ namespace Ghost.Repository
         Task<int> CreateConvertJob(int id, string threadName, ConvertRequestDto convertRequest);
         Task<ConvertJob?> GetConvertJob(int jobId);
         Task<Job> UpdateJobStatus(int id, string status);
+
+        Task<IEnumerable<Job>> GetJobs();
     }
 }

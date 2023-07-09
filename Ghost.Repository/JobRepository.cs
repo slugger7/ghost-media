@@ -53,12 +53,18 @@ namespace Ghost.Repository
             return convertJob;
         }
 
+        public async Task<IEnumerable<Job>> GetJobs()
+        {
+            return await context.Jobs.OrderByDescending(j => j.Created).ToListAsync();
+        }
+
         public async Task<Job> UpdateJobStatus(int id, string status)
         {
             var job = await context.Jobs.FirstOrDefaultAsync(j => j.Id == id);
             if (job == null) throw new NullReferenceException("Job was null when updating status");
 
             job.Status = status;
+            job.Modified = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
 
