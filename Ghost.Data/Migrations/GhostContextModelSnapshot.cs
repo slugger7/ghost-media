@@ -60,31 +60,6 @@ namespace Ghost.Data.Migrations
                     b.ToTable("Chapters", (string)null);
                 });
 
-            modelBuilder.Entity("Ghost.Data.ConvertJob", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("JobId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("VideoId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobId");
-
-                    b.HasIndex("VideoId");
-
-                    b.ToTable("ConvertJobs", (string)null);
-                });
-
             modelBuilder.Entity("Ghost.Data.FavouriteActor", b =>
                 {
                     b.Property<int>("Id")
@@ -159,31 +134,6 @@ namespace Ghost.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Images", (string)null);
-                });
-
-            modelBuilder.Entity("Ghost.Data.Job", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Modified")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ThreadName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Jobs", (string)null);
                 });
 
             modelBuilder.Entity("Ghost.Data.Library", b =>
@@ -419,25 +369,6 @@ namespace Ghost.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Image");
-
-                    b.Navigation("Video");
-                });
-
-            modelBuilder.Entity("Ghost.Data.ConvertJob", b =>
-                {
-                    b.HasOne("Ghost.Data.Job", "Job")
-                        .WithMany()
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ghost.Data.Video", "Video")
-                        .WithMany()
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Job");
 
                     b.Navigation("Video");
                 });
