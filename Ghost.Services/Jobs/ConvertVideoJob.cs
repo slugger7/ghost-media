@@ -1,64 +1,82 @@
 using Ghost.Data;
+using Ghost.Data.Enums;
 using Ghost.Dtos;
 using Ghost.Exceptions;
 using Ghost.Media;
 using Ghost.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services.Jobs
 {
     public class ConvertVideoJob
     {
-        private readonly DbContextOptions<GhostContext> contextOptions;
+        private readonly IServiceScopeFactory scopeFactory;
         private int Id;
-        private ConvertRequestDto convertRequest;
+        private int JobId;
 
-        public ConvertVideoJob(int id, ConvertRequestDto convertRequestDto, DbContextOptions<GhostContext> contextOptions)
+        public ConvertVideoJob(
+            int id,
+            int jobId,
+            IServiceScopeFactory scopeFactory)
         {
             this.Id = id;
-            this.convertRequest = convertRequestDto;
-            this.contextOptions = contextOptions;
+            this.JobId = jobId;
+            this.scopeFactory = scopeFactory;
         }
 
         public async void Run()
         {
-            using (var context = new GhostContext(contextOptions))
+            using (var scope = scopeFactory.CreateScope())
             {
-                Console.WriteLine("Starting thread to convert video");
-                var video = VideoRepository.FindById(context, Id, new List<string> { "LibraryPath" });
-                if (video == null) throw new NullReferenceException("Video was not found to convert");
+                var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+                var logger = new Logger<ConvertJob>(loggerFactory);
+                var videoRepository = scope.ServiceProvider.GetRequiredService<IVideoRepository>();
+                var imageService = scope.ServiceProvider.GetRequiredService<IImageService>();
+                var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+                var libraryRepository = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
 
-                var root = Path.GetDirectoryName(video.Path) ?? "";
-                var newPath = Path.Combine(root, convertRequest.Title + ".mp4");
+                logger.LogInformation("Starting conversion job: {0}", JobId);
 
-                if (!convertRequest.Overwrite && File.Exists(newPath))
-                {
-                    throw new FileExistsException();
-                }
+                var video = videoRepository.FindById(Id, new List<string> { "LibraryPath" });
+                if (video == null) throw new NullReferenceException("Could not find video before conversion job");
 
+                var convertJob = await jobRepository.GetConvertJob(JobId);
+                if (convertJob == null) throw new NullReferenceException("Conversion job was not found");
+
+                var newPath = convertJob.Path;
+
+                convertJob.Job = await jobRepository.UpdateJobStatus(convertJob.Id, JobStatus.InProgress);
+
+                if (String.IsNullOrEmpty(video.Path)) throw new NullReferenceException("Video to convert had no path");
+                if (String.IsNullOrEmpty(newPath)) throw new NullReferenceException("Path for converted video was null or empty");
                 await VideoFns.ConvertVideo(video.Path, newPath);
 
                 var newVideoInfo = VideoFns.GetVideoInformation(newPath);
                 if (newVideoInfo == null) throw new NullReferenceException("Could not find video info");
 
-                // if overwirite make sure not to create another entity
-                var newVideoEntity = await VideoRepository.CreateVideo(context, newPath, newVideoInfo, video.LibraryPath);
+                var libraryPath = await libraryRepository.GetLibraryPathById(video.LibraryPath.Id);
+                if (libraryPath == null) throw new NullReferenceException("Library path for converted video was not found");
 
-                // ImageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
-                // {
-                //     VideoId = newVideoEntity.Id
-                // });
+                var newVideoEntity = await videoRepository.CreateVideo(newPath, newVideoInfo, libraryPath);
 
-                // copy actors
-                // copy genres
+                imageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
+                {
+                    VideoId = newVideoEntity.Id
+                });
 
-                // rehidrate video before relating
-                await VideoRepository.RelateVideo(context, video.Id, newVideoEntity.Id);
-                await VideoRepository.RelateVideo(context, newVideoEntity.Id, video.Id);
+                video = videoRepository.FindById(Id, null);
+                if (video != null)
+                {
+                    await videoRepository.RelateVideo(Id, newVideoEntity.Id);
+                    await videoRepository.RelateVideo(newVideoEntity.Id, Id);
+                }
 
-                // Optional: create thread
-                // Optional: create jobs entity
-                Console.WriteLine("Finished converting video in thread");
+                // TODO: onsider using transactions to create all of these things together
+                await jobRepository.UpdateJobStatus(convertJob.Job.Id, JobStatus.Completed);
+
+                logger.LogInformation("Completed conversion job: {0}", JobId);
             }
         }
     }

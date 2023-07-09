@@ -21,7 +21,10 @@ namespace Ghost.Data
         public DbSet<FavouriteVideo> FavouriteVideos { get; set; }
         public DbSet<Progress> Progress { get; set; }
         public DbSet<RelatedVideo> RelatedVideos { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<ConvertJob> ConvertJobs { get; set; }
 
+        public GhostContext() { }
         public GhostContext(DbContextOptions<GhostContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -101,6 +104,11 @@ namespace Ghost.Data
               .WithMany(v => v.RelatedVideos);
             relatedVideo
               .HasOne<Video>(v => v.RelatedTo);
+
+            modelBuilder.Entity<Job>().ToTable("Jobs");
+            var convertJob = modelBuilder.Entity<ConvertJob>().ToTable("ConvertJobs");
+            convertJob.HasOne<Video>(j => j.Video);
+            convertJob.HasOne<Job>(j => j.Job);
         }
     }
 }

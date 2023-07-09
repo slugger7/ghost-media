@@ -5,6 +5,8 @@ using Ghost.Repository;
 using Microsoft.Extensions.Logging;
 using Ghost.Services.Jobs;
 using Microsoft.EntityFrameworkCore;
+using Ghost.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ghost.Services
 {
@@ -20,7 +22,8 @@ namespace Ghost.Services
         private readonly IImageIoService imageIoService;
         private readonly IImageService imageService;
         private readonly INfoService nfoService;
-        private readonly DbContextOptions<GhostContext> contextOptions;
+        private readonly IJobRepository jobRepository;
+        private readonly IServiceScopeFactory scopeFactory;
 
         public VideoService(
           ILogger<VideoService> logger,
@@ -33,7 +36,9 @@ namespace Ghost.Services
           IImageIoService imageIoService,
           IImageService imageService,
           INfoService nfoService,
-          DbContextOptions<GhostContext> contextOptions)
+          IJobRepository jobRepository,
+          IServiceScopeFactory scopeFactory,
+          IServiceProvider serviceProvider)
         {
             this.logger = logger;
             this.genreService = genreService;
@@ -45,7 +50,8 @@ namespace Ghost.Services
             this.imageService = imageService;
             this.nfoService = nfoService;
             this.userRepository = userRepository;
-            this.contextOptions = contextOptions;
+            this.jobRepository = jobRepository;
+            this.scopeFactory = scopeFactory;
         }
 
         public PageResultDto<VideoDto> SearchVideos(PageRequestDto pageRequest, FilterQueryDto filterQuery, int userId)
@@ -430,7 +436,8 @@ namespace Ghost.Services
             var video = videoRepository.FindById(id);
             if (video == null) throw new NullReferenceException("Video was not found to create sub video from");
 
-            var newVideoPath = Path.Combine(Path.GetDirectoryName(video.Path), subVideoRequest.Name + Path.GetExtension(video.Path));
+            var root = Path.GetDirectoryName(video.Path) ?? "";
+            var newVideoPath = Path.Combine(root, subVideoRequest.Name + Path.GetExtension(video.Path));
             await VideoFns.CreateSubVideoAsync(
                 video.Path,
                 newVideoPath,
@@ -462,11 +469,19 @@ namespace Ghost.Services
             });
         }
 
-        public void Convert(int id, ConvertRequestDto convertRequest)
+        public async Task Convert(int id, ConvertRequestDto convertRequest)
         {
-            var convertJob = new ConvertVideoJob(id, convertRequest, contextOptions);
+            var threadName = $"ConvertVideo {convertRequest.Title}";
+            var convertJobId = await jobRepository.CreateConvertJob(id, threadName, convertRequest);
 
-            Thread convertThread = new Thread(new ThreadStart(convertJob.Run));
+            var convertVideoJob = new ConvertVideoJob(
+                id,
+                convertJobId,
+                scopeFactory
+            );
+
+            Thread convertThread = new Thread(new ThreadStart(convertVideoJob.Run));
+            convertThread.Name = threadName;
             convertThread.Start();
             convertThread.Join();
         }

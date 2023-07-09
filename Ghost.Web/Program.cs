@@ -44,6 +44,7 @@ internal class Program
         builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IImageRepository, ImageRepository>();
+        builder.Services.AddScoped<IJobRepository, JobRepository>();
         builder.Services.AddDbContext<GhostContext>();
 
         JWTAuthentication.ConfigureJWTAuthentication(builder.Services);
