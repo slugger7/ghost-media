@@ -1,4 +1,3 @@
-using Ghost.Dtos;
 using Ghost.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
