@@ -9,7 +9,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/Ghost.Web/bin/Debug/net6.0/Ghost.Web.dll",
+      "program": "${workspaceFolder}/Ghost.Web/bin/Debug/net7.0/Ghost.Web.dll",
       "args": [
         "--urls=http://0.0.0.0:5120"
       ],
