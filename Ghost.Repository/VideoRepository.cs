@@ -51,9 +51,9 @@ namespace Ghost.Repository
             return video;
         }
 
-        public Video SetActors(int id, IEnumerable<Actor> actors)
+        public async Task<Video> SetActors(int id, IEnumerable<Actor> actors)
         {
-            var video = context.Videos.Find(id);
+            var video = await context.Videos.FindAsync(id);
             if (video == null) throw new NullReferenceException("Video was null");
 
             context.VideoActors.RemoveRange(video.VideoActors);
@@ -63,7 +63,7 @@ namespace Ghost.Repository
                 Video = video
             });
             video.VideoActors = videoActors.ToList();
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             video = FindById(id, new List<String> { "VideoActors.Actor" });
             if (video == null) throw new NullReferenceException("Video was null");
@@ -169,9 +169,9 @@ namespace Ghost.Repository
             };
         }
 
-        public Video SetGenres(int id, IEnumerable<Genre> genres)
+        public async Task<Video> SetGenres(int id, IEnumerable<Genre> genres)
         {
-            var video = context.Videos.Find(id);
+            var video = await context.Videos.FindAsync(id);
             if (video == null) throw new NullReferenceException("Video was null");
 
             context.VideoGenres.RemoveRange(video.VideoGenres);
@@ -183,7 +183,7 @@ namespace Ghost.Repository
             });
 
             video.VideoGenres = videoGenres.ToList();
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             video = FindById(id, new List<String> { "VideoGenres.Genre" });
             if (video == null) throw new NullReferenceException("Video was null");

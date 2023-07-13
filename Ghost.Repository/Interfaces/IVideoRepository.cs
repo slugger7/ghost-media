@@ -11,8 +11,8 @@ namespace Ghost.Repository
         PageResult<Video> GetForGenre(int userId, string watchState, string[]? genresFilter, string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
         Video? FindById(int id);
         Video? FindById(int id, List<string>? includes);
-        Video SetActors(int id, IEnumerable<Actor> actors);
-        Video SetGenres(int id, IEnumerable<Genre> genres);
+        Task<Video> SetActors(int id, IEnumerable<Actor> actors);
+        Task<Video> SetGenres(int id, IEnumerable<Genre> genres);
         Task<Video> Delete(int id);
         Task<Video> UpdateTitle(int id, string title);
         Task<Video> UpdateVideo(Video video);
