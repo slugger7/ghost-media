@@ -472,18 +472,17 @@ namespace Ghost.Services
         public async Task Convert(int id, ConvertRequestDto convertRequest)
         {
             var threadName = $"ConvertVideo {convertRequest.Title}";
-            var convertJobId = await jobRepository.CreateConvertJob(id, threadName, convertRequest);
+            var jobId = await jobRepository.CreateConvertJob(id, threadName, convertRequest);
 
             var convertVideoJob = new ConvertVideoJob(
-                id,
-                convertJobId,
-                scopeFactory
+                scopeFactory,
+                jobId,
+                id
             );
 
             Thread convertThread = new Thread(new ThreadStart(convertVideoJob.Run));
             convertThread.Name = threadName;
             convertThread.Start();
-            convertThread.Join();
         }
     }
 }

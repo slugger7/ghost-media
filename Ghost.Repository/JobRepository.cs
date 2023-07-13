@@ -41,13 +41,14 @@ namespace Ghost.Repository
 
             await context.SaveChangesAsync();
 
-            return convertJob.Id;
+            return convertJob.Job.Id;
         }
 
-        public async Task<ConvertJob?> GetConvertJob(int jobId)
+        public async Task<ConvertJob?> GetConvertJobByJobId(int jobId)
         {
             var convertJob = await context.ConvertJobs
                 .Include("Job")
+                .Include("Video")
                 .FirstOrDefaultAsync(j => j.Job.Id == jobId);
 
             return convertJob;
@@ -69,6 +70,14 @@ namespace Ghost.Repository
             await context.SaveChangesAsync();
 
             return job;
+        }
+
+        public async Task<IEnumerable<Job>> GetJobsByStatus(string status)
+        {
+            return await context.Jobs
+                .Where(j => j.Status.Equals(status))
+                .OrderBy(j => j.Created)
+                .ToListAsync();
         }
     }
 }
