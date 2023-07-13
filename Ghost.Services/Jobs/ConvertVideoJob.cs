@@ -21,7 +21,7 @@ public class ConvertVideoJob : BaseJob
         this.Id = id;
     }
 
-    public override async Task RunJob()
+    public override async Task<string> RunJob()
     {
         using (var scope = scopeFactory.CreateScope())
         {
@@ -41,8 +41,6 @@ public class ConvertVideoJob : BaseJob
             if (convertJob == null) throw new NullReferenceException("Conversion job was not found");
 
             var newPath = convertJob.Path;
-
-            convertJob.Job = await jobRepository.UpdateJobStatus(convertJob.Id, JobStatus.InProgress);
 
             if (String.IsNullOrEmpty(video.Path)) throw new NullReferenceException("Video to convert had no path");
             if (String.IsNullOrEmpty(newPath)) throw new NullReferenceException("Path for converted video was null or empty");
@@ -68,10 +66,9 @@ public class ConvertVideoJob : BaseJob
                 await videoRepository.RelateVideo(newVideoEntity.Id, Id);
             }
 
-            // TODO: onsider using transactions to create all of these things together
-            await jobRepository.UpdateJobStatus(convertJob.Job.Id, JobStatus.Completed);
-
             logger.LogInformation("Completed conversion job: {0}", jobId);
+
+            return JobStatus.Completed;
         }
     }
 }

@@ -14,15 +14,23 @@ public abstract class BaseJob
         this.jobId = jobId;
     }
 
-    public abstract Task RunJob();
+    public abstract Task<string> RunJob();
 
     public async void Run()
     {
         if (await this.PreRun())
         {
-            await this.RunJob();
+            string status;
+            try
+            {
+                status = await this.RunJob();
+            }
+            catch (Exception)
+            {
+                status = JobStatus.Error;
+            }
 
-            await this.PostRun();
+            await this.PostRun(status);
         }
 
     }
@@ -35,15 +43,24 @@ public abstract class BaseJob
 
             var runningJobs = await jobRepository.GetJobsByStatus(JobStatus.InProgress);
 
-            return runningJobs.Count() == 0;
+            if (runningJobs.Count() == 0)
+            {
+                await jobRepository.UpdateJobStatus(jobId, JobStatus.InProgress);
+
+                return true;
+            }
+
+            return false;
         }
     }
 
-    protected async Task PostRun()
+    protected async Task PostRun(string status)
     {
         using (var scope = scopeFactory.CreateScope())
         {
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+
+            await jobRepository.UpdateJobStatus(jobId, status);
 
             var notStartedJobs = await jobRepository.GetJobsByStatus(JobStatus.NotStarted);
             var nextJob = notStartedJobs.FirstOrDefault();
