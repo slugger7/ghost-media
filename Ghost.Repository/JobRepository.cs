@@ -54,6 +54,13 @@ namespace Ghost.Repository
             return convertJob;
         }
 
+        public async Task<Job?> GetJobById(int id)
+        {
+            var job = await context.Jobs.FirstOrDefaultAsync(j => j.Id == id);
+
+            return job;
+        }
+
         public async Task<IEnumerable<Job>> GetJobs()
         {
             return await context.Jobs.OrderByDescending(j => j.Created).ToListAsync();
@@ -78,6 +85,16 @@ namespace Ghost.Repository
                 .Where(j => j.Status.Equals(status))
                 .OrderBy(j => j.Created)
                 .ToListAsync();
+        }
+
+        public async Task DeleteJob(int id)
+        {
+            var job = await context.Jobs.FindAsync(id);
+            if (job == null) throw new NullReferenceException("Job was not found to delet");
+
+            context.Jobs.Remove(job);
+
+            await context.SaveChangesAsync();
         }
     }
 }

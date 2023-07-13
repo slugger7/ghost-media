@@ -25,7 +25,7 @@ public abstract class BaseJob
             {
                 status = await this.RunJob();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 status = JobStatus.Error;
             }

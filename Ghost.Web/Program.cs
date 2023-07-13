@@ -36,6 +36,7 @@ internal class Program
         builder.Services.AddScoped<IImageIoService, ImageIoService>();
         builder.Services.AddScoped<INfoService, NfoService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IJobService, JobService>();
 
         // Repositories
         builder.Services.AddScoped<IGenreRepository, GenreRepository>();

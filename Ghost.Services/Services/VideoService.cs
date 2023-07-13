@@ -214,8 +214,8 @@ namespace Ghost.Services
                     video.DateAdded = DateAdded;
                 }
                 video = await videoRepository.UpdateVideo(video);
-                this.SetActorsByNameToVideo(id, videoNfo.actors.Select(a => a.name).ToList());
-                this.SetGenresByNameToVideo(id, videoNfo.genres);
+                await this.SetActorsByNameToVideo(id, videoNfo.actors.Select(a => a.name).ToList());
+                await this.SetGenresByNameToVideo(id, videoNfo.genres);
             }
 
             return new VideoDto(video);
