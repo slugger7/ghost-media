@@ -61,7 +61,8 @@ public class ConvertVideoJob : BaseJob
 
             video = videoRepository.FindById(VideoId, new List<string> {
                 "VideoGenres.Genre",
-                "VideoActors.Actor"
+                "VideoActors.Actor",
+                "RelatedVideos.RelatedTo"
             });
             if (video != null)
             {
@@ -73,8 +74,15 @@ public class ConvertVideoJob : BaseJob
 
                 var genres = video.VideoGenres.Select(vg => vg.Genre);
                 await videoRepository.SetGenres(newVideoEntity.Id, genres);
-                // relations
-                //var relations = video.RelatedVideos.Select(rv => rv.Video);
+
+                var relations = video.RelatedVideos.Select(rv => rv.RelatedTo);
+                foreach (var relation in relations)
+                {
+                    if (newVideoEntity.Id == relation.Id) continue;
+
+                    await videoRepository.RelateVideo(newVideoEntity.Id, relation.Id);
+                    await videoRepository.RelateVideo(relation.Id, newVideoEntity.Id);
+                }
 
             }
 
