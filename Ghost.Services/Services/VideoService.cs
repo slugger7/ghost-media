@@ -126,7 +126,7 @@ namespace Ghost.Services
             return new VideoDto(video);
         }
 
-        public VideoDto SetGenresByNameToVideo(int id, List<string> genres)
+        public async Task<VideoDto> SetGenresByNameToVideo(int id, List<string> genres)
         {
             if (genres == null) throw new NullReferenceException("Genres not provided");
             var videoEntity = videoRepository.FindById(id, new List<string> { "VideoGenres" });
@@ -134,7 +134,7 @@ namespace Ghost.Services
             if (videoEntity == null) throw new NullReferenceException("Video not found");
             var genreEntities = genres.Select(g => genreRepository.Upsert(g));
 
-            videoEntity = videoRepository.SetGenres(videoEntity.Id, genreEntities);
+            videoEntity = await videoRepository.SetGenres(videoEntity.Id, genreEntities);
             return new VideoDto(videoEntity);
         }
 
@@ -158,7 +158,7 @@ namespace Ghost.Services
             };
         }
 
-        public VideoDto SetActorsByNameToVideo(int id, List<string> actors)
+        public async Task<VideoDto> SetActorsByNameToVideo(int id, List<string> actors)
         {
             if (actors == null) throw new NullReferenceException("Actors not provided");
             var videoEntity = videoRepository.FindById(id, new List<string> { "VideoActors" });
@@ -166,7 +166,7 @@ namespace Ghost.Services
             if (videoEntity == null) throw new NullReferenceException("Video not found");
             var actorEntities = actors.Select(a => actorRepository.UpsertActor(a));
 
-            videoEntity = videoRepository.SetActors(videoEntity.Id, actorEntities);
+            videoEntity = await videoRepository.SetActors(videoEntity.Id, actorEntities);
 
             return new VideoDto(videoEntity);
         }
@@ -214,8 +214,8 @@ namespace Ghost.Services
                     video.DateAdded = DateAdded;
                 }
                 video = await videoRepository.UpdateVideo(video);
-                this.SetActorsByNameToVideo(id, videoNfo.actors.Select(a => a.name).ToList());
-                this.SetGenresByNameToVideo(id, videoNfo.genres);
+                await this.SetActorsByNameToVideo(id, videoNfo.actors.Select(a => a.name).ToList());
+                await this.SetGenresByNameToVideo(id, videoNfo.genres);
             }
 
             return new VideoDto(video);

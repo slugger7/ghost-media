@@ -103,11 +103,11 @@ namespace Ghost.Api.Controllers
 
         [HttpPut("{id}/genres")]
         [Authorize]
-        public ActionResult<VideoDto> AddGenresByNameToVideo(int id, [FromBody] GenreAddDto genreAddDto)
+        public async Task<ActionResult<VideoDto>> AddGenresByNameToVideo(int id, [FromBody] GenreAddDto genreAddDto)
         {
             try
             {
-                return this.videoService.SetGenresByNameToVideo(id, genreAddDto.Genres);
+                return await this.videoService.SetGenresByNameToVideo(id, genreAddDto.Genres);
             }
             catch (NullReferenceException ex)
             {
@@ -139,11 +139,11 @@ namespace Ghost.Api.Controllers
 
         [HttpPut("{id}/actors")]
         [Authorize]
-        public ActionResult<VideoDto> AddActorsByNameToVideo(int id, [FromBody] ActorAddDto actorAddDto)
+        public async Task<ActionResult<VideoDto>> AddActorsByNameToVideo(int id, [FromBody] ActorAddDto actorAddDto)
         {
             try
             {
-                return this.videoService.SetActorsByNameToVideo(id, actorAddDto.Actors);
+                return await this.videoService.SetActorsByNameToVideo(id, actorAddDto.Actors);
             }
             catch (NullReferenceException ex)
             {

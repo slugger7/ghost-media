@@ -10,15 +10,15 @@ namespace Ghost.Services.Jobs;
 
 public class ConvertVideoJob : BaseJob
 {
-    private int Id;
+    private int VideoId;
 
     public ConvertVideoJob(
         IServiceScopeFactory scopeFactory,
         int jobId,
-        int id
+        int videoId
     ) : base(scopeFactory, jobId)
     {
-        this.Id = id;
+        this.VideoId = videoId;
     }
 
     public override async Task<string> RunJob()
@@ -34,7 +34,7 @@ public class ConvertVideoJob : BaseJob
 
             logger.LogInformation("Starting conversion job: {0}", jobId);
 
-            var video = videoRepository.FindById(Id, new List<string> { "LibraryPath" });
+            var video = videoRepository.FindById(VideoId, new List<string> { "LibraryPath" });
             if (video == null) throw new NullReferenceException("Could not find video before conversion job");
 
             var convertJob = await jobRepository.GetConvertJobByJobId(jobId);
@@ -59,11 +59,31 @@ public class ConvertVideoJob : BaseJob
                 VideoId = newVideoEntity.Id
             });
 
-            video = videoRepository.FindById(Id, null);
+            video = videoRepository.FindById(VideoId, new List<string> {
+                "VideoGenres.Genre",
+                "VideoActors.Actor",
+                "RelatedVideos.RelatedTo"
+            });
             if (video != null)
             {
-                await videoRepository.RelateVideo(Id, newVideoEntity.Id);
-                await videoRepository.RelateVideo(newVideoEntity.Id, Id);
+                await videoRepository.RelateVideo(VideoId, newVideoEntity.Id);
+                await videoRepository.RelateVideo(newVideoEntity.Id, VideoId);
+
+                var actors = video.VideoActors.Select(va => va.Actor);
+                await videoRepository.SetActors(newVideoEntity.Id, actors);
+
+                var genres = video.VideoGenres.Select(vg => vg.Genre);
+                await videoRepository.SetGenres(newVideoEntity.Id, genres);
+
+                var relations = video.RelatedVideos.Select(rv => rv.RelatedTo);
+                foreach (var relation in relations)
+                {
+                    if (newVideoEntity.Id == relation.Id) continue;
+
+                    await videoRepository.RelateVideo(newVideoEntity.Id, relation.Id);
+                    await videoRepository.RelateVideo(relation.Id, newVideoEntity.Id);
+                }
+
             }
 
             logger.LogInformation("Completed conversion job: {0}", jobId);
