@@ -11,15 +11,10 @@ Content-Type: application/json
 
 ###
 
-GET {{baseUrl}}/media
+GET {{baseUrl}}/job
 Authorization: Bearer {{authToken}}
 
 ###
 
-POST {{baseUrl}}/media/53/convert
+DELETE {{baseUrl}}/job/26
 Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-    "title": "new video"
-}
