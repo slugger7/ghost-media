@@ -1,3 +1,5 @@
+using Ghost.Data;
+using Ghost.Dtos;
 using Ghost.Repository;
 using Ghost.Services.Jobs;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,5 +32,12 @@ public class JobService : IJobService
     public async Task DeleteJob(int id)
     {
         await jobRepository.DeleteJob(id);
+    }
+
+    public async Task<IEnumerable<Job>> GetJobs()
+    {
+        var jobs = await jobRepository.GetJobs();
+
+        return jobs;
     }
 }
