@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:5120/api
+@username = slugger
+@authToken = {{login.response.body.token}}
+# @name login
+POST {{baseUrl}}/user/login
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{$dotenv PASSWORD}}"
+}
+
+###
+
+GET {{baseUrl}}/media
+Authorization: Bearer {{authToken}}

@@ -240,3 +240,4 @@ media
 */**/node_modules
 docker-compose.yml
 !FFMpegCore/FFMpegCore.5.0.3.nupkg
+.env
