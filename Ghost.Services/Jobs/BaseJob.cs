@@ -67,12 +67,11 @@ public abstract class BaseJob
 
             if (nextJob != null)
             {
-                // strategy pattern to construct the new job
-                var convertJobEntity = await jobRepository.GetConvertJobByJobId(nextJob.Id);
-                if (convertJobEntity == null) throw new NullReferenceException("Convert job is null");
-                ConvertVideoJob convertJob = new ConvertVideoJob(scopeFactory, nextJob.Id, convertJobEntity.Video.Id);
+                var jobFactory = new JobFactory(scopeFactory);
+                var runnableJob = await jobFactory.CreateJob(nextJob);
+                if (runnableJob == null) throw new NullReferenceException("Could not create a job to run next");
 
-                Thread convertThread = new Thread(new ThreadStart(convertJob.Run));
+                Thread convertThread = new Thread(new ThreadStart(runnableJob.Run));
                 convertThread.Name = nextJob.ThreadName;
                 convertThread.Start();
             }
