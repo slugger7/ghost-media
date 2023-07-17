@@ -1,0 +1,35 @@
+@baseUrl = {{$dotenv BASE_URL}}
+@authToken = {{login.response.body.token}}
+# @name login
+POST {{baseUrl}}/user/login
+Content-Type: application/json
+
+{
+    "username": "{{$dotenv USERNAME}}",
+    "password": "{{$dotenv PASSWORD}}"
+}
+
+###
+
+POST {{baseUrl}}/library
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "main"
+}
+
+###
+
+PUT {{baseUrl}}/library/1/add-paths
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "paths": ["/media/gimli/Music Videos (copy)"]
+}
+
+###
+
+PUT {{baseUrl}}/library/1/sync
+Authorization: Bearer {{authToken}}
