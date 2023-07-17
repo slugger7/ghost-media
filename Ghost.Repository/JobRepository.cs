@@ -33,7 +33,8 @@ namespace Ghost.Repository
                 Path = newPath,
                 Job = new Job
                 {
-                    ThreadName = threadName
+                    ThreadName = threadName,
+                    Type = JobType.Conversion
                 }
             };
 
