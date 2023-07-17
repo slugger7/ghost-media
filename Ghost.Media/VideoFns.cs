@@ -28,7 +28,7 @@ namespace Ghost.Media
             return await FFMpeg.SubVideoAsync(inputPath, outputPath, start, end);
         }
 
-        public static async Task ConvertVideo(string inputPath, string outputPath, int? constantRateFactor = null, int? variableBitrate = null)
+        public static async Task ConvertVideo(string inputPath, string outputPath, int? constantRateFactor = null, int? variableBitrate = null, string? forcePixelFormat = null)
         {
             await FFMpegArguments
                 .FromFileInput(inputPath)
@@ -47,6 +47,11 @@ namespace Ghost.Media
                     if (variableBitrate.HasValue)
                     {
                         options.WithVariableBitrate(variableBitrate.Value);
+                    }
+
+                    if (!String.IsNullOrWhiteSpace(forcePixelFormat))
+                    {
+                        options.ForcePixelFormat(forcePixelFormat);
                     }
                 })
                 .ProcessAsynchronously();

@@ -16,14 +16,14 @@ Authorization: Bearer {{authToken}}
 
 ###
 
-POST {{baseUrl}}/media/93/convert
+POST {{baseUrl}}/media/96/convert
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-    "title": "new conversion",
-    "constantRateFactor": 20,
-    "variableBitrate": 4
+    "title": "conversion title",
+    "constantRateFactor": 28,
+    "forcePixelFormat": "yuv420p"
 }
 
 ###

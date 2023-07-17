@@ -44,7 +44,7 @@ public class ConvertVideoJob : BaseJob
 
             if (String.IsNullOrEmpty(video.Path)) throw new NullReferenceException("Video to convert had no path");
             if (String.IsNullOrEmpty(newPath)) throw new NullReferenceException("Path for converted video was null or empty");
-            await VideoFns.ConvertVideo(video.Path, newPath, convertJob.ConstantRateFactor, convertJob.VariableBitrate);
+            await VideoFns.ConvertVideo(video.Path, newPath, convertJob.ConstantRateFactor, convertJob.VariableBitrate, convertJob.ForcePixelFormat);
 
             var newVideoInfo = VideoFns.GetVideoInformation(newPath);
             if (newVideoInfo == null) throw new NullReferenceException("Could not find video info");
