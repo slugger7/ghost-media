@@ -32,12 +32,11 @@ namespace Ghost.Media
         {
             await FFMpegArguments
                 .FromFileInput(inputPath)
-                .OutputToFile(outputPath, true, options =>
+                .OutputToFile(outputPath, false, options =>
                 {
                     options
                     .WithVideoCodec(VideoCodec.LibX264)
                     .WithAudioCodec(AudioCodec.Aac)
-                    .WithVariableBitrate(4)
                     .WithFastStart();
 
                     if (constantRateFactor.HasValue)
