@@ -1,12 +1,11 @@
 @baseUrl = http://localhost:5120/api
-@username = slugger
 @authToken = {{login.response.body.token}}
 # @name login
 POST {{baseUrl}}/user/login
 Content-Type: application/json
 
 {
-    "username": "{{username}}",
+    "username": "{{$dotenv USERNAME}}",
     "password": "{{$dotenv PASSWORD}}"
 }
 
@@ -21,6 +20,6 @@ POST {{baseUrl}}/user
 Content-Type: application/json
 
 {
-    "username": "{{username}}",
+    "username": "{{$dotenv USERNAME}}",
     "password": "{{$dotenv PASSWORD}}"
 }

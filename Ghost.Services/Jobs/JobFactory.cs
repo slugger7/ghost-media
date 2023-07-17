@@ -26,6 +26,13 @@ public class JobFactory
 
                 return new ConvertVideoJob(scopeFactory, job.Id, conversionJob.Video.Id);
             }
+            if (job.Type.Equals(JobType.Synchronise))
+            {
+                var syncJob = await jobRepository.GetSyncJobByJobId(job.Id);
+                if (syncJob == null) throw new NullReferenceException("Could not find sync job in factory");
+
+                return new SyncLibraryJob(scopeFactory, job.Id);
+            }
         }
 
         return null;

@@ -1,10 +1,8 @@
-using Ghost.Data;
 using Ghost.Data.Enums;
 using Ghost.Dtos;
 using Ghost.Media;
 using Ghost.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services.Jobs;
 
@@ -25,14 +23,10 @@ public class ConvertVideoJob : BaseJob
     {
         using (var scope = scopeFactory.CreateScope())
         {
-            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
-            var logger = new Logger<ConvertJob>(loggerFactory);
             var videoRepository = scope.ServiceProvider.GetRequiredService<IVideoRepository>();
             var imageService = scope.ServiceProvider.GetRequiredService<IImageService>();
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
             var libraryRepository = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
-
-            logger.LogInformation("Starting conversion job: {0}", jobId);
 
             var video = videoRepository.FindById(VideoId, new List<string> { "LibraryPath" });
             if (video == null) throw new NullReferenceException("Could not find video before conversion job");
@@ -83,10 +77,7 @@ public class ConvertVideoJob : BaseJob
                     await videoRepository.RelateVideo(newVideoEntity.Id, relation.Id);
                     await videoRepository.RelateVideo(relation.Id, newVideoEntity.Id);
                 }
-
             }
-
-            logger.LogInformation("Completed conversion job: {0}", jobId);
 
             return JobStatus.Completed;
         }

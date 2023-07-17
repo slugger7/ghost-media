@@ -4,7 +4,7 @@ namespace Ghost.Repository
 {
     public interface ILibraryRepository
     {
-        Library? FindById(int id);
+        Task<Library?> FindById(int id);
         Library Create(Library library);
         Library AddPaths(int id, IEnumerable<LibraryPath> paths);
         PageResult<Library> GetLibraries(int page = 0, int limit = 10);

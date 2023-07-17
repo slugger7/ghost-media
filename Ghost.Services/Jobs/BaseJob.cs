@@ -1,6 +1,7 @@
 using Ghost.Data.Enums;
 using Ghost.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services.Jobs;
 public abstract class BaseJob
@@ -40,16 +41,20 @@ public abstract class BaseJob
         using (var scope = scopeFactory.CreateScope())
         {
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger<BaseJob>();
 
             var runningJobs = await jobRepository.GetJobsByStatus(JobStatus.InProgress);
 
             if (runningJobs.Count() == 0)
             {
+                logger.LogInformation($"Starting job {jobId}");
                 await jobRepository.UpdateJobStatus(jobId, JobStatus.InProgress);
 
                 return true;
             }
 
+            logger.LogInformation($"Job {jobId} will run after current job finishes");
             return false;
         }
     }
@@ -59,6 +64,10 @@ public abstract class BaseJob
         using (var scope = scopeFactory.CreateScope())
         {
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger<BaseJob>();
+
+            logger.LogInformation($"Completed job {jobId}");
 
             await jobRepository.UpdateJobStatus(jobId, status);
 

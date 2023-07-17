@@ -10,10 +10,15 @@ namespace Ghost.Repository
     {
         private readonly GhostContext context;
         private readonly IVideoRepository videoRepository;
-        public JobRepository(GhostContext context, IVideoRepository videoRepository)
+        private readonly ILibraryRepository libraryRepository;
+        public JobRepository(
+            GhostContext context,
+            IVideoRepository videoRepository,
+            ILibraryRepository libraryRepository)
         {
             this.context = context;
             this.videoRepository = videoRepository;
+            this.libraryRepository = libraryRepository;
         }
 
         public async Task<int> CreateConvertJob(int id, string threadName, ConvertRequestDto convertRequest)
@@ -45,6 +50,28 @@ namespace Ghost.Repository
             return convertJob.Job.Id;
         }
 
+        public async Task<int> CreateSyncJob(int libraryId, string threadName)
+        {
+            var library = await libraryRepository.FindById(libraryId);
+            if (library == null) throw new NullReferenceException("Could not get the library");
+
+            var syncJob = new SyncJob
+            {
+                Library = library,
+                Job = new Job
+                {
+                    ThreadName = threadName,
+                    Type = JobType.Synchronise
+                }
+            };
+
+            context.SyncJobs.Add(syncJob);
+
+            await context.SaveChangesAsync();
+
+            return syncJob.Job.Id;
+        }
+
         public async Task<ConvertJob?> GetConvertJobByJobId(int jobId)
         {
             var convertJob = await context.ConvertJobs
@@ -53,6 +80,16 @@ namespace Ghost.Repository
                 .FirstOrDefaultAsync(j => j.Job.Id == jobId);
 
             return convertJob;
+        }
+
+        public async Task<SyncJob?> GetSyncJobByJobId(int jobId)
+        {
+            var syncJob = await context.SyncJobs
+                .Include("Job")
+                .Include("Library.Paths.Videos.VideoImages")
+                .FirstOrDefaultAsync(j => j.Job.Id == jobId);
+
+            return syncJob;
         }
 
         public async Task<Job?> GetJobById(int id)

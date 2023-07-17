@@ -21,12 +21,12 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-    "title": "conversion title",
-    "constantRateFactor": 28,
-    "forcePixelFormat": "yuv420p"
+    "title": "conversion title3"
+    # "constantRateFactor": 28,
+    # "forcePixelFormat": "yuv420p"
 }
 
 ###
 
-DELETE {{baseUrl}}/media/95
+DELETE {{baseUrl}}/media/99
 Authorization: Bearer {{authToken}}
