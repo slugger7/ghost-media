@@ -9,6 +9,7 @@ namespace Ghost.Repository
         Library AddPaths(int id, IEnumerable<LibraryPath> paths);
         PageResult<Library> GetLibraries(int page = 0, int limit = 10);
         LibraryPath AddVideosToPath(int pathId, IEnumerable<Video> videos);
+        Task<IEnumerable<Video>> GetVideos(int id);
         Task Delete(int id);
         Task<LibraryPath?> GetLibraryPathById(int id);
     }

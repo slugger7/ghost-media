@@ -33,6 +33,13 @@ public class JobFactory
 
                 return new SyncLibraryJob(scopeFactory, job.Id);
             }
+            if (job.Type.Equals(JobType.GenerateThumbnails))
+            {
+                var generateThumbnailsJob = await jobRepository.GetGenerateThumbnailsJobByJobId(job.Id);
+                if (generateThumbnailsJob == null) throw new NullReferenceException("Could not find generate thumbnails job in factory");
+
+                return new GenerateThumbnailsJob(scopeFactory, job.Id);
+            }
         }
 
         return null;

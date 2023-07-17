@@ -93,11 +93,11 @@ namespace Ghost.Api.Controllers
 
         [HttpPut("{id}/generate-thumbnails")]
         [Authorize]
-        public ActionResult GenerateThumbnails(int id, bool overwrite = false)
+        public async Task<ActionResult> GenerateThumbnails(int id, bool overwrite = false)
         {
             try
             {
-                libraryService.GenerateThumbnails(id, overwrite);
+                await libraryService.GenerateThumbnails(id, overwrite);
                 return Ok();
             }
             catch (NullReferenceException)

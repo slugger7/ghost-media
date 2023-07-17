@@ -24,6 +24,7 @@ namespace Ghost.Data
         public DbSet<Job> Jobs { get; set; }
         public DbSet<ConvertJob> ConvertJobs { get; set; }
         public DbSet<SyncJob> SyncJobs { get; set; }
+        public DbSet<GenerateThumbnailsJob> GenerateThumbnailsJobs { get; set; }
 
         public GhostContext() { }
         public GhostContext(DbContextOptions<GhostContext> options) : base(options) { }
@@ -115,6 +116,10 @@ namespace Ghost.Data
             var syncJob = modelBuilder.Entity<SyncJob>().ToTable("SyncJobs");
             syncJob.HasOne<Library>(j => j.Library);
             syncJob.HasOne<Job>(j => j.Job);
+
+            var generateThumbnailsJob = modelBuilder.Entity<GenerateThumbnailsJob>().ToTable("GenerateThumbnailsJobs");
+            generateThumbnailsJob.HasOne<Library>(j => j.Library);
+            generateThumbnailsJob.HasOne<Job>(j => j.Job);
         }
     }
 }
