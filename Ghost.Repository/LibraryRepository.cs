@@ -1,5 +1,6 @@
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Repository
 {
@@ -7,14 +8,17 @@ namespace Ghost.Repository
     {
         private readonly GhostContext context;
         private readonly IVideoRepository videoRepository;
+        private readonly ILogger<ILibraryRepository> logger;
 
         public LibraryRepository(
           GhostContext context,
-          IVideoRepository videoRepository
+          IVideoRepository videoRepository,
+          ILogger<ILibraryRepository> logger
           )
         {
             this.context = context;
             this.videoRepository = videoRepository;
+            this.logger = logger;
         }
         public Library AddPaths(int id, IEnumerable<LibraryPath> paths)
         {
@@ -91,6 +95,23 @@ namespace Ghost.Repository
         public async Task<LibraryPath?> GetLibraryPathById(int id)
         {
             return await context.LibraryPaths.FirstOrDefaultAsync(l => l.Id == id);
+        }
+
+        public async Task<IEnumerable<Video>> GetVideos(int id)
+        {
+            var library = await FindById(id);
+            if (library == null) throw new NullReferenceException("Library not found");
+
+            logger.LogDebug("Library has {0} paths", library.Paths.Count());
+
+            var videos = new List<Video>();
+            foreach (var path in library.Paths)
+            {
+                logger.LogDebug("Path has {0} videos", path.Videos.Count());
+                videos = videos.Concat(path.Videos).ToList();
+            }
+
+            return videos;
         }
     }
 }

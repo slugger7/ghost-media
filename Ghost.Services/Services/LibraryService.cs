@@ -74,7 +74,7 @@ public class LibraryService : ILibraryService
 
     public async Task Sync(int libraryId)
     {
-        var threadName = "Sync library";
+        var threadName = $"Sync library {libraryId}";
         var jobId = await jobRepository.CreateSyncJob(libraryId, threadName);
 
         var syncJob = new SyncLibraryJob(scopeFactory, jobId);
@@ -112,65 +112,21 @@ public class LibraryService : ILibraryService
         await videoService.BatchSyncNfos(videos);
     }
 
-    private async Task<IEnumerable<Video>> GetVideos(int id)
-    {
-        var library = await libraryRepository.FindById(id);
-        if (library == null) throw new NullReferenceException("Library not found");
-
-        logger.LogDebug("Library has {0} paths", library.Paths.Count());
-
-        var videos = new List<Video>();
-        foreach (var path in library.Paths)
-        {
-            logger.LogDebug("Path has {0} videos", path.Videos.Count());
-            videos = videos.Concat(path.Videos).ToList();
-        }
-
-        return videos;
-    }
-
     public async Task GenerateThumbnails(int id, bool overwrite)
     {
-        var batchSize = 10;
+        var threadName = $"GenerateThumbnails {id}";
+        var jobId = await jobRepository.CreateGenerateThumbnailsJob(id, overwrite, threadName);
 
-        var videos = await GetVideos(id);
+        var generateThumbnailsJob = new Jobs.GenerateThumbnailsJob(scopeFactory, jobId);
 
-        var videoBatch = new List<Video>();
-        for (int i = 0; i < videos.Count(); i++)
-        {
-            var video = videos.ElementAt(i);
-            logger.LogInformation("Generating thumbnail for video: {0}", video.Title);
-            if (video.VideoImages.Where(vi => vi.Type.ToLower().Equals("thumbnail") && !overwrite).Count() > 0) continue;
-            // if overwrite it will still create multiple thumbnails per video that point to the same place
-            var outputPath = ImageIoService.GenerateFileName(video.Path, ".png");
-            logger.LogDebug("Creating thumbnail {0}", outputPath);
-            imageIoService.GenerateImage(video.Path, outputPath);
-            video.VideoImages.Add(new VideoImage
-            {
-                Video = video,
-                Image = new Image
-                {
-                    Name = video.Title,
-                    Path = outputPath
-                },
-                Type = "thumbnail"
-            });
-            videoBatch.Add(video);
-
-            if (i % batchSize == 0)
-            {
-                logger.LogInformation("Writing batch {0} of {1}", i / batchSize, videos.Count() / batchSize);
-                await videoRepository.BatchUpdate(videoBatch);
-                videoBatch = new List<Video>();
-            }
-        }
-
-        await videoRepository.BatchUpdate(videoBatch);
+        var generateThumbnailsThread = new Thread(new ThreadStart(generateThumbnailsJob.Run));
+        generateThumbnailsThread.Name = threadName;
+        generateThumbnailsThread.Start();
     }
 
     public async Task GenerateChapters(int id, bool overwrite)
     {
-        var videos = await GetVideos(id);
+        var videos = await libraryRepository.GetVideos(id);
 
         for (int i = 0; i < videos.Count(); i++)
         {
