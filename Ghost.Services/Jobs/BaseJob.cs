@@ -1,6 +1,7 @@
 using Ghost.Data.Enums;
 using Ghost.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Services.Jobs;
 public abstract class BaseJob
@@ -25,7 +26,7 @@ public abstract class BaseJob
             {
                 status = await this.RunJob();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 status = JobStatus.Error;
             }
@@ -40,16 +41,20 @@ public abstract class BaseJob
         using (var scope = scopeFactory.CreateScope())
         {
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger<BaseJob>();
 
             var runningJobs = await jobRepository.GetJobsByStatus(JobStatus.InProgress);
 
             if (runningJobs.Count() == 0)
             {
+                logger.LogInformation($"Starting job {jobId}");
                 await jobRepository.UpdateJobStatus(jobId, JobStatus.InProgress);
 
                 return true;
             }
 
+            logger.LogInformation($"Job {jobId} will run after current job finishes");
             return false;
         }
     }
@@ -59,6 +64,10 @@ public abstract class BaseJob
         using (var scope = scopeFactory.CreateScope())
         {
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger<BaseJob>();
+
+            logger.LogInformation($"Completed job {jobId}");
 
             await jobRepository.UpdateJobStatus(jobId, status);
 
@@ -67,12 +76,11 @@ public abstract class BaseJob
 
             if (nextJob != null)
             {
-                // strategy pattern to construct the new job
-                var convertJobEntity = await jobRepository.GetConvertJobByJobId(nextJob.Id);
-                if (convertJobEntity == null) throw new NullReferenceException("Convert job is null");
-                ConvertVideoJob convertJob = new ConvertVideoJob(scopeFactory, nextJob.Id, convertJobEntity.Video.Id);
+                var jobFactory = new JobFactory(scopeFactory);
+                var runnableJob = await jobFactory.CreateJob(nextJob);
+                if (runnableJob == null) throw new NullReferenceException("Could not create a job to run next");
 
-                Thread convertThread = new Thread(new ThreadStart(convertJob.Run));
+                Thread convertThread = new Thread(new ThreadStart(runnableJob.Run));
                 convertThread.Name = nextJob.ThreadName;
                 convertThread.Start();
             }

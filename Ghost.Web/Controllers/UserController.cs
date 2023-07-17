@@ -43,7 +43,7 @@ namespace Ghost.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserDto createUser)
         {
             try

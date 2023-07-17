@@ -67,9 +67,11 @@ namespace Ghost.Repository
             await context.SaveChangesAsync();
         }
 
-        public Library? FindById(int id)
+        public async Task<Library?> FindById(int id)
         {
-            return context.Libraries.Include("Paths.Videos.VideoImages").FirstOrDefault(l => l.Id == id);
+            return await context.Libraries
+                .Include("Paths.Videos.VideoImages")
+                .FirstOrDefaultAsync(l => l.Id == id);
         }
 
         public PageResult<Library> GetLibraries(int page = 0, int limit = 10)

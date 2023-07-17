@@ -23,6 +23,7 @@ namespace Ghost.Data
         public DbSet<RelatedVideo> RelatedVideos { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<ConvertJob> ConvertJobs { get; set; }
+        public DbSet<SyncJob> SyncJobs { get; set; }
 
         public GhostContext() { }
         public GhostContext(DbContextOptions<GhostContext> options) : base(options) { }
@@ -106,9 +107,14 @@ namespace Ghost.Data
               .HasOne<Video>(v => v.RelatedTo);
 
             modelBuilder.Entity<Job>().ToTable("Jobs");
+
             var convertJob = modelBuilder.Entity<ConvertJob>().ToTable("ConvertJobs");
             convertJob.HasOne<Video>(j => j.Video);
             convertJob.HasOne<Job>(j => j.Job);
+
+            var syncJob = modelBuilder.Entity<SyncJob>().ToTable("SyncJobs");
+            syncJob.HasOne<Library>(j => j.Library);
+            syncJob.HasOne<Job>(j => j.Job);
         }
     }
 }

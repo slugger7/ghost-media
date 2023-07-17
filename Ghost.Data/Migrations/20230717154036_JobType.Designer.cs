@@ -3,6 +3,7 @@ using System;
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ghost.Data.Migrations
 {
     [DbContext(typeof(GhostContext))]
-    partial class GhostContextModelSnapshot : ModelSnapshot
+    [Migration("20230717154036_JobType")]
+    partial class JobType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
@@ -283,27 +286,6 @@ namespace Ghost.Data.Migrations
                     b.ToTable("RelatedVideos", (string)null);
                 });
 
-            modelBuilder.Entity("Ghost.Data.SyncJob", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("JobId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("LibraryId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobId");
-
-                    b.HasIndex("LibraryId");
-
-                    b.ToTable("SyncJobs", (string)null);
-                });
-
             modelBuilder.Entity("Ghost.Data.User", b =>
                 {
                     b.Property<int>("Id")
@@ -561,25 +543,6 @@ namespace Ghost.Data.Migrations
                     b.Navigation("RelatedTo");
 
                     b.Navigation("Video");
-                });
-
-            modelBuilder.Entity("Ghost.Data.SyncJob", b =>
-                {
-                    b.HasOne("Ghost.Data.Job", "Job")
-                        .WithMany()
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ghost.Data.Library", "Library")
-                        .WithMany()
-                        .HasForeignKey("LibraryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Job");
-
-                    b.Navigation("Library");
                 });
 
             modelBuilder.Entity("Ghost.Data.Video", b =>

@@ -28,14 +28,32 @@ namespace Ghost.Media
             return await FFMpeg.SubVideoAsync(inputPath, outputPath, start, end);
         }
 
-        public static async Task ConvertVideo(string inputPath, string outputPath)
+        public static async Task ConvertVideo(string inputPath, string outputPath, int? constantRateFactor = null, int? variableBitrate = null, string? forcePixelFormat = null)
         {
             await FFMpegArguments
                 .FromFileInput(inputPath)
-                .OutputToFile(outputPath, true, options => options
+                .OutputToFile(outputPath, false, options =>
+                {
+                    options
                     .WithVideoCodec(VideoCodec.LibX264)
                     .WithAudioCodec(AudioCodec.Aac)
-                    .WithFastStart())
+                    .WithFastStart();
+
+                    if (constantRateFactor.HasValue)
+                    {
+                        options.WithConstantRateFactor(constantRateFactor.Value);
+                    }
+
+                    if (variableBitrate.HasValue)
+                    {
+                        options.WithVariableBitrate(variableBitrate.Value);
+                    }
+
+                    if (!String.IsNullOrWhiteSpace(forcePixelFormat))
+                    {
+                        options.ForcePixelFormat(forcePixelFormat);
+                    }
+                })
                 .ProcessAsynchronously();
         }
     }

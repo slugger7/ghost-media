@@ -1,4 +1,4 @@
-using Ghost.Dtos;
+using Ghost.Data;
 using Ghost.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +19,15 @@ public class JobController : Controller
     {
         this.logger = logger;
         this.jobService = jobService;
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<Job>>> GetJobs()
+    {
+        var jobs = await jobService.GetJobs();
+
+        return jobs.ToList();
     }
 
     [HttpPut("{id}")]

@@ -35,11 +35,11 @@ namespace Ghost.Api.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public ActionResult<LibraryDto> GetLibrary(int id)
+        public async Task<ActionResult<LibraryDto>> GetLibrary(int id)
         {
             try
             {
-                return libraryService.GetLibrary(id);
+                return await libraryService.GetLibrary(id);
             }
             catch (NullReferenceException)
             {
