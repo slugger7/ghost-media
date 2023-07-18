@@ -55,7 +55,7 @@ public class GenerateThumbnailsJob : BaseJob
 
                 if (i % batchSize == 0)
                 {
-                    logger.LogInformation("Writing batch {0} of {1}", i / batchSize, videos.Count() / batchSize);
+                    logger.LogInformation("Writing batch {0} of {1}", i / batchSize + 1, videos.Count() / batchSize);
                     await videoRepository.BatchUpdate(videoBatch);
                     videoBatch = new List<Video>();
                 }

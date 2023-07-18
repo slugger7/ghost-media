@@ -8,16 +8,12 @@ namespace Ghost.Services.Jobs;
 
 public class ConvertVideoJob : BaseJob
 {
-    private int VideoId;
 
     public ConvertVideoJob(
         IServiceScopeFactory scopeFactory,
-        int jobId,
-        int videoId
+        int jobId
     ) : base(scopeFactory, jobId)
-    {
-        this.VideoId = videoId;
-    }
+    { }
 
     public override async Task<string> RunJob()
     {
@@ -28,11 +24,11 @@ public class ConvertVideoJob : BaseJob
             var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
             var libraryRepository = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
 
-            var video = videoRepository.FindById(VideoId, new List<string> { "LibraryPath" });
-            if (video == null) throw new NullReferenceException("Could not find video before conversion job");
-
             var convertJob = await jobRepository.GetConvertJobByJobId(jobId);
             if (convertJob == null) throw new NullReferenceException("Conversion job was not found");
+
+            var video = videoRepository.FindById(convertJob.Video.Id, new List<string> { "LibraryPath" });
+            if (video == null) throw new NullReferenceException("Could not find video before conversion job");
 
             var newPath = convertJob.Path;
 
@@ -53,15 +49,15 @@ public class ConvertVideoJob : BaseJob
                 VideoId = newVideoEntity.Id
             });
 
-            video = videoRepository.FindById(VideoId, new List<string> {
+            video = videoRepository.FindById(convertJob.Video.Id, new List<string> {
                 "VideoGenres.Genre",
                 "VideoActors.Actor",
                 "RelatedVideos.RelatedTo"
             });
             if (video != null)
             {
-                await videoRepository.RelateVideo(VideoId, newVideoEntity.Id);
-                await videoRepository.RelateVideo(newVideoEntity.Id, VideoId);
+                await videoRepository.RelateVideo(convertJob.Video.Id, newVideoEntity.Id);
+                await videoRepository.RelateVideo(newVideoEntity.Id, convertJob.Video.Id);
 
                 var actors = video.VideoActors.Select(va => va.Actor);
                 await videoRepository.SetActors(newVideoEntity.Id, actors);

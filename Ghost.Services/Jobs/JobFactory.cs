@@ -24,7 +24,7 @@ public class JobFactory
                 var conversionJob = await jobRepository.GetConvertJobByJobId(job.Id);
                 if (conversionJob == null) throw new NullReferenceException("Could not find conversion job in factory");
 
-                return new ConvertVideoJob(scopeFactory, job.Id, conversionJob.Video.Id);
+                return new ConvertVideoJob(scopeFactory, job.Id);
             }
             if (job.Type.Equals(JobType.Synchronise))
             {
@@ -39,6 +39,13 @@ public class JobFactory
                 if (generateThumbnailsJob == null) throw new NullReferenceException("Could not find generate thumbnails job in factory");
 
                 return new GenerateThumbnailsJob(scopeFactory, job.Id);
+            }
+            if (job.Type.Equals(JobType.GenerateChapters))
+            {
+                var generateThumbnailsJob = await jobRepository.GetGenerateChaptersJobByJobId(job.Id);
+                if (generateThumbnailsJob == null) throw new NullReferenceException("Could not find generate chapters job in factory");
+
+                return new GenerateChaptersJob(scopeFactory, job.Id);
             }
         }
 

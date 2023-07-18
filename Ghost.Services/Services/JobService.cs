@@ -19,13 +19,15 @@ public class JobService : IJobService
 
     public async Task StartJob(int id)
     {
-        var job = await jobRepository.GetConvertJobByJobId(id);
+        var job = await jobRepository.GetJobById(id);
         if (job == null) throw new NullReferenceException("Job was not found to start");
 
-        var convertJob = new ConvertVideoJob(scopeFactory, id, job.Video.Id);
+        var jobFactory = new JobFactory(scopeFactory);
+        var runableJob = await jobFactory.CreateJob(job);
+        if (runableJob == null) throw new NullReferenceException("Job to start was not found");
 
-        var thread = new Thread(new ThreadStart(convertJob.Run));
-        thread.Name = job.Job.ThreadName;
+        var thread = new Thread(new ThreadStart(runableJob.Run));
+        thread.Name = job.ThreadName;
         thread.Start();
     }
 
