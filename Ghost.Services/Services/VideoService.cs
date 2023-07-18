@@ -474,8 +474,7 @@ public class VideoService : IVideoService
 
         var convertVideoJob = new ConvertVideoJob(
             scopeFactory,
-            jobId,
-            id
+            jobId
         );
 
         Thread convertThread = new Thread(new ThreadStart(convertVideoJob.Run));

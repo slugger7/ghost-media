@@ -126,15 +126,13 @@ public class LibraryService : ILibraryService
 
     public async Task GenerateChapters(int id, bool overwrite)
     {
-        var videos = await libraryRepository.GetVideos(id);
+        var threadName = $"GenerateChapters {id}";
+        var jobId = await jobRepository.CreateGenerateChaptersJob(id, overwrite, threadName);
 
-        for (int i = 0; i < videos.Count(); i++)
-        {
-            var video = videos.ElementAt(i);
-            await this.videoService.GenerateChapters(video.Id, overwrite);
-            logger.LogInformation("Generating chapters {0} of {1}", i + 1, videos.Count());
-        }
+        var generateChaptersJob = new Jobs.GenerateChaptersJob(scopeFactory, jobId);
 
-        logger.LogInformation("Done generating chapter images");
+        var generateChaptersThread = new Thread(new ThreadStart(generateChaptersJob.Run));
+        generateChaptersThread.Name = threadName;
+        generateChaptersThread.Start();
     }
 }

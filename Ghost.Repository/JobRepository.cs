@@ -95,6 +95,29 @@ public class JobRepository : IJobRepository
         return generateThumbnailsJob.Job.Id;
     }
 
+    public async Task<int> CreateGenerateChaptersJob(int libraryId, bool overwrite, string threadName)
+    {
+        var library = await libraryRepository.FindById(libraryId);
+        if (library == null) throw new NullReferenceException("Could not get the library to create generate chapters job");
+
+        var generateChaptersJob = new GenerateChaptersJob
+        {
+            Overwrite = overwrite,
+            Library = library,
+            Job = new Job
+            {
+                ThreadName = threadName,
+                Type = JobType.GenerateChapters
+            }
+        };
+
+        context.GenerateChaptersJobs.Add(generateChaptersJob);
+
+        await context.SaveChangesAsync();
+
+        return generateChaptersJob.Job.Id;
+    }
+
     public async Task<ConvertJob?> GetConvertJobByJobId(int jobId)
     {
         var convertJob = await context.ConvertJobs
@@ -122,6 +145,16 @@ public class JobRepository : IJobRepository
             .FirstOrDefaultAsync(g => g.Job.Id == jobId);
 
         return generateThumbnailsJob;
+    }
+
+    public async Task<GenerateChaptersJob?> GetGenerateChaptersJobByJobId(int jobId)
+    {
+        var generateChaptersJob = await context.GenerateChaptersJobs
+            .Include("Job")
+            .Include("Library")
+            .FirstOrDefaultAsync(g => g.Job.Id == jobId);
+
+        return generateChaptersJob;
     }
 
     public async Task<Job?> GetJobById(int id)

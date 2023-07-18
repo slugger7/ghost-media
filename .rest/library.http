@@ -34,4 +34,12 @@ Content-Type: application/json
 PUT {{baseUrl}}/library/1/sync
 Authorization: Bearer {{authToken}}
 
-            
+###
+
+PUT {{baseUrl}}/library/1/generate-thumbnails
+Authorization: Bearer {{authToken}}
+
+###
+
+PUT {{baseUrl}}/library/1/generate-chapters
+Authorization: Bearer {{authToken}}

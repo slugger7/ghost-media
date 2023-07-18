@@ -54,15 +54,17 @@ docker run -d \
 
 This container is used to update the database if there are any migrations that need to be run on the data
 
+1. `docker image rm ghost-updater`
+
 1. `docker build -t ghost-updater -f Ghost.Data/Dockerfile Ghost.Data`
 
 1.
 
 ```bash
-docker run -d \
+docker run --rm \
   -v $(pwd)/data:/data \
   -e DATABASE_PATH=/data/Ghost.db \
-  --name ghost-updater ghost-updater
+  ghost-updater
 ```
 
 ## Ghost API
