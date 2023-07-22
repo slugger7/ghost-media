@@ -28,7 +28,7 @@ namespace Ghost.Media
             return await FFMpeg.SubVideoAsync(inputPath, outputPath, start, end);
         }
 
-        public static async Task ConvertVideo(string inputPath, string outputPath, int? constantRateFactor = null, int? variableBitrate = null, string? forcePixelFormat = null)
+        public static async Task ConvertVideo(string inputPath, string outputPath, int width, int height, int? constantRateFactor = null, int? variableBitrate = null, string? forcePixelFormat = null)
         {
             await FFMpegArguments
                 .FromFileInput(inputPath)
@@ -37,6 +37,7 @@ namespace Ghost.Media
                     options
                     .WithVideoCodec(VideoCodec.LibX264)
                     .WithAudioCodec(AudioCodec.Aac)
+                    .WithVideoFilters(options => options.Scale(width: width, height: height))
                     .WithFastStart();
 
                     if (constantRateFactor.HasValue)

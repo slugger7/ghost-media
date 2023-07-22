@@ -8,6 +8,8 @@ namespace Ghost.Data
         public int? ConstantRateFactor { get; set; }
         public int? VariableBitrate { get; set; }
         public string? ForcePixelFormat { get; set; }
+        public int Height { get; set; }
+        public int Width { get; set; }
         public Video Video { get; set; }
         public Job Job { get; set; }
     }
