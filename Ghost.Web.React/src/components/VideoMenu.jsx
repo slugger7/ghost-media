@@ -6,8 +6,9 @@ import {
   ListItemIcon,
   CircularProgress,
   ListItemText,
-  Divider
+  Divider,
 } from '@mui/material'
+import { Link } from 'react-router-dom'
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import SyncIcon from '@mui/icons-material/Sync'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -241,7 +242,7 @@ export const VideoMenu = ({
           </MenuItem>
         )}
         {!hideItems.includes(items.convert) && (
-          <MenuItem component={'a'} href={`/convert/${videoId}`}>
+          <MenuItem component={Link} to={`/convert/${videoId}`}>
             <ListItemIcon>
               {!loadingSyncNfo && <CompareIcon fontSize="small" />}
               {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
