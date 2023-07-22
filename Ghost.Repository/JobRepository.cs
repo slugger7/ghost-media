@@ -36,6 +36,9 @@ public class JobRepository : IJobRepository
             Video = video,
             Title = convertRequest.Title,
             Path = newPath,
+            ConstantRateFactor = convertRequest.ConstantRateFactor,
+            VariableBitrate = convertRequest.VariableBitrate,
+            ForcePixelFormat = convertRequest.ForcePixelFormat,
             Job = new Job
             {
                 ThreadName = threadName,

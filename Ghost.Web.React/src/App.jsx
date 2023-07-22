@@ -12,6 +12,7 @@ import { Genres } from './components/Genres.jsx'
 import { Actor } from './components/Actor.jsx'
 import { Actors } from './components/Actors.jsx'
 import { Favourites } from './components/Favourites.jsx';
+import { ConvertVideo } from './components/ConvertVideo.jsx'
 
 import './styles.scss'
 import { Login } from './components/Login.jsx';
@@ -35,6 +36,7 @@ export const App = ({ baseUrl }) => {
             <Route path='/actors' element={<AuthenticatedRoute><Actors /></AuthenticatedRoute>} />
             <Route path='/favourites' element={<AuthenticatedRoute><Favourites /></AuthenticatedRoute>} />
             <Route path='/jobs' element={<AuthenticatedRoute><Jobs /></AuthenticatedRoute>} />
+            <Route path='/convert/:id' element={<AuthenticatedRoute><ConvertVideo /></AuthenticatedRoute>} />
             <Route path='/login' element={<Login />} />
           </Routes>
         </Layout>
