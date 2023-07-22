@@ -54,6 +54,10 @@ export const ConvertVideo = () => {
         navigate(`/media/${video.id}/${video.title}`)
     }
 
+    const handleCancelClick = () => {
+        navigate(`/media/${video.id}/${video.title}`)
+    }
+
     return <Container>
         {/*create skeleton while loading */}
         {!videoLoading && <><Typography variant="h3">Convert video: <strong>{video.title}</strong></Typography>
@@ -64,7 +68,10 @@ export const ConvertVideo = () => {
                 <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Constant Rate Factor" value={constantRateFactor} onChange={handleConstantRateFactorChange} /></Grid>
                 <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Variable Bitrate" value={variableBitrate} onChange={handleVariableBitrateChange} /></Grid>
                 <Grid item xs={12}><TextField fullWidth label="Force Pixel Format" value={forcePixelFormat} onChange={handleForcePixelFormatChange} /></Grid>
-                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'end' }}><Button variant="contained" onClick={handleConvertClick}>Convert</Button></Grid>
+                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'end', gap: 1 }}>
+                    <Button variant="outlined" onClick={handleCancelClick}>Cancel</Button>
+                    <Button variant="contained" onClick={handleConvertClick}>Convert</Button>
+                </Grid>
             </Grid>
         </>
         }
