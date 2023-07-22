@@ -3,6 +3,7 @@ using Ghost.Data.Enums;
 using Ghost.Dtos;
 using Ghost.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Ghost.Repository;
 
@@ -11,14 +12,17 @@ public class JobRepository : IJobRepository
     private readonly GhostContext context;
     private readonly IVideoRepository videoRepository;
     private readonly ILibraryRepository libraryRepository;
+    private readonly ILogger<IJobRepository> logger;
     public JobRepository(
         GhostContext context,
         IVideoRepository videoRepository,
-        ILibraryRepository libraryRepository)
+        ILibraryRepository libraryRepository,
+        ILogger<IJobRepository> logger)
     {
         this.context = context;
         this.videoRepository = videoRepository;
         this.libraryRepository = libraryRepository;
+        this.logger = logger;
     }
 
     public async Task<int> CreateConvertJob(int id, string threadName, ConvertRequestDto convertRequest)
@@ -31,6 +35,13 @@ public class JobRepository : IJobRepository
 
         if (File.Exists(newPath)) throw new FileExistsException("Path to save converted video already exists");
 
+        if (video.Height < convertRequest.Height || video.Width < convertRequest.Width)
+        {
+            logger.LogWarning($"Video {video.Id} had a height or width greater than the original height or width and has been reset");
+            convertRequest.Height = video.Height;
+            convertRequest.Width = video.Width;
+        }
+
         var convertJob = new ConvertJob
         {
             Video = video,
@@ -39,6 +50,8 @@ public class JobRepository : IJobRepository
             ConstantRateFactor = convertRequest.ConstantRateFactor,
             VariableBitrate = convertRequest.VariableBitrate,
             ForcePixelFormat = convertRequest.ForcePixelFormat,
+            Width = convertRequest.Width,
+            Height = convertRequest.Height,
             Job = new Job
             {
                 ThreadName = threadName,

@@ -15,10 +15,14 @@ export const ConvertVideo = () => {
     const [constantRateFactor, setConstantRateFactor] = useState(23);
     const [variableBitrate, setVariableBitrate] = useState();
     const [forcePixelFormat, setForcePixelFormat] = useState();
+    const [height, setHeight] = useState(0);
+    const [width, setWidth] = useState(0);
 
     useEffect(() => {
         if (video) {
             setTitle(video.title);
+            setHeight(video.height);
+            setWidth(video.width);
         }
     }, [video])
 
@@ -41,6 +45,14 @@ export const ConvertVideo = () => {
         setForcePixelFormat(event.target.value)
     }
 
+    const handleWidthChange = (event) => {
+        setWidth(event.target.value)
+    }
+
+    const handleHeightChange = (event) => {
+        setHeight(event.target.value)
+    }
+
     const handleConvertClick = async () => {
         if (title === video.title) {
             setError(mergeDeepLeft({ title: "Title cannot be the same as current video title" }))
@@ -48,7 +60,7 @@ export const ConvertVideo = () => {
         }
 
         await convertVideo(params.id, {
-            title, constantRateFactor, variableBitrate, forcePixelFormat
+            title, constantRateFactor, variableBitrate, forcePixelFormat, width, height
         });
 
         navigate(`/media/${video.id}/${video.title}`)
@@ -63,8 +75,10 @@ export const ConvertVideo = () => {
         {!videoLoading && <><Typography variant="h3">Convert video: <strong>{video.title}</strong></Typography>
             <Grid container spacing={1}>
                 <Grid item xs={12}>
-                    <TextField label="Title" fullWidth value={title} onChange={handleTitleChange} error={error.title} helperText={error.title} />
+                    <TextField label="Title" fullWidth value={title} onChange={handleTitleChange} error={!!error.title} helperText={error.title} />
                 </Grid>
+                <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Width" value={width} onChange={handleWidthChange} /></Grid>
+                <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Height" value={height} onChange={handleHeightChange} /></Grid>
                 <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Constant Rate Factor" value={constantRateFactor} onChange={handleConstantRateFactorChange} /></Grid>
                 <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Variable Bitrate" value={variableBitrate} onChange={handleVariableBitrateChange} /></Grid>
                 <Grid item xs={12}><TextField fullWidth label="Force Pixel Format" value={forcePixelFormat} onChange={handleForcePixelFormatChange} /></Grid>
