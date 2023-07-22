@@ -25,8 +25,8 @@ import { MediaSection } from './MediaSection.jsx'
 import { VideoCard } from './VideoCard.jsx'
 import { AddVideoCard } from './AddVideoCard.jsx'
 import { TextInputModal } from './TextInputModal.jsx'
+import { fetchMedia } from '../services/media.service.js'
 
-const fetchMedia = async (id) => (await axios.get(`/media/${id}/info`)).data
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
 const fetchActors = async (id) => (await axios.get(`/actor/video/${id}`)).data
 const updateGenres = async (id, genres) =>

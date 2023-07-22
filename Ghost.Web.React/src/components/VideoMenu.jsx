@@ -6,7 +6,7 @@ import {
   ListItemIcon,
   CircularProgress,
   ListItemText,
-  Divider,
+  Divider
 } from '@mui/material'
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import SyncIcon from '@mui/icons-material/Sync'
@@ -23,7 +23,6 @@ import copy from 'copy-to-clipboard'
 import { toggleFavourite } from '../services/video.service'
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
-import { ConvertVideoModal } from './ConvertVideoModal'
 
 const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) =>
@@ -40,7 +39,6 @@ const chooseThumbnail = async (videoId, progress) => {
     )
   }
 }
-const convertVideo = async (id, convertRequest) => (await axios.post(`/media/${id}/convert`, convertRequest))
 
 export const items = {
   favourite: 'favourite',
@@ -75,16 +73,11 @@ export const VideoMenu = ({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [loadingFavourite, setLoadingFavourite] = useState(false)
   const [loadingChooseThumbnail, setLoadingChooseThumbnail] = useState(false)
-  const [convertVideoModalOpen, setConvertVideoModalOpen] = useState(false);
 
   const handleDeleteModalClose = () => {
     if (!loadingDelete) {
       setDeleteModalOpen(false)
     }
-  }
-
-  const handleConvertModalClose = () => {
-    setConvertVideoModalOpen(false);
   }
 
   const handleSyncFromNfo = async () => {
@@ -175,19 +168,6 @@ export const VideoMenu = ({
     setEditing(!editing)
   }
 
-  const handleConvertMenuClick = () => {
-    setConvertVideoModalOpen(true);
-  }
-
-  const handleConvertVideo = async (convertRequest) => {
-    try {
-      convertVideo(videoId, convertRequest)
-    } finally {
-      setConvertVideoModalOpen(false)
-      handleClose()
-    }
-  }
-
   return (
     <>
       <Menu
@@ -261,7 +241,7 @@ export const VideoMenu = ({
           </MenuItem>
         )}
         {!hideItems.includes(items.convert) && (
-          <MenuItem onClick={handleConvertMenuClick}>
+          <MenuItem component={'a'} href={`/convert/${videoId}`}>
             <ListItemIcon>
               {!loadingSyncNfo && <CompareIcon fontSize="small" />}
               {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
@@ -292,12 +272,6 @@ export const VideoMenu = ({
         title={title}
         loadingConfirm={loadingDelete}
         onConfirm={handleDelete}
-      />
-      <ConvertVideoModal
-        open={convertVideoModalOpen}
-        title={title}
-        onClose={handleConvertModalClose}
-        onConfirm={handleConvertVideo}
       />
     </>
   )
