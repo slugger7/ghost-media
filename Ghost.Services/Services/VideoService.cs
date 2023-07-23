@@ -221,8 +221,21 @@ public class VideoService : IVideoService
 
     public async Task DeletePermanently(int id)
     {
-        var video = await videoRepository.Delete(id);
+        var video = videoRepository.FindById(id, new List<string> { "VideoImages.Image", "Chapters.Image" });
+        if (video == null) throw new NullReferenceException("Video was not found to delete");
+
         File.Delete(video.Path);
+        foreach (var videoImage in video.VideoImages)
+        {
+            File.Delete(videoImage.Image.Path);
+        }
+
+        foreach (var chapter in video.Chapters)
+        {
+            File.Delete(chapter.Image.Path);
+        }
+
+        await videoRepository.Delete(id);
     }
 
     public async Task BatchSyncNfos(List<Video> videos)

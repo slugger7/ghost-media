@@ -225,6 +225,7 @@ namespace Ghost.Repository
               .Include("VideoActors")
               .Include("VideoGenres")
               .Include("VideoImages.Image")
+              .Include("Chapters.Image")
               .FirstOrDefault(v => v.Id == id);
             if (video == null) throw new NullReferenceException();
 
@@ -232,6 +233,8 @@ namespace Ghost.Repository
             context.VideoActors.RemoveRange(video.VideoActors);
             context.Images.RemoveRange(video.VideoImages.Select(vi => vi.Image));
             context.VideoImages.RemoveRange(video.VideoImages);
+            context.Images.RemoveRange(video.Chapters.Select(c => c.Image));
+            context.Chapters.RemoveRange(video.Chapters);
             context.Videos.Remove(video);
 
             await context.SaveChangesAsync();
