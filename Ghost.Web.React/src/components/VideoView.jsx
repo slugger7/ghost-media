@@ -59,12 +59,6 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
     [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
   )
 
-  const [, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setSearchParams({ page, search, sortBy, sortAscending, watchState })
-  }, [page, limit, search, sortBy, sortAscending, watchState])
-
   useEffect(() => {
     if (!loading && !error) {
       setTotal(videosPage.total)
@@ -116,14 +110,12 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       <Search
         search={search}
         setSearch={(...args) => {
-          setSearch(...args)
-          setPage(1)
+          setSearch(...args, { page: 1 })
         }}
       />
       {paginationComponent}
       <LimitPicker limit={limit} setLimit={(...args) => {
-        setLimit(...args)
-        setPage(1)
+        setLimit(...args, { page: 1 })
       }} />
       <Sort
         sortBy={sortBy}
@@ -133,14 +125,12 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       />
       <GenreFilter
         setSelectedGenres={(...args) => {
-          setSelectedGenres(...args)
-          setPage(1)
+          setSelectedGenres(...args, { page: 1 })
         }}
         selectedGenres={selectedGenres}
       />
       <WatchState watchState={watchState} setWatchState={(...args) => {
-        setWatchState(...args)
-        setPage(1)
+        setWatchState(...args, { page: 1 });
       }} />
       <RandomVideoButton fetchFn={fetchRandomVideoFn} />
     </Box>

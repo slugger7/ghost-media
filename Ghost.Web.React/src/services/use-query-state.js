@@ -13,7 +13,7 @@ const getValidSearchParam = (searchParam, initialState) => {
 }
 
 export default function useQueryState(key, initialState) {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const searchParam = searchParams.get(key)
   const localValue = getValidSearchParam(searchParam, initialState)
 
@@ -27,5 +27,18 @@ export default function useQueryState(key, initialState) {
     }
   }, [searchParam])
 
-  return [value, setValue]
+  const modifiedSet = (newValue, otherSearchParams) => {
+    setValue(newValue);
+    setSearchParams((currentSearchParams) => {
+      currentSearchParams.set(key, newValue);
+      if (otherSearchParams) {
+        const keys = Object.keys(otherSearchParams);
+        const values = Object.values(otherSearchParams);
+        keys.forEach((key, index) => currentSearchParams.set(key, values[index]));
+      }
+      return currentSearchParams;
+    });
+  }
+
+  return [value, modifiedSet]
 }
