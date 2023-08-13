@@ -215,4 +215,12 @@ public class JobRepository : IJobRepository
 
         await context.SaveChangesAsync();
     }
+
+    public async Task DeleteJobsByStatus(string status)
+    {
+        var completedJobs = context.Jobs.Where(j => j.Status.ToLower().Equals(status.ToLower()));
+        context.Jobs.RemoveRange(completedJobs);
+
+        await context.SaveChangesAsync();
+    }
 }

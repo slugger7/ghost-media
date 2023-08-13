@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container } from '@mui/material'
 import { Libraries } from './Libraries';
-import { Users } from './Users'
+import { Users } from '../components/Users'
 
 export const Settings = () => {
   return <Container>

@@ -42,4 +42,9 @@ public class JobService : IJobService
 
         return jobs;
     }
+
+    public async Task DeleteJobsByStatus(string status)
+    {
+        await jobRepository.DeleteJobsByStatus(status);
+    }
 }

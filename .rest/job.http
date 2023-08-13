@@ -23,3 +23,8 @@ Authorization: Bearer {{authToken}}
 
 PUT {{baseUrl}}/job/5
 Authorization: Bearer {{authToken}}
+
+###
+
+DELETE {{baseUrl}}/job/status/completed
+Authorization: Bearer {{authToken}}

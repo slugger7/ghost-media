@@ -16,8 +16,8 @@ import AddIcon from "@mui/icons-material/Add"
 import { remove, append } from 'ramda'
 import axios from 'axios'
 
-import { PathListItem } from './PathListItem.jsx'
-import { AddPathModal } from './AddPathModal.jsx'
+import { PathListItem } from '../components/PathListItem.jsx'
+import { AddPathModal } from '../components/AddPathModal.jsx'
 import { useNavigate } from 'react-router-dom'
 
 const createLibrary = async (name) => (await axios.post('library', { name })).data

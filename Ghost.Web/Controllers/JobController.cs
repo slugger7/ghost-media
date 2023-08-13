@@ -45,4 +45,12 @@ public class JobController : Controller
         await jobService.DeleteJob(id);
         return Ok();
     }
+
+    [HttpDelete("status/{status}")]
+    [Authorize]
+    public async Task<ActionResult> DeleteAll(string status)
+    {
+        await jobService.DeleteJobsByStatus(status);
+        return Ok();
+    }
 }

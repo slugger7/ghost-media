@@ -3,10 +3,10 @@ import axios from 'axios'
 import { Box } from '@mui/material'
 
 import { constructVideoParams } from '../services/video.service'
-import { VideoView } from './VideoView.jsx'
-import { ChipSkeleton } from './ChipSkeleton.jsx'
+import { VideoView } from '../components/VideoView.jsx'
+import { ChipSkeleton } from '../components/ChipSkeleton.jsx'
 import usePromise from '../services/use-promise'
-import { ActorChip } from './ActorChip'
+import { ActorChip } from '../components/ActorChip'
 
 const fetchFavouriteVideos = async ({
   page,
