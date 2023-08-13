@@ -19,5 +19,6 @@ namespace Ghost.Repository
         Task<IEnumerable<Job>> GetJobs();
         Task<IEnumerable<Job>> GetJobsByStatus(string status);
         Task DeleteJob(int id);
+        Task DeleteJobsByStatus(string status);
     }
 }
