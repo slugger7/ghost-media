@@ -2,12 +2,12 @@ import axios from 'axios'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { constructVideoParams } from '../services/video.service.js'
-import { TextEdit } from './TextEdit.jsx'
+import { TextEdit } from '../components/TextEdit.jsx'
 import { mergeDeepLeft } from 'ramda'
 import { Stack } from '@mui/material'
-import { FavouriteIconButton } from './FavouriteIconButton.jsx'
+import { FavouriteIconButton } from '../components/FavouriteIconButton.jsx'
 import usePromise from '../services/use-promise.js'
-import { VideoView } from './VideoView.jsx'
+import { VideoView } from '../components/VideoView.jsx'
 
 const fetchActor = async (name) =>
   (await axios.get(`/actor/${encodeURIComponent(name)}`)).data

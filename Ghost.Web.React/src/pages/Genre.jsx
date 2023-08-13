@@ -3,9 +3,9 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { mergeDeepLeft } from 'ramda'
 import { constructVideoParams } from '../services/video.service.js'
-import { TextEdit } from './TextEdit.jsx'
+import { TextEdit } from '../components/TextEdit.jsx'
 import usePromise from '../services/use-promise.js'
-import { VideoView } from './VideoView.jsx'
+import { VideoView } from '../components/VideoView.jsx'
 
 const fetchGenre = async (name) =>
   (await axios.get(`/genre/${encodeURIComponent(name)}`)).data

@@ -1,10 +1,10 @@
 import React from 'react'
 import axios from 'axios'
 
-import { ButtonLink } from './ButtonLink.jsx'
-import { LibraryCard } from './LibraryCard.jsx'
+import { ButtonLink } from '../components/ButtonLink.jsx'
+import { LibraryCard } from '../components/LibraryCard.jsx'
 import { Stack, Skeleton, Typography, Box } from '@mui/material'
-import { NothingHere } from './NothingHere.jsx'
+import { NothingHere } from '../components/NothingHere.jsx'
 import usePromise from '../services/use-promise.js'
 
 const fetchLibraries = async () => (await axios.get('library')).data
@@ -24,7 +24,7 @@ export const Libraries = () => {
             <LibraryCard
               key={library.id}
               library={library}
-              updateLibraries={() => {}}
+              updateLibraries={() => { }}
             />
           ))}
           {libraries?.content.length === 0 && (

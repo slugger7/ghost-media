@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchActors } from '../services/actor.service'
 import usePromise from '../services/use-promise'
-import { ActorChip } from './ActorChip'
-import { ChipSkeleton } from './ChipSkeleton'
-import { NothingHere } from './NothingHere'
-import { Search } from './Search'
+import { ActorChip } from '../components/ActorChip'
+import { ChipSkeleton } from '../components/ChipSkeleton'
+import { NothingHere } from '../components/NothingHere'
+import { Search } from '../components/Search'
 
 export const Actors = () => {
   const [actorsResult, , loading] = usePromise(() => fetchActors())

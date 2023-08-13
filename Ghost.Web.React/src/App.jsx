@@ -3,22 +3,22 @@ import { BrowserRouter, Routes, Route, } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { Layout } from './components/Layout.jsx';
-import { Home } from './components/Home.jsx';
-import { Settings } from './components/Settings.jsx'
-import { AddLibrary } from './components/AddLibrary.jsx';
-import { Media } from './components/Media.jsx'
-import { Genre } from './components/Genre.jsx'
-import { Genres } from './components/Genres.jsx'
-import { Actor } from './components/Actor.jsx'
-import { Actors } from './components/Actors.jsx'
-import { Favourites } from './components/Favourites.jsx';
-import { ConvertVideo } from './components/ConvertVideo.jsx'
+import { Home } from './pages/Home.jsx';
+import { Settings } from './pages/Settings.jsx'
+import { AddLibrary } from './pages/AddLibrary.jsx';
+import { Media } from './pages/Media.jsx'
+import { Genre } from './pages/Genre.jsx'
+import { Genres } from './pages/Genres.jsx'
+import { Actor } from './pages/Actor.jsx'
+import { Actors } from './pages/Actors.jsx'
+import { Favourites } from './pages/Favourites.jsx';
+import { ConvertVideo } from './pages/ConvertVideo.jsx'
+import { Jobs } from './pages/Jobs.jsx';
 
 import './styles.scss'
-import { Login } from './components/Login.jsx';
+import { Login } from './pages/Login.jsx';
 import { AuthenticationProvider } from './context/Authentication.provider.jsx';
 import { AuthenticatedRoute } from './components/AuthenticatedRoute.jsx';
-import { Jobs } from './components/Jobs.jsx';
 
 export const App = ({ baseUrl }) => {
   return (
