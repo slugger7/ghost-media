@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { fetchMedia, convertVideo } from "../services/media.service";
 import { useNavigate, useParams } from "react-router-dom";
 import usePromise from "../services/use-promise";
-import { Button, Container, Grid, TextField, Typography } from "@mui/material";
+import { Button, Container, Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 import { mergeDeepLeft } from "ramda";
+import LinkIcon from '@mui/icons-material/Link';
+import LinkOffIcon from '@mui/icons-material/LinkOff';
 
 export const ConvertVideo = () => {
     const params = useParams();
@@ -14,15 +16,18 @@ export const ConvertVideo = () => {
     const [title, setTitle] = useState("");
     const [constantRateFactor, setConstantRateFactor] = useState(23);
     const [variableBitrate, setVariableBitrate] = useState();
-    const [forcePixelFormat, setForcePixelFormat] = useState();
+    const [forcePixelFormat, setForcePixelFormat] = useState('yuv420p');
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
+    const [originalAspectRatio, setOriginalAspectRatio] = useState(true);
+    const [aspectRatio, setAspectRatio] = useState(0)
 
     useEffect(() => {
         if (video) {
             setTitle(video.title);
             setHeight(video.height);
             setWidth(video.width);
+            setAspectRatio(height / width)
         }
     }, [video])
 
@@ -46,11 +51,21 @@ export const ConvertVideo = () => {
     }
 
     const handleWidthChange = (event) => {
-        setWidth(event.target.value)
+        const value = event.target.value
+        setWidth(value);
+        if (originalAspectRatio) {
+            const ratio = video.height / video.width;
+            setHeight(Math.round(ratio * value))
+        }
     }
 
     const handleHeightChange = (event) => {
-        setHeight(event.target.value)
+        const value = event.target.value;
+        setHeight(value)
+        if (originalAspectRatio) {
+            const ratio = video.width / video.height;
+            setWidth(Math.round(ratio * value));
+        }
     }
 
     const handleConvertClick = async () => {
@@ -63,11 +78,15 @@ export const ConvertVideo = () => {
             title, constantRateFactor, variableBitrate, forcePixelFormat, width, height
         });
 
-        navigate(`/media/${video.id}/${video.title}`)
+        navigate(-1)
     }
 
     const handleCancelClick = () => {
-        navigate(`/media/${video.id}/${video.title}`)
+        navigate(-1)
+    }
+
+    const handleToggleOriginalAspectRatio = () => {
+        setOriginalAspectRatio(!originalAspectRatio)
     }
 
     return <Container>
@@ -77,8 +96,17 @@ export const ConvertVideo = () => {
                 <Grid item xs={12}>
                     <TextField label="Title" fullWidth value={title} onChange={handleTitleChange} error={!!error.title} helperText={error.title} />
                 </Grid>
-                <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Width" value={width} onChange={handleWidthChange} /></Grid>
-                <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Height" value={height} onChange={handleHeightChange} /></Grid>
+                <Grid item xs={12} sm={5}><TextField fullWidth type="number" label="Width" value={width} onChange={handleWidthChange} /></Grid>
+                <Grid item xs={12} sm={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Tooltip title={originalAspectRatio ? "Keep the original aspect ration" : "Disregard original aspect ratio"}
+                        sx={{ height: 'original' }}>
+                        <IconButton aria-label="keep-aspect-ratio" onClick={handleToggleOriginalAspectRatio}>
+                            {originalAspectRatio && <LinkIcon color="primary" />}
+                            {!originalAspectRatio && <LinkOffIcon />}
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+                <Grid item xs={12} sm={5}><TextField fullWidth type="number" label="Height" value={height} onChange={handleHeightChange} /></Grid>
                 <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Constant Rate Factor" value={constantRateFactor} onChange={handleConstantRateFactorChange} /></Grid>
                 <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Variable Bitrate" value={variableBitrate} onChange={handleVariableBitrateChange} /></Grid>
                 <Grid item xs={12}><TextField fullWidth label="Force Pixel Format" value={forcePixelFormat} onChange={handleForcePixelFormatChange} /></Grid>
