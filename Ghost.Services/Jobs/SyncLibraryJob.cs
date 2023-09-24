@@ -35,9 +35,11 @@ public class SyncLibraryJob : BaseJob
                 var currentVideos = path.Videos;
                 if (path.Path == null) continue;
 
+                // refactor to have directory service return files of type
                 var directories = directoryService.GetDirectories(path.Path);
                 var videos = directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4");
                 videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(path.Path, "mkv")).ToList();
+                videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(path.Path, "avi")).ToList();
 
                 var dirIndex = 0;
 
@@ -46,6 +48,7 @@ public class SyncLibraryJob : BaseJob
                     var currentDirectory = directories.ElementAt(dirIndex++);
                     videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "mp4")).ToList();
                     videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "mkv")).ToList();
+                    videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "avi")).ToList();
                 }
 
                 var videoEntities = videos
