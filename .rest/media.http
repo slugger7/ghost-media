@@ -1,22 +1,21 @@
-@baseUrl = {{$dotenv BASE_URL}}
 @authToken = {{login.response.body.token}}
 # @name login
-POST {{baseUrl}}/user/login
+POST {{host}}:{{port}}/api/user/login
 Content-Type: application/json
 
 {
-    "username": "{{$dotenv USERNAME}}",
-    "password": "{{$dotenv PASSWORD}}"
+    "username": "{{username}}",
+    "password": "{{password}}"
 }
 
 ###
 
-GET {{baseUrl}}/media?sortBy=date-added&ascending=false
+GET {{host}}:{{port}}/api/media?sortBy=date-added&ascending=false
 Authorization: Bearer {{authToken}}
 
 ###
 
-POST {{baseUrl}}/media/96/convert
+POST {{host}}:{{port}}/api/media/96/convert
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -28,5 +27,5 @@ Content-Type: application/json
 
 ###
 
-DELETE {{baseUrl}}/media/99
+DELETE {{host}}:{{port}}/api/media/99
 Authorization: Bearer {{authToken}}

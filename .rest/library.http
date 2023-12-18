@@ -1,17 +1,16 @@
-@baseUrl = {{$dotenv BASE_URL}}
 @authToken = {{login.response.body.token}}
 # @name login
-POST {{baseUrl}}/user/login
+POST {{host}}:{{port}}/api/user/login
 Content-Type: application/json
 
 {
-    "username": "{{$dotenv USERNAME}}",
-    "password": "{{$dotenv PASSWORD}}"
+    "username": "{{username}}",
+    "password": "{{password}}"
 }
 
 ###
 
-POST {{baseUrl}}/library
+POST {{host}}:{{port}}/api/library
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -21,7 +20,7 @@ Authorization: Bearer {{authToken}}
 
 ###
 
-PUT {{baseUrl}}/library/1/add-paths
+PUT {{host}}:{{port}}/api/library/1/add-paths
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -31,15 +30,15 @@ Content-Type: application/json
 
 ###
 
-PUT {{baseUrl}}/library/1/sync
+PUT {{host}}:{{port}}/api/library/1/sync
 Authorization: Bearer {{authToken}}
 
 ###
 
-PUT {{baseUrl}}/library/1/generate-thumbnails
+PUT {{host}}:{{port}}/api/library/1/generate-thumbnails
 Authorization: Bearer {{authToken}}
 
 ###
 
-PUT {{baseUrl}}/library/1/generate-chapters
+PUT {{host}}:{{port}}/api/library/1/generate-chapters
 Authorization: Bearer {{authToken}}
