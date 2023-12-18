@@ -19,6 +19,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import ImageIcon from '@mui/icons-material/Image'
 import EditIcon from '@mui/icons-material/Edit';
 import CompareIcon from '@mui/icons-material/Compare';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { toggleFavourite } from '../services/video.service'
@@ -50,7 +52,8 @@ export const items = {
   syncNfo: 'syncNfo',
   convert: 'convert',
   delete: 'delete',
-  edit: 'edit'
+  edit: 'edit',
+  toggleSelected: 'toggleSelected'
 }
 
 export const VideoMenu = ({
@@ -63,8 +66,10 @@ export const VideoMenu = ({
   setVideo,
   source,
   progress,
+  toggleSelected,
   hideItems = [],
   editing = false,
+  selected = false,
   setEditing = () => { }
 }) => {
   const [loadingSync, setLoadingSync] = useState(false)
@@ -169,6 +174,11 @@ export const VideoMenu = ({
     setEditing(!editing)
   }
 
+  const handleSelectedClick = () => {
+    handleClose()
+    toggleSelected()
+  }
+
   return (
     <>
       <Menu
@@ -180,6 +190,15 @@ export const VideoMenu = ({
           'aria-labelledby': `${videoId}-video-card-menu-button`,
         }}
       >
+        {!hideItems.includes(items.toggleSelected) &&
+          <MenuItem onClick={handleSelectedClick}>
+            <ListItemIcon>
+              {selected && <CheckBoxIcon fontSize='small' />}
+              {!selected && <CheckBoxOutlineBlankIcon fontSize="small" />}
+            </ListItemIcon>
+            <ListItemText>Select</ListItemText>
+          </MenuItem>
+        }
         {!hideItems.includes(items.favourite) && (
           <MenuItem onClick={handleFavourite}>
             <ListItemIcon>
@@ -290,5 +309,7 @@ VideoMenu.propTypes = {
   progress: PropTypes.number,
   hideItems: PropTypes.arrayOf(PropTypes.string),
   editing: PropTypes.bool,
-  setEditing: PropTypes.func
+  setEditing: PropTypes.func,
+  toggleSelected: PropTypes.func,
+  selected: PropTypes.bool
 }
