@@ -30,25 +30,31 @@ public class SyncLibraryJob : BaseJob
             var library = syncJob.Library;
             if (library == null) throw new NullReferenceException("Library not found");
 
+            var videoTypes = new List<string> { "mp4", "m4v", "mkv", "avi", "wmv", "flv", "webm", "f4v" };
+
             foreach (var path in library.Paths)
             {
                 var currentVideos = path.Videos;
                 if (path.Path == null) continue;
 
-                // refactor to have directory service return files of type
                 var directories = directoryService.GetDirectories(path.Path);
-                var videos = directoryService.GetFilesOfTypeInDirectory(path.Path, "mp4");
-                videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(path.Path, "mkv")).ToList();
-                videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(path.Path, "avi")).ToList();
+                List<string> videos = videoTypes.Aggregate(
+                    new List<string>(),
+                    (acc, fileType) => acc.Concat(directoryService.GetFilesOfTypeInDirectory(path.Path, fileType)).ToList()
+                );
 
                 var dirIndex = 0;
 
                 while (directories.Count() > dirIndex)
                 {
                     var currentDirectory = directories.ElementAt(dirIndex++);
-                    videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "mp4")).ToList();
-                    videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "mkv")).ToList();
-                    videos = videos.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, "avi")).ToList();
+
+                    directories = directories.Concat(directoryService.GetDirectories(currentDirectory)).ToList();
+
+                    videos = videoTypes.Aggregate(
+                        videos,
+                        (acc, fileType) => acc.Concat(directoryService.GetFilesOfTypeInDirectory(currentDirectory, fileType)).ToList()
+                    );
                 }
 
                 var videoEntities = videos
