@@ -10,7 +10,16 @@ import { mergeDeepLeft } from 'ramda'
 import { VideoProgress } from './VideoProgress.jsx'
 import { FavouriteIconButton } from './FavouriteIconButton.jsx'
 
-export const VideoCard = ({ video, remove, onClick, overrideLeftAction, selected = false, disableActions = false, disabled = false }) => {
+export const VideoCard = ({
+  video,
+  remove,
+  onClick,
+  overrideLeftAction,
+  toggleSelected,
+  selection = false,
+  selected = false,
+  disableActions = false,
+  disabled = false }) => {
   const [localVideo, setLocalVideo] = useState(video);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -89,8 +98,7 @@ export const VideoCard = ({ video, remove, onClick, overrideLeftAction, selected
       <VideoProgress duration={localVideo.runtime} current={localVideo.progress} />
     </CardActionArea>
     <CardActions
-      sx={{ cursor: onClick && !disabled ? "pointer" : "auto" }}
-      onClick={onClickOverride}
+      sx={{ cursor: onClick && !disabled && !selection ? "pointer" : "auto" }}
       disableSpacing
     >
       {!overrideLeftAction && <FavouriteIconButton
@@ -124,6 +132,8 @@ export const VideoCard = ({ video, remove, onClick, overrideLeftAction, selected
       favourite={!!localVideo.favourite}
       progress={localVideo.progress}
       hideItems={[items.favourite, items.chooseThumbnail, items.edit]}
+      toggleSelected={toggleSelected}
+      selected={selected}
     />
   </Card>)
 }
@@ -139,7 +149,9 @@ VideoCard.propTypes = {
   remove: PropTypes.func,
   onClick: PropTypes.func,
   selected: PropTypes.bool,
+  selection: PropTypes.bool,
+  toggleSelected: PropTypes.func,
   disableActions: PropTypes.bool,
   disabled: PropTypes.bool,
-  overrideLeftAction: PropTypes.node
+  overrideLeftAction: PropTypes.node,
 } 

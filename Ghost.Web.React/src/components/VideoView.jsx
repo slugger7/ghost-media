@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Grid, Pagination } from '@mui/material'
+import { Box, Grid, Pagination, Button } from '@mui/material'
 import { remove } from 'ramda'
 
 import usePromise from '../services/use-promise'
@@ -16,7 +16,6 @@ import { Sort } from './Sort.jsx'
 import { GenreFilter } from './GenreFilter.jsx'
 import { LimitPicker } from './LimitPicker.jsx'
 import { VideoGridSkeleton } from './VideoGridSkeleton.jsx'
-import { useSearchParams } from 'react-router-dom'
 import { RandomVideoButton } from './RandomVideoButton'
 import useLocalState from '../services/use-local-state'
 
@@ -58,6 +57,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       }),
     [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
   )
+  const [selectedVideos, setSelectedVideos] = useState(null)
 
   useEffect(() => {
     if (!loading && !error) {
@@ -77,6 +77,18 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
     setPage(newPage)
     setVideos(null)
   }
+
+  const toggleSelectedVideo = useCallback((id) => () => {
+    if (!selectedVideos) {
+      setSelectedVideos([id])
+      return;
+    }
+    if (selectedVideos.find(vidId => vidId === id)) {
+      setSelectedVideos(selectedVideos.filter(vidId => vidId !== id))
+    } else {
+      setSelectedVideos([...selectedVideos, id])
+    }
+  });
 
   const paginationComponent = (
     <>
@@ -132,7 +144,8 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       <WatchState watchState={watchState} setWatchState={(...args) => {
         setWatchState(...args, { page: 1 });
       }} />
-      <RandomVideoButton fetchFn={fetchRandomVideoFn} />
+      {!selectedVideos && <RandomVideoButton fetchFn={fetchRandomVideoFn} />}
+      {selectedVideos && <Button onClick={() => setSelectedVideos(null)}>Clear selected</Button>}
     </Box>
   )
 
@@ -158,7 +171,12 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
                 <VideoCard
                   video={video}
+                  onClick={selectedVideos ? toggleSelectedVideo(video.id) : null}
                   remove={removeVideo({ index, setVideos })}
+                  selected={!!selectedVideos?.find(id => id === video.id)}
+                  selection={!!selectedVideos}
+                  toggleSelected={toggleSelectedVideo(video.id)}
+                  overrideLeftAction={selectedVideos?.length ? <></> : undefined}
                 />
               </Grid>
             ))}
