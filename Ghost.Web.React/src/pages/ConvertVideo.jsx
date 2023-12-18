@@ -91,7 +91,7 @@ export const ConvertVideo = () => {
 
     return <Container>
         {/*create skeleton while loading */}
-        {!videoLoading && <><Typography variant="h3">Convert video: <strong>{video.title}</strong></Typography>
+        {!videoLoading && <><Typography variant="h3" sx={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>Convert video: <strong>{video.title}</strong></Typography>
             <Grid container spacing={1}>
                 <Grid item xs={12}>
                     <TextField label="Title" fullWidth value={title} onChange={handleTitleChange} error={!!error.title} helperText={error.title} />

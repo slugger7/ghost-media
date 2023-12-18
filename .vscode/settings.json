@@ -6,7 +6,18 @@
   "editor.formatOnSave": true,
   "eslint.nodePath": "src",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
-  "eslint.validate": ["javascript", "javascriptreact"]
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact"
+  ],
+  "rest-client.environmentVariables": {
+    "local": {
+      "host": "http://localhost",
+      "port": 5120,
+      "username": "slugger",
+      "password": "password1234"
+    }
+  }
 }

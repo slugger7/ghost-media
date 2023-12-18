@@ -1,30 +1,29 @@
-@baseUrl = {{$dotenv BASE_URL}}
 @authToken = {{login.response.body.token}}
 # @name login
-POST {{baseUrl}}/user/login
+POST {{host}}:{{port}}/api/user/login
 Content-Type: application/json
 
 {
-    "username": "{{$dotenv USERNAME}}",
-    "password": "{{$dotenv PASSWORD}}"
+    "username": "{{username}}",
+    "password": "{{password}}"
 }
 
 ###
 
-GET {{baseUrl}}/job
+GET {{host}}:{{port}}/api/job
 Authorization: Bearer {{authToken}}
 
 ###
 
-DELETE {{baseUrl}}/job/26
+DELETE {{host}}:{{port}}/api/job/26
 Authorization: Bearer {{authToken}}
 
 ###
 
-PUT {{baseUrl}}/job/5
+PUT {{host}}:{{port}}/api/job/5
 Authorization: Bearer {{authToken}}
 
 ###
 
-DELETE {{baseUrl}}/job/status/completed
+DELETE {{host}}:{{port}}/api/job/status/completed
 Authorization: Bearer {{authToken}}

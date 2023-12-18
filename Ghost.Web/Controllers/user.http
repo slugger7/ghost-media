@@ -1,0 +1,24 @@
+@authToken = {{login.response.body.token}}
+# @name login
+POST {{host}}:{{port}}/api/user/login
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+###
+
+GET {{host}}:{{port}}/api/user
+Authorization: Bearer {{authToken}}
+
+###
+
+POST {{host}}:{{port}}/api/user
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}

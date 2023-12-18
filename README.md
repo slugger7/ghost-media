@@ -96,7 +96,7 @@ This container is the frontend container that connects to the API
 ```bash
 docker run -d \
   -p 3001:3000 \
-  -e REACT_APP_SERVER_URL=http://192.168.178.203:8080 \
+  -e REACT_APP_SERVER_URL=http://localhost:8080 \
   --name ghost-media-react ghost-media-react
 ```
 
