@@ -6,7 +6,7 @@
   "editor.formatOnSave": true,
   "eslint.nodePath": "src",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "eslint.validate": ["javascript", "javascriptreact"]
 }
