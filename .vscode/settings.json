@@ -18,6 +18,10 @@
       "port": 5120,
       "username": "slugger",
       "password": "password1234"
+    },
+    "production": {
+      "host": "http://localhost",
+      "port": "5121"
     }
   }
 }
