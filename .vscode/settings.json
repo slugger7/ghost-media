@@ -12,6 +12,7 @@
     "javascript",
     "javascriptreact"
   ],
+  "editor.tabSize": 2,
   "rest-client.environmentVariables": {
     "local": {
       "host": "http://localhost",
