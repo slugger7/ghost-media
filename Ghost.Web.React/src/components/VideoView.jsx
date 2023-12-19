@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Box, Grid, Pagination, Button } from '@mui/material'
 import { remove } from 'ramda'
@@ -7,6 +7,8 @@ import usePromise from '../services/use-promise'
 import useQueryState from '../services/use-query-state'
 
 import watchStates from '../constants/watch-states'
+
+import SelectedVideoContext from '../context/selectedVideos.context.js'
 
 import { VideoCard } from './VideoCard.jsx'
 import { Search } from './Search'
@@ -57,7 +59,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       }),
     [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
   )
-  const [selectedVideos, setSelectedVideos] = useState(null)
+  const { selectedVideos, setSelectedVideos } = useContext(SelectedVideoContext)
 
   useEffect(() => {
     if (!loading && !error) {
@@ -171,11 +173,11 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
                 <VideoCard
                   video={video}
-                  onClick={selectedVideos ? toggleSelectedVideo(video.id) : null}
+                  onClick={selectedVideos ? toggleSelectedVideo(video.id.toString()) : null}
                   remove={removeVideo({ index, setVideos })}
-                  selected={!!selectedVideos?.find(id => id === video.id)}
+                  selected={!!selectedVideos?.find(id => id === video.id.toString())}
                   selection={!!selectedVideos}
-                  toggleSelected={toggleSelectedVideo(video.id)}
+                  toggleSelected={toggleSelectedVideo(video.id.toString())}
                   overrideLeftAction={selectedVideos?.length ? <></> : undefined}
                 />
               </Grid>

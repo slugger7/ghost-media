@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import {
   Menu,
@@ -26,6 +26,7 @@ import copy from 'copy-to-clipboard'
 import { toggleFavourite } from '../services/video.service'
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
+import SelectedVideoContext from '../context/selectedVideos.context.js'
 
 const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) =>
@@ -72,6 +73,8 @@ export const VideoMenu = ({
   selected = false,
   setEditing = () => { }
 }) => {
+  const { selectedVideos } = useContext(SelectedVideoContext)
+
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
   const [loadingDelete, setLoadingDelete] = useState(false)
@@ -261,12 +264,14 @@ export const VideoMenu = ({
           </MenuItem>
         )}
         {!hideItems.includes(items.convert) && (
-          <MenuItem component={Link} to={`/convert/${videoId}`}>
+          <MenuItem
+            component={Link}
+            to={`/convert/${videoId}`}>
             <ListItemIcon>
               {!loadingSyncNfo && <CompareIcon fontSize="small" />}
               {loadingSyncNfo && <CircularProgress sx={{ mr: 1 }} />}
             </ListItemIcon>
-            <ListItemText>Convert Video</ListItemText>
+            <ListItemText>{selectedVideos?.length ? "Bulk convert videos" : "Convert Video"}</ListItemText>
           </MenuItem>
         )}
         {!hideItems.includes(items.edit) && (
