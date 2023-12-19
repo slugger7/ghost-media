@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Box, Grid, Pagination, Button } from '@mui/material'
 import { remove } from 'ramda'
@@ -7,6 +7,8 @@ import usePromise from '../services/use-promise'
 import useQueryState from '../services/use-query-state'
 
 import watchStates from '../constants/watch-states'
+
+import SelectedVideoContext from '../context/selectedVideos.context.js'
 
 import { VideoCard } from './VideoCard.jsx'
 import { Search } from './Search'
@@ -57,7 +59,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       }),
     [page, limit, search, sortBy, sortAscending, watchState, selectedGenres],
   )
-  const [selectedVideos, setSelectedVideos] = useState(null)
+  const { selectedVideos, setSelectedVideos } = useContext(SelectedVideoContext)
 
   useEffect(() => {
     if (!loading && !error) {
