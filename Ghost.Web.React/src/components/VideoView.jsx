@@ -173,11 +173,11 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
               <Grid key={video.id} item xs={12} sm={6} md={4} lg={3} xl={2}>
                 <VideoCard
                   video={video}
-                  onClick={selectedVideos ? toggleSelectedVideo(video.id) : null}
+                  onClick={selectedVideos ? toggleSelectedVideo(video.id.toString()) : null}
                   remove={removeVideo({ index, setVideos })}
-                  selected={!!selectedVideos?.find(id => id === video.id)}
+                  selected={!!selectedVideos?.find(id => id === video.id.toString())}
                   selection={!!selectedVideos}
-                  toggleSelected={toggleSelectedVideo(video.id)}
+                  toggleSelected={toggleSelectedVideo(video.id.toString())}
                   overrideLeftAction={selectedVideos?.length ? <></> : undefined}
                 />
               </Grid>

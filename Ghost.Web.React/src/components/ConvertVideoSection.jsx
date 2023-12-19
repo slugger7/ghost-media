@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import PropTypes from 'prop-types'
+import { mergeDeepLeft } from 'ramda'
 import { fetchMedia } from "../services/media.service";
 import usePromise from "../services/use-promise";
 
-import { Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, TextField, Tooltip, Typography, Button } from "@mui/material";
 
 import LinkIcon from '@mui/icons-material/Link';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
+import { useNavigate } from "react-router-dom";
+import SelectedVideoContext from "../context/selectedVideos.context";
+import { convertVideo } from "../services/media.service";
 
 export const ConvertVideoSection = ({ videoId }) => {
+  const { selectedVideos, setSelectedVideos } = useContext(SelectedVideoContext)
+
   const [video, , videoLoading] = usePromise(() => fetchMedia(videoId), [videoId])
 
   const [error, setError] = useState({})
@@ -71,9 +77,37 @@ export const ConvertVideoSection = ({ videoId }) => {
     setOriginalAspectRatio(!originalAspectRatio)
   }
 
+  const navigate = useNavigate();
+
+  const handleConvertClick = async () => {
+    if (title === video.title) {
+      setError(mergeDeepLeft({ title: "Title cannot be the same as current video title" }))
+      return;
+    }
+
+    await convertVideo(videoId, {
+      title, constantRateFactor, variableBitrate, forcePixelFormat, width, height
+    });
+
+    handleCancelClick()
+  }
+
+  const handleCancelClick = useCallback(() => {
+    if (selectedVideos && selectedVideos.length) {
+      const remainingVideos = selectedVideos.filter(vid => vid !== videoId)
+
+      if (remainingVideos.length === 0) {
+        setSelectedVideos(null)
+        navigate(-1)
+      } else {
+        setSelectedVideos(remainingVideos)
+      }
+    } else { navigate(-1) }
+  })
+
   return <>
     {/*create skeleton while loading */}
-    {!videoLoading && <>
+    {!videoLoading && video && <>
       <Grid item xs={12}><Typography variant="h3" sx={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>Convert video: <strong>{video.title}</strong></Typography></Grid>
       <Grid item xs={12}>
         <TextField label="Title" fullWidth value={title} onChange={handleTitleChange} error={!!error.title} helperText={error.title} />
@@ -91,7 +125,12 @@ export const ConvertVideoSection = ({ videoId }) => {
       <Grid item xs={12} sm={5}><TextField fullWidth type="number" label="Height" value={height} onChange={handleHeightChange} /></Grid>
       <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Constant Rate Factor" value={constantRateFactor} onChange={handleConstantRateFactorChange} /></Grid>
       <Grid item xs={12} sm={6}><TextField fullWidth type="number" label="Variable Bitrate" value={variableBitrate} onChange={handleVariableBitrateChange} /></Grid>
-      <Grid item xs={12}><TextField fullWidth label="Force Pixel Format" value={forcePixelFormat} onChange={handleForcePixelFormatChange} /></Grid></>
+      <Grid item xs={12}><TextField fullWidth label="Force Pixel Format" value={forcePixelFormat} onChange={handleForcePixelFormatChange} /></Grid>
+      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'end', gap: 1 }}>
+        <Button variant="outlined" onClick={handleCancelClick}>Cancel</Button>
+        <Button variant="contained" onClick={handleConvertClick}>Convert</Button>
+      </Grid>
+    </>
     }
   </>
 }
