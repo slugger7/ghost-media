@@ -1,0 +1,23 @@
+@authToken = {{login.response.body.token}}
+# @name login
+POST {{host}}:{{port}}/api/user/login
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+### Get all playlists
+GET {{host}}:{{port}}/api/playlist
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### Create playlist
+POST {{host}}:{{port}}/api/playlist
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "New Playlist"
+}

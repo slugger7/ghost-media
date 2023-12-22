@@ -18,11 +18,11 @@ internal class Program
       options.AddPolicy(name: AllowSpecificOrigins,
           builder =>
           {
-          builder
-                  .AllowAnyOrigin()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+            builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+          });
     });
 
     builder.Services.AddControllers();
@@ -37,6 +37,7 @@ internal class Program
     builder.Services.AddScoped<INfoService, NfoService>();
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IJobService, JobService>();
+    builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 
     // Repositories
     builder.Services.AddScoped<IGenreRepository, GenreRepository>();
@@ -46,6 +47,7 @@ internal class Program
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IImageRepository, ImageRepository>();
     builder.Services.AddScoped<IJobRepository, JobRepository>();
+    builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
     builder.Services.AddDbContext<GhostContext>();
 
     JWTAuthentication.ConfigureJWTAuthentication(builder.Services);

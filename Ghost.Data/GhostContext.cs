@@ -125,7 +125,9 @@ public class GhostContext : DbContext
     generateChaptersJob.HasOne<Library>(j => j.Library);
     generateChaptersJob.HasOne<Job>(j => j.Job);
 
-    modelBuilder.Entity<Playlist>().ToTable("Playlists");
+    modelBuilder.Entity<Playlist>().ToTable("Playlists")
+      .HasOne<User>(x => x.User)
+      .WithMany(x => x.Playlists);
 
     var playlistVideo = modelBuilder.Entity<PlaylistVideo>().ToTable("PlaylistVideos");
     playlistVideo
