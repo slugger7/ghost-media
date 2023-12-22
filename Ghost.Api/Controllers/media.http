@@ -1,0 +1,30 @@
+@authToken = {{login.response.body.token}}
+# @name login
+POST {{host}}:{{port}}/api/user/login
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+### Get all videos
+GET {{host}}:{{port}}/api/media?sortBy=date-added&ascending=false
+Authorization: Bearer {{authToken}}
+
+###
+
+POST {{host}}:{{port}}/api/media/96/convert
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "title": "conversion title3"
+    # "constantRateFactor": 28,
+    # "forcePixelFormat": "yuv420p"
+}
+
+###
+
+DELETE {{host}}:{{port}}/api/media/99
+Authorization: Bearer {{authToken}}

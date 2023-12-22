@@ -1,11 +1,9 @@
 using Ghost.Dtos;
 
-namespace Ghost.Services
+namespace Ghost.Services;
+public interface IImageService
 {
-  public interface IImageService
-  {
-    PageResultDto<ImageDto> GetImages(PageRequestDto pageRequest);
-    ImageDto GetImage(int id);
-    ImageDto GenerateThumbnailForVideo(GenerateImageRequestDto generateImageRequest);
-  }
+  PageResultDto<ImageDto> GetImages(PageRequestDto pageRequest);
+  ImageDto GetImage(int id);
+  ImageDto GenerateThumbnailForVideo(GenerateImageRequestDto generateImageRequest);
 }

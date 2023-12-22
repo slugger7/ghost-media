@@ -1,34 +1,32 @@
 using Ghost.Data;
 
-namespace Ghost.Repository.Extensions
+namespace Ghost.Repository.Extensions;
+public static class FilterGenresExtension
 {
-    public static class FilterGenresExtension
+  public static IEnumerable<Video> FilterGenres(this IEnumerable<Video> videos, string[]? genres)
+  {
+    if (genres == null)
     {
-        public static IEnumerable<Video> FilterGenres(this IEnumerable<Video> videos, string[]? genres)
-        {
-            if (genres == null)
-            {
-                return videos;
-            }
-            else
-            {
-                if (genres.Count() == 0)
-                {
-                    return videos;
-                }
-
-                return videos
-                    .Where(video => genres
-                        .ToArray()
-                        .All(genre => video.VideoGenres
-                            .Any(
-                                videoGenre => videoGenre.Genre.Name
-                                    .ToLower()
-                                    .Equals(genre.ToLower())
-                            )
-                        )
-                    );
-            }
-        }
+      return videos;
     }
+    else
+    {
+      if (genres.Count() == 0)
+      {
+        return videos;
+      }
+
+      return videos
+          .Where(video => genres
+              .ToArray()
+              .All(genre => video.VideoGenres
+                  .Any(
+                      videoGenre => videoGenre.Genre.Name
+                          .ToLower()
+                          .Equals(genre.ToLower())
+                  )
+              )
+          );
+    }
+  }
 }

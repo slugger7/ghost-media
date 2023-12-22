@@ -9,11 +9,11 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/Ghost.Web/bin/Debug/net7.0/Ghost.Web.dll",
+      "program": "${workspaceFolder}/Ghost.Api/bin/Debug/net7.0/Ghost.Api.dll",
       "args": [
         "--urls=http://0.0.0.0:5120"
       ],
-      "cwd": "${workspaceFolder}/Ghost.Web",
+      "cwd": "${workspaceFolder}/Ghost.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"

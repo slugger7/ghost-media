@@ -1,9 +1,7 @@
-namespace Ghost.Data
+namespace Ghost.Data;
+public class FavouriteVideo
 {
-  public class FavouriteVideo
-  {
-    public int Id { get; set; }
-    public virtual Video Video { get; set; }
-    public virtual User User { get; set; }
-  }
+  public int Id { get; set; }
+  public virtual Video Video { get; set; } = null!;
+  public virtual User User { get; set; } = null!;
 }

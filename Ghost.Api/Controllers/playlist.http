@@ -1,0 +1,63 @@
+@authToken = {{login.response.body.token}}
+@userId = {{login.response.body.userId}}
+# @name login
+POST {{host}}:{{port}}/api/user/login
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+### Get all playlists
+GET {{host}}:{{port}}/api/playlist
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
+
+### Get playlist by id
+GET {{host}}:{{port}}/api/playlist/7
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
+
+### Create playlist
+POST {{host}}:{{port}}/api/playlist
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
+
+{
+    "name": "New Playlist"
+}
+
+### Delete playlist
+DELETE {{host}}:{{port}}/api/playlist/6
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
+
+### Update playlist
+PUT {{host}}:{{port}}/api/playlist/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
+
+{
+    "name": "Updated Playlist"
+}
+
+### Add videos to playlist
+POST {{host}}:{{port}}/api/playlist/7/videos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
+
+{
+    "videoIds": [1]
+}
+
+### Remove videos from playlist
+DELETE {{host}}:{{port}}/api/playlist/7/videos/1
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}

@@ -1,12 +1,10 @@
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class ConvertRequestDto
 {
-    public class ConvertRequestDto
-    {
-        public string Title { get; set; } = string.Empty;
-        public int? ConstantRateFactor { get; set; }
-        public int? VariableBitrate { get; set; }
-        public string ForcePixelFormat { get; set; } = string.Empty;
-        public int Width { get; set; }
-        public int Height { get; set; }
-    }
+  public string Title { get; set; } = string.Empty;
+  public int? ConstantRateFactor { get; set; }
+  public int? VariableBitrate { get; set; }
+  public string ForcePixelFormat { get; set; } = string.Empty;
+  public int Width { get; set; }
+  public int Height { get; set; }
 }

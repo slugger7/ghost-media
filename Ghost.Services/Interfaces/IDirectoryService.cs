@@ -1,8 +1,6 @@
-namespace Ghost.Services
+namespace Ghost.Services;
+public interface IDirectoryService
 {
-  public interface IDirectoryService
-  {
-    List<string> GetDirectories(string directory);
-    List<string> GetFilesOfTypeInDirectory(string directory, string type);
-  }
+  List<string> GetDirectories(string directory);
+  List<string> GetFilesOfTypeInDirectory(string directory, string type);
 }

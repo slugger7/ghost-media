@@ -1,13 +1,11 @@
 using Ghost.Dtos;
 
-namespace Ghost.Services
+namespace Ghost.Services;
+public interface IGenreService
 {
-  public interface IGenreService
-  {
-    GenreViewDto GetGenreByName(string name);
-    List<GenreDto> GetGenres();
-    List<GenreDto> SearchTopGenres(string search, int limit = 10);
-    List<GenreDto> GetGenresForVideo(int videoId);
-    Task<GenreViewDto> UpdateGenre(int id, string name);
-  }
+  GenreViewDto GetGenreByName(string name);
+  List<GenreDto> GetGenres();
+  List<GenreDto> SearchTopGenres(string search, int limit = 10);
+  List<GenreDto> GetGenresForVideo(int videoId);
+  Task<GenreViewDto> UpdateGenre(int id, string name);
 }

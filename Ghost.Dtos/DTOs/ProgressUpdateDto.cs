@@ -1,8 +1,6 @@
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class ProgressUpdateDto
 {
-    public class ProgressUpdateDto
-    {
-        public double Progress { get; set; }
-        public bool ReduceProgress { get; set; }
-    }
-}
+  public double Progress { get; set; }
+  public bool ReduceProgress { get; set; }
+};

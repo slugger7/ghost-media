@@ -1,9 +1,7 @@
 using Ghost.Data;
 
-namespace Ghost.Media
+namespace Ghost.Media;
+public interface INfoService
 {
-  public interface INfoService
-  {
-    public VideoNfo? HydrateVideo(Video video);
-  }
+  public VideoNfo? HydrateVideo(Video video);
 }

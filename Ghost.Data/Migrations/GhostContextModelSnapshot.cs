@@ -292,6 +292,53 @@ namespace Ghost.Data.Migrations
                     b.ToTable("LibraryPaths", (string)null);
                 });
 
+            modelBuilder.Entity("Ghost.Data.Playlist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Playlists", (string)null);
+                });
+
+            modelBuilder.Entity("Ghost.Data.PlaylistVideo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PlaylistId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VideoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaylistId");
+
+                    b.HasIndex("VideoId");
+
+                    b.ToTable("PlaylistVideos", (string)null);
+                });
+
             modelBuilder.Entity("Ghost.Data.Progress", b =>
                 {
                     b.Property<int>("Id")
@@ -617,6 +664,36 @@ namespace Ghost.Data.Migrations
                         .HasForeignKey("LibraryId");
                 });
 
+            modelBuilder.Entity("Ghost.Data.Playlist", b =>
+                {
+                    b.HasOne("Ghost.Data.User", "User")
+                        .WithMany("Playlists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Ghost.Data.PlaylistVideo", b =>
+                {
+                    b.HasOne("Ghost.Data.Playlist", "Playlist")
+                        .WithMany("PlaylistVideos")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ghost.Data.Video", "Video")
+                        .WithMany()
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Playlist");
+
+                    b.Navigation("Video");
+                });
+
             modelBuilder.Entity("Ghost.Data.Progress", b =>
                 {
                     b.HasOne("Ghost.Data.User", "User")
@@ -769,11 +846,18 @@ namespace Ghost.Data.Migrations
                     b.Navigation("Videos");
                 });
 
+            modelBuilder.Entity("Ghost.Data.Playlist", b =>
+                {
+                    b.Navigation("PlaylistVideos");
+                });
+
             modelBuilder.Entity("Ghost.Data.User", b =>
                 {
                     b.Navigation("FavouriteActors");
 
                     b.Navigation("FavouriteVideos");
+
+                    b.Navigation("Playlists");
 
                     b.Navigation("VideoProgress");
                 });
