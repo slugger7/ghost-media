@@ -7,6 +7,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import LogoutIcon from '@mui/icons-material/Logout';
 import WorkIcon from '@mui/icons-material/Work';
+import ListIcon from '@mui/icons-material/List';
 
 import { LinkTab } from './LinkTab.jsx'
 import { useContext } from 'react'
@@ -52,6 +53,12 @@ export const NavMenu = () => {
             to="/favourites"
             label="Favourites"
             icon={<FavoriteIcon />}
+            iconPosition="start"
+          />
+          <LinkTab
+            to="/playlists"
+            label="Playlists"
+            icon={<ListIcon />}
             iconPosition="start"
           />
           <LinkTab
