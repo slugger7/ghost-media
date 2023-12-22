@@ -1,17 +1,15 @@
 using Ghost.Dtos;
 
-namespace Ghost.Services
+namespace Ghost.Services;
+public interface ILibraryService
 {
-    public interface ILibraryService
-    {
-        LibraryDto Create(string libraryName);
-        LibraryDto AddDirectories(int id, AddPathsToLibraryDto pathsLibraryDto);
-        PageResultDto<LibraryDto> GetLibraries(int page = 0, int limit = 10);
-        Task<LibraryDto> GetLibrary(int id);
-        Task Sync(int id);
-        Task Delete(int id);
-        Task SyncNfos(int id);
-        Task GenerateThumbnails(int id, bool overwrite);
-        Task GenerateChapters(int id, bool overwrite);
-    }
+  LibraryDto Create(string libraryName);
+  LibraryDto AddDirectories(int id, AddPathsToLibraryDto pathsLibraryDto);
+  PageResultDto<LibraryDto> GetLibraries(int page = 0, int limit = 10);
+  Task<LibraryDto> GetLibrary(int id);
+  Task Sync(int id);
+  Task Delete(int id);
+  Task SyncNfos(int id);
+  Task GenerateThumbnails(int id, bool overwrite);
+  Task GenerateChapters(int id, bool overwrite);
 }

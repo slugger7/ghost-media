@@ -6,84 +6,84 @@ using Microsoft.Extensions.Logging;
 namespace Ghost.Services.Jobs;
 public abstract class BaseJob
 {
-    protected int jobId;
-    protected readonly IServiceScopeFactory scopeFactory;
+  protected int jobId;
+  protected readonly IServiceScopeFactory scopeFactory;
 
-    public BaseJob(IServiceScopeFactory scopeFactory, int jobId)
+  public BaseJob(IServiceScopeFactory scopeFactory, int jobId)
+  {
+    this.scopeFactory = scopeFactory;
+    this.jobId = jobId;
+  }
+
+  public abstract Task<string> RunJob();
+
+  public async void Run()
+  {
+    if (await this.PreRun())
     {
-        this.scopeFactory = scopeFactory;
-        this.jobId = jobId;
+      string status;
+      try
+      {
+        status = await this.RunJob();
+      }
+      catch (Exception)
+      {
+        status = JobStatus.Error;
+      }
+
+      await this.PostRun(status);
     }
 
-    public abstract Task<string> RunJob();
+  }
 
-    public async void Run()
+  protected async Task<bool> PreRun()
+  {
+    using (var scope = scopeFactory.CreateScope())
     {
-        if (await this.PreRun())
-        {
-            string status;
-            try
-            {
-                status = await this.RunJob();
-            }
-            catch (Exception)
-            {
-                status = JobStatus.Error;
-            }
+      var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+      var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+      var logger = loggerFactory.CreateLogger<BaseJob>();
 
-            await this.PostRun(status);
-        }
+      var runningJobs = await jobRepository.GetJobsByStatus(JobStatus.InProgress);
 
+      if (runningJobs.Count() == 0)
+      {
+        logger.LogInformation($"Starting job {jobId}");
+        await jobRepository.UpdateJobStatus(jobId, JobStatus.InProgress);
+
+        return true;
+      }
+
+      logger.LogInformation($"Job {jobId} will run after current job finishes");
+      return false;
     }
+  }
 
-    protected async Task<bool> PreRun()
+  protected async Task PostRun(string status)
+  {
+    using (var scope = scopeFactory.CreateScope())
     {
-        using (var scope = scopeFactory.CreateScope())
-        {
-            var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
-            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
-            var logger = loggerFactory.CreateLogger<BaseJob>();
+      var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
+      var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+      var logger = loggerFactory.CreateLogger<BaseJob>();
 
-            var runningJobs = await jobRepository.GetJobsByStatus(JobStatus.InProgress);
+      logger.LogInformation($"Completed job {jobId}");
 
-            if (runningJobs.Count() == 0)
-            {
-                logger.LogInformation($"Starting job {jobId}");
-                await jobRepository.UpdateJobStatus(jobId, JobStatus.InProgress);
+      await jobRepository.UpdateJobStatus(jobId, status);
 
-                return true;
-            }
+      var notStartedJobs = await jobRepository.GetJobsByStatus(JobStatus.NotStarted);
+      var nextJob = notStartedJobs.FirstOrDefault();
 
-            logger.LogInformation($"Job {jobId} will run after current job finishes");
-            return false;
-        }
+      if (nextJob != null)
+      {
+        var jobFactory = new JobFactory(scopeFactory);
+        var runnableJob = await jobFactory.CreateJob(nextJob);
+        if (runnableJob == null) throw new NullReferenceException("Could not create a job to run next");
+
+        Thread convertThread = new Thread(new ThreadStart(runnableJob.Run));
+        convertThread.Name = nextJob.ThreadName;
+        convertThread.Start();
+      }
     }
-
-    protected async Task PostRun(string status)
-    {
-        using (var scope = scopeFactory.CreateScope())
-        {
-            var jobRepository = scope.ServiceProvider.GetRequiredService<IJobRepository>();
-            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
-            var logger = loggerFactory.CreateLogger<BaseJob>();
-
-            logger.LogInformation($"Completed job {jobId}");
-
-            await jobRepository.UpdateJobStatus(jobId, status);
-
-            var notStartedJobs = await jobRepository.GetJobsByStatus(JobStatus.NotStarted);
-            var nextJob = notStartedJobs.FirstOrDefault();
-
-            if (nextJob != null)
-            {
-                var jobFactory = new JobFactory(scopeFactory);
-                var runnableJob = await jobFactory.CreateJob(nextJob);
-                if (runnableJob == null) throw new NullReferenceException("Could not create a job to run next");
-
-                Thread convertThread = new Thread(new ThreadStart(runnableJob.Run));
-                convertThread.Name = nextJob.ThreadName;
-                convertThread.Start();
-            }
-        }
-    }
+  }
 }

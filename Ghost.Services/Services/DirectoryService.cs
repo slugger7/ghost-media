@@ -1,19 +1,16 @@
 using Ghost.Media;
-using Ghost.Data;
 
-namespace Ghost.Services
+namespace Ghost.Services;
+public class DirectoryService : IDirectoryService
 {
-  public class DirectoryService : IDirectoryService
+
+  public List<string> GetDirectories(string directory)
   {
+    return FileFns.ListDirectories(directory);
+  }
 
-    public List<string> GetDirectories(string directory)
-    {
-      return FileFns.ListDirectories(directory);
-    }
-
-    public List<string> GetFilesOfTypeInDirectory(string directory, string type)
-    {
-      return FileFns.ListFilesByExtension(directory, type);
-    }
+  public List<string> GetFilesOfTypeInDirectory(string directory, string type)
+  {
+    return FileFns.ListFilesByExtension(directory, type);
   }
 }
