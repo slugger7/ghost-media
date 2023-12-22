@@ -107,8 +107,19 @@ public class PlaylistService : IPlaylistService
     return new PlaylistDto(playlist);
   }
 
-  public Task<PlaylistDto> RemoveVideoFromPlaylist(int userId, int id, int videoId)
+  public async Task<PlaylistDto> RemoveVideoFromPlaylist(int userId, int id, int videoId)
   {
-    throw new NotImplementedException();
+    var playlist = await playlistRepository.GetPlaylistById(userId, id);
+
+    if (playlist == null)
+    {
+      throw new NullReferenceException($"Playlist with id {id} not found");
+    }
+
+    playlist.PlaylistVideos = playlist.PlaylistVideos.Where(pv => pv.Video.Id != videoId).ToList();
+
+    playlist = await playlistRepository.UpdatePlaylist(userId, id, playlist);
+
+    return new PlaylistDto(playlist);
   }
 }

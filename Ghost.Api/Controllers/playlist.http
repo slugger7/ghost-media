@@ -56,3 +56,8 @@ User-Id: {{userId}}
 {
     "videoIds": [1]
 }
+
+### Remove videos from playlist
+DELETE {{host}}:{{port}}/api/playlist/7/videos/1
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
