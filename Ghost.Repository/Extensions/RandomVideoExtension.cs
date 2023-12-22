@@ -1,26 +1,24 @@
 using Ghost.Data;
 using Ghost.Dtos;
 
-namespace Ghost.Repository.Extensions
+namespace Ghost.Repository.Extensions;
+public static class RandomVideoExtension
 {
-    public static class RandomVideoExtension
-    {
-        public static Video RandomVideo(
-            this IEnumerable<Video> videos,
-            int userId,
-            RandomVideoRequestDto randomVideoRequest
-        )
-        {
-            Random rnd = new Random();
+  public static Video RandomVideo(
+      this IEnumerable<Video> videos,
+      int userId,
+      RandomVideoRequestDto randomVideoRequest
+  )
+  {
+    Random rnd = new Random();
 
-            var result = videos
-                .FilterWatchedState(randomVideoRequest.WatchState, userId)
-                .TitleSearch(randomVideoRequest.Search)
-                .FilterGenres(randomVideoRequest.Genres);
+    var result = videos
+        .FilterWatchedState(randomVideoRequest.WatchState, userId)
+        .TitleSearch(randomVideoRequest.Search)
+        .FilterGenres(randomVideoRequest.Genres);
 
-            var count = result.Count();
+    var count = result.Count();
 
-            return result.ElementAt(rnd.Next(0, count));
-        }
-    }
+    return result.ElementAt(rnd.Next(0, count));
+  }
 }
