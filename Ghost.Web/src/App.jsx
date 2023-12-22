@@ -20,6 +20,8 @@ import { Login } from './pages/Login.jsx';
 import { AuthenticationProvider } from './context/Authentication.provider.jsx';
 import { SelectedVideosProvider } from './context/SelectedVideos.provider.jsx';
 import { AuthenticatedRoute } from './components/AuthenticatedRoute.jsx';
+import { Playlists } from './pages/Playlists.jsx';
+import { CreatePlaylist } from './pages/CreatePlaylist.jsx';
 
 export const App = ({ baseUrl }) => {
   return (
@@ -39,6 +41,8 @@ export const App = ({ baseUrl }) => {
               <Route path='/favourites' element={<AuthenticatedRoute><Favourites /></AuthenticatedRoute>} />
               <Route path='/jobs' element={<AuthenticatedRoute><Jobs /></AuthenticatedRoute>} />
               <Route path='/convert/:id?' element={<AuthenticatedRoute><ConvertVideo /></AuthenticatedRoute>} />
+              <Route path='/playlists' element={<AuthenticatedRoute><Playlists /></AuthenticatedRoute>} />
+              <Route path='/new-playlist' element={<AuthenticatedRoute><CreatePlaylist /></AuthenticatedRoute>} />
               <Route path='/login' element={<Login />} />
             </Routes>
           </Layout>
