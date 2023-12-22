@@ -24,4 +24,5 @@ public interface IVideoRepository
   Task<List<Video>> RelateVideo(int id, int relateTo);
   Task<List<Video>> DeleteRelation(int id, int relatedTo);
   Task<Video> CreateSubVideo(int id, Video newVideo);
+  Task<List<Video>> GetVideosByIds(IEnumerable<int> ids);
 }

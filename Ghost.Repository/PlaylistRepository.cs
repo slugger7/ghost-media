@@ -16,6 +16,7 @@ public class PlaylistRepository : IPlaylistRepository
   {
     return await context.Playlists
       .Include("User")
+      .Include("PlaylistVideos.Video")
       .Where(p => p.User.Id == userId)
       .ToListAsync();
   }
@@ -24,6 +25,7 @@ public class PlaylistRepository : IPlaylistRepository
   {
     return await context.Playlists
       .Include("User")
+      .Include("PlaylistVideos.Video")
       .FirstOrDefaultAsync(p => p.Id == id);
   }
 

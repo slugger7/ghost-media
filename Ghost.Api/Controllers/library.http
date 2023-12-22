@@ -25,7 +25,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-    "paths": ["/media/merry/gimli/Music Videos (copy)"]
+    "paths": ["/Users/kevinheritage/Movies"]
 }
 
 ###
@@ -41,4 +41,8 @@ Authorization: Bearer {{authToken}}
 ###
 
 PUT {{host}}:{{port}}/api/library/1/generate-chapters
+Authorization: Bearer {{authToken}}
+
+### Get all libraries
+GET {{host}}:{{port}}/api/library
 Authorization: Bearer {{authToken}}

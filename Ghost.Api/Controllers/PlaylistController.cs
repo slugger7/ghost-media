@@ -77,4 +77,42 @@ public class PlaylistController : Controller
       return NotFound(e.Message);
     }
   }
+
+  [HttpPost("{id}/videos")]
+  [Authorize]
+  public async Task<ActionResult<PlaylistDto>> AddVideoToPlaylist(
+    [FromHeader(Name = "User-Id")] int userId,
+    int id,
+    AddVideosToPlaylistDto addVideosToPlaylistDto)
+  {
+    try
+    {
+      var playlist = await playlistService.AddVideosToPlaylist(userId, id, addVideosToPlaylistDto);
+
+      return Ok(playlist);
+    }
+    catch (NullReferenceException e)
+    {
+      return NotFound(e.Message);
+    }
+  }
+
+  [HttpDelete("{id}/videos/{videoId}")]
+  [Authorize]
+  public async Task<ActionResult<PlaylistDto>> RemoveVideoFromPlaylist(
+    [FromHeader(Name = "User-Id")] int userId,
+    int id,
+    int videoId)
+  {
+    try
+    {
+      var playlist = await playlistService.RemoveVideoFromPlaylist(userId, id, videoId);
+
+      return Ok(playlist);
+    }
+    catch (NullReferenceException e)
+    {
+      return NotFound(e.Message);
+    }
+  }
 }

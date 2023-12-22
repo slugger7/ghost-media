@@ -46,3 +46,13 @@ User-Id: {{userId}}
 {
     "name": "Updated Playlist"
 }
+
+### Add videos to playlist
+POST {{host}}:{{port}}/api/playlist/7/videos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+User-Id: {{userId}}
+
+{
+    "videoIds": [1]
+}

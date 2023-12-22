@@ -9,4 +9,6 @@ public interface IPlaylistService
   Task<PlaylistDto> CreatePlaylist(int userId, CreatePlaylistDto playlistDto);
   Task DeletePlaylist(int id);
   Task<PlaylistDto> UpdatePlaylist(int userId, int id, UpdatePlaylistDto playlistDto);
+  Task<PlaylistDto> AddVideosToPlaylist(int userId, int id, AddVideosToPlaylistDto addVideosToPlaylistDto);
+  Task<PlaylistDto> RemoveVideoFromPlaylist(int userId, int id, int videoId);
 }

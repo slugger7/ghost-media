@@ -539,4 +539,11 @@ public class VideoRepository : IVideoRepository
 
     return video;
   }
+
+  public async Task<List<Video>> GetVideosByIds(IEnumerable<int> ids)
+  {
+    return await context.Videos
+      .Where(v => ids.Contains(v.Id))
+      .ToListAsync();
+  }
 }

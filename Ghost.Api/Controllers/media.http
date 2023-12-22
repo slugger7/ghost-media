@@ -8,8 +8,7 @@ Content-Type: application/json
     "password": "{{password}}"
 }
 
-###
-
+### Get all videos
 GET {{host}}:{{port}}/api/media?sortBy=date-added&ascending=false
 Authorization: Bearer {{authToken}}
 
