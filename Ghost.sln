@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghost.Web", "Ghost.Web\Ghost.Web.csproj", "{AF34F076-034F-4079-9F22-C64FFC118820}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghost.Web", "Ghost.Api\Ghost.Api.csproj", "{AF34F076-034F-4079-9F22-C64FFC118820}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghost.Dtos", "Ghost.Dtos\Ghost.Dtos.csproj", "{1D785EF1-6C2B-4B6A-8863-967A2105DC94}"
 EndProject
