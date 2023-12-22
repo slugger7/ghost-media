@@ -21,9 +21,7 @@ public class PlaylistRepository : IPlaylistRepository
   public async Task<Playlist?> GetPlaylistById(int userId, int id)
   {
     return await context.Playlists
-      .Include("PlaylistVideos.Video")
-      .Include("User")
-      .Where(p => p.User.Id == userId && p.Id == id)
+      .Where(p => p.Id == id)
       .FirstOrDefaultAsync();
   }
 
@@ -47,5 +45,12 @@ public class PlaylistRepository : IPlaylistRepository
       context.PlaylistVideos.RemoveRange(playlist.PlaylistVideos);
       await context.SaveChangesAsync();
     }
+  }
+
+  public async Task<Playlist> UpdatePlaylist(int userId, int id, Playlist playlist)
+  {
+    context.Playlists.Update(playlist);
+    await context.SaveChangesAsync();
+    return playlist;
   }
 }

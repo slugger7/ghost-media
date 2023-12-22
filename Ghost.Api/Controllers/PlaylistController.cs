@@ -58,4 +58,23 @@ public class PlaylistController : Controller
 
     return NoContent();
   }
+
+  [HttpPut("{id}")]
+  [Authorize]
+  public async Task<ActionResult<PlaylistDto>> UpdatePlaylist(
+    [FromHeader(Name = "User-Id")] int userId,
+    int id,
+    UpdatePlaylistDto playlistDto)
+  {
+    try
+    {
+      var playlist = await playlistService.UpdatePlaylist(userId, id, playlistDto);
+
+      return Ok(playlist);
+    }
+    catch (NullReferenceException e)
+    {
+      return NotFound(e.Message);
+    }
+  }
 }
