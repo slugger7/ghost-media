@@ -41,10 +41,21 @@ public class PlaylistController : Controller
 
   [HttpPost]
   [Authorize]
-  public async Task<ActionResult<PlaylistDto>> CreatePlaylist([FromHeader(Name = "User-Id")] int userId, CreatePlaylistDto playlistDto)
+  public async Task<ActionResult<PlaylistDto>> CreatePlaylist(
+    [FromHeader(Name = "User-Id")] int userId,
+    CreatePlaylistDto playlistDto)
   {
     var playlist = await playlistService.CreatePlaylist(userId, playlistDto);
 
     return CreatedAtAction(nameof(GetPlaylistById), new { id = playlist.Id }, playlist);
+  }
+
+  [HttpDelete("{id}")]
+  [Authorize]
+  public async Task<ActionResult> DeletePlaylist(int id)
+  {
+    await playlistService.DeletePlaylist(id);
+
+    return NoContent();
   }
 }

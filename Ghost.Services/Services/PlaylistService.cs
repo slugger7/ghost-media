@@ -44,4 +44,9 @@ public class PlaylistService : IPlaylistService
 
     return new PlaylistDto(createdPlaylist);
   }
+
+  public async Task DeletePlaylist(int id)
+  {
+    await playlistRepository.DeletePlaylist(id);
+  }
 }

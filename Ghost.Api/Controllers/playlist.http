@@ -21,3 +21,8 @@ Authorization: Bearer {{authToken}}
 {
     "name": "New Playlist"
 }
+
+### Delete playlist
+DELETE {{host}}:{{port}}/api/playlist/4
+Content-Type: application/json
+Authorization: Bearer {{authToken}}

@@ -33,4 +33,19 @@ public class PlaylistRepository : IPlaylistRepository
     await context.SaveChangesAsync();
     return playlist;
   }
+
+  public async Task DeletePlaylist(int id)
+  {
+    var playlist = context.Playlists
+      .Include("PlaylistVideos")
+      .FirstOrDefault(p => p.Id == id);
+    ;
+
+    if (playlist != null)
+    {
+      context.Playlists.Remove(playlist);
+      context.PlaylistVideos.RemoveRange(playlist.PlaylistVideos);
+      await context.SaveChangesAsync();
+    }
+  }
 }

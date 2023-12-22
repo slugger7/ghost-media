@@ -7,4 +7,5 @@ public interface IPlaylistRepository
   Task<List<Playlist>> GetPlaylists(int userId);
   Task<Playlist?> GetPlaylistById(int userId, int id);
   Task<Playlist> CreatePlaylist(Playlist playlist);
+  Task DeletePlaylist(int id);
 }
