@@ -1,9 +1,7 @@
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class RandomVideoRequestDto
 {
-    public class RandomVideoRequestDto
-    {
-        public string Search { get; set; } = "";
-        public string WatchState { get; set; } = Ghost.Data.Enums.WatchState.All;
-        public string[]? Genres { get; set; }
-    }
+  public string Search { get; set; } = "";
+  public string WatchState { get; set; } = Ghost.Data.Enums.WatchState.All;
+  public string[]? Genres { get; set; }
 }

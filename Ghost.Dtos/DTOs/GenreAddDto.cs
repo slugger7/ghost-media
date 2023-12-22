@@ -1,7 +1,5 @@
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class GenreAddDto
 {
-  public class GenreAddDto
-  {
-    public List<string> Genres { get; set; } = new List<string>();
-  }
+  public List<string> Genres { get; set; } = new List<string>();
 }

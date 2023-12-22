@@ -1,7 +1,5 @@
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class ActorNameUpdateDto
 {
-  public class ActorNameUpdateDto
-  {
-    public string Name { get; set; } = string.Empty;
-  }
+  public string Name { get; set; } = string.Empty;
 }

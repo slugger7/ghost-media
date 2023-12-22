@@ -1,7 +1,5 @@
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class ActorAddDto
 {
-  public class ActorAddDto
-  {
-    public List<string> Actors { get; set; } = new List<string>();
-  }
+  public List<string> Actors { get; set; } = new List<string>();
 }

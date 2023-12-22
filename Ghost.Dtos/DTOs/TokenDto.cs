@@ -1,7 +1,5 @@
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class TokenDto
 {
-    public class TokenDto
-    {
-        public string Token { get; set; } = string.Empty;
-    }
+  public string Token { get; set; } = string.Empty;
 }

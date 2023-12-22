@@ -1,23 +1,21 @@
 using Ghost.Data;
 
-namespace Ghost.Dtos
+namespace Ghost.Dtos;
+public class LibraryDto
 {
-  public class LibraryDto
-  {
-    public string? Id { get; set; }
-    public string? Name { get; set; }
-    public List<LibraryPathDto> Paths { get; set; } = new List<LibraryPathDto>();
+  public string? Id { get; set; }
+  public string? Name { get; set; }
+  public List<LibraryPathDto> Paths { get; set; } = new List<LibraryPathDto>();
 
-    public LibraryDto(Library library)
+  public LibraryDto(Library library)
+  {
+    this.Id = library.Id.ToString();
+    this.Name = library.Name;
+    if (library.Paths != null)
     {
-      this.Id = library.Id.ToString();
-      this.Name = library.Name;
-      if (library.Paths != null)
-      {
-        this.Paths = library.Paths
-          .Select(p => new LibraryPathDto(p))
-          .ToList();
-      }
+      this.Paths = library.Paths
+        .Select(p => new LibraryPathDto(p))
+        .ToList();
     }
   }
 }
