@@ -1,64 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from 'prop-types'
-import { Card, CardHeader, IconButton, MenuItem, ListItemText, ListItemIcon, Menu } from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import DeleteIcon from '@mui/icons-material/Delete';
-import { deletePlaylist } from "../services/playlists.service";
+import { Card, CardHeader } from "@mui/material";
 
-export const PlaylistItem = ({ playlist, onDelete }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [loadingDelete, setLoadingDelete] = useState(false)
-
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
-
-  const handleDeleteClick = async () => {
-    setLoadingDelete(true)
-    try {
-      await deletePlaylist(playlist.id)
-
-      if (onDelete) {
-        onDelete(playlist.id)
-      }
-    } finally {
-      setLoadingDelete(false)
-      handleMenuClose()
-    }
-  }
+export const PlaylistItem = ({ playlist, action, onClick, selected }) => {
 
   return <>
-    <Card>
+    <Card onClick={onClick} raised={selected} sx={{cursor: onClick ? 'pointer': null}}>
       <CardHeader 
         title={playlist.name} 
-        action={<IconButton 
-          id={`playlist-${playlist.id}`}
-          aria-controls={!!anchorEl ? 'playlist-menu' : undefined}
-          aria-haspopup={true}
-          aria-expanded={!!anchorEl}
-          onClick={handleMenuClick}>
-            <MoreVertIcon />
-          </IconButton>}
+        action={action}
       />
     </Card>
-
-    <Menu
-      id={`${playlist.id}-playlist-menu`}
-      anchorEl={anchorEl}
-      open={!!anchorEl}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleDeleteClick} disabled={loadingDelete}>
-        <ListItemIcon>
-          <DeleteIcon />
-        </ListItemIcon>
-        <ListItemText>Delete</ListItemText>
-      </MenuItem>
-    </Menu>
   </>
 }
 
@@ -70,6 +22,8 @@ PlaylistItem.propTypes = {
     playlistVideos: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
     })).isRequired
-  }).isRequired,
-  onDelete: PropTypes.func
+  }).isRequired,  
+  action: PropTypes.node,
+  onClick: PropTypes.func,
+  selected: PropTypes.bool
 }
