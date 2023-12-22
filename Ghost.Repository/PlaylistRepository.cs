@@ -15,19 +15,21 @@ public class PlaylistRepository : IPlaylistRepository
   public async Task<List<Playlist>> GetPlaylists(int userId)
   {
     return await context.Playlists
+      .Include("User")
+      .Where(p => p.User.Id == userId)
       .ToListAsync();
   }
 
   public async Task<Playlist?> GetPlaylistById(int userId, int id)
   {
     return await context.Playlists
-      .Where(p => p.Id == id)
-      .FirstOrDefaultAsync();
+      .Include("User")
+      .FirstOrDefaultAsync(p => p.Id == id);
   }
 
   public async Task<Playlist> CreatePlaylist(Playlist playlist)
   {
-    await context.Playlists.AddAsync(playlist);
+    context.Playlists.Add(playlist);
     await context.SaveChangesAsync();
     return playlist;
   }

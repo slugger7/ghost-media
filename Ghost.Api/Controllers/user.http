@@ -22,3 +22,7 @@ Content-Type: application/json
     "username": "{{username}}",
     "password": "{{password}}"
 }
+
+### Delete user
+DELETE {{host}}:{{port}}/api/user/8
+Authorization: Bearer {{authToken}}

@@ -7,10 +7,12 @@ namespace Ghost.Services;
 public class PlaylistService : IPlaylistService
 {
   private readonly IPlaylistRepository playlistRepository;
+  private readonly IUserRepository userRepository;
 
-  public PlaylistService(IPlaylistRepository playlistRepository)
+  public PlaylistService(IPlaylistRepository playlistRepository, IUserRepository userRepository)
   {
     this.playlistRepository = playlistRepository;
+    this.userRepository = userRepository;
   }
 
   public async Task<List<PlaylistDto>> GetPlaylists(int userId)
@@ -34,10 +36,17 @@ public class PlaylistService : IPlaylistService
 
   public async Task<PlaylistDto> CreatePlaylist(int userId, CreatePlaylistDto playlistDto)
   {
+    var user = userRepository.FindById(userId);
+
+    if (user == null)
+    {
+      throw new NullReferenceException($"User with id {userId} not found");
+    }
+
     var playlist = new Playlist
     {
       Name = playlistDto.Name,
-      User = new User { Id = userId },
+      User = user,
       CreatedAt = DateTime.UtcNow,
     };
 

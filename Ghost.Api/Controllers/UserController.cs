@@ -83,7 +83,7 @@ public class UserController : Controller
 
       var token = JWTAuthentication.BuildJWTToken(user.Id, user.Username);
 
-      return new TokenDto { Token = token };
+      return new TokenDto { Token = token, UserId = user.Id };
     }
     catch (NullReferenceException)
     {
