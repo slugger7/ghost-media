@@ -21,6 +21,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CompareIcon from '@mui/icons-material/Compare';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { toggleFavourite } from '../services/video.service'
@@ -54,7 +55,8 @@ export const items = {
   convert: 'convert',
   delete: 'delete',
   edit: 'edit',
-  toggleSelected: 'toggleSelected'
+  toggleSelected: 'toggleSelected',
+  addToPlaylist: 'addToPlaylist'
 }
 
 export const VideoMenu = ({
@@ -181,7 +183,7 @@ export const VideoMenu = ({
     handleClose()
     toggleSelected()
   }
-
+  
   return (
     <>
       <Menu
@@ -216,6 +218,17 @@ export const VideoMenu = ({
             <ListItemText>Favourite</ListItemText>
           </MenuItem>
         )}
+        {!hideItems.includes(items.addToPlaylist) && (
+          <MenuItem component={Link} to={`/add-video-to-playlist/${videoId}`} state={{title}}>
+            <ListItemIcon>
+              <PlaylistAddIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Add to playlist</ListItemText>
+          </MenuItem>
+        )}
+
+        <Divider /> 
+
         {progress !== undefined && !hideItems.includes(items.chooseThumbnail) && (
           <MenuItem onClick={handleChooseThumbnail}>
             <ListItemIcon>

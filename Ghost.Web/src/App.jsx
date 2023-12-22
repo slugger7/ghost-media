@@ -22,6 +22,7 @@ import { SelectedVideosProvider } from './context/SelectedVideos.provider.jsx';
 import { AuthenticatedRoute } from './components/AuthenticatedRoute.jsx';
 import { Playlists } from './pages/Playlists.jsx';
 import { CreatePlaylist } from './pages/CreatePlaylist.jsx';
+import { AddVideoToPlaylist } from './pages/AddVideoToPlaylist.jsx';
 
 export const App = ({ baseUrl }) => {
   return (
@@ -43,6 +44,7 @@ export const App = ({ baseUrl }) => {
               <Route path='/convert/:id?' element={<AuthenticatedRoute><ConvertVideo /></AuthenticatedRoute>} />
               <Route path='/playlists' element={<AuthenticatedRoute><Playlists /></AuthenticatedRoute>} />
               <Route path='/new-playlist' element={<AuthenticatedRoute><CreatePlaylist /></AuthenticatedRoute>} />
+              <Route path='/add-video-to-playlist/:videoId' element={<AuthenticatedRoute><AddVideoToPlaylist /></AuthenticatedRoute>} />
               <Route path='/login' element={<Login />} />
             </Routes>
           </Layout>
