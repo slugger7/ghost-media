@@ -223,7 +223,7 @@ export const VideoMenu = ({
             <ListItemIcon>
               <PlaylistAddIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Add to playlist</ListItemText>
+            <ListItemText>Add {selectedVideos?.length ? 'multiple ' : ''} to playlist</ListItemText>
           </MenuItem>
         )}
 
