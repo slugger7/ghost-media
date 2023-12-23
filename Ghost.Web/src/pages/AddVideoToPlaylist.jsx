@@ -1,15 +1,17 @@
 import { Grid, Typography, Button } from '@mui/material';
-import React, {useState} from 'react'
+import React, {useContext, useState} from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import usePromise from '../services/use-promise'
 import { addVideosToPlaylist, fetchPlaylists } from '../services/playlists.service'
 import { PlaylistItem } from '../components/PlaylistItem';
 import { useNavigate } from 'react-router-dom';
+import SelectedVideosContext from '../context/selectedVideos.context';
 
 export const AddVideoToPlaylist = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+  const {selectedVideos, setSelectedVideos} = useContext(SelectedVideosContext)
 
   const [playlists, , playlistsLoading] = usePromise(() => fetchPlaylists(), [])
   const [loading, setLoading] = useState(false)
@@ -18,10 +20,12 @@ export const AddVideoToPlaylist = () => {
   const handleSave = async () => {
     setLoading(true)
     try {
-      const promises = selectedPlaylists.map(p => addVideosToPlaylist(p, [params.videoId]))
+      const promises = selectedPlaylists.map(p => addVideosToPlaylist(p, 
+        selectedVideos?.length ? selectedVideos : [params.videoId]))
 
       await Promise.all(promises);
 
+      setSelectedVideos(null)
       navigate(-1);
     } finally {
       setLoading(false)
