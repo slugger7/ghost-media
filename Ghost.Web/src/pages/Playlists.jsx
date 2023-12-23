@@ -53,14 +53,17 @@ export const Playlists = () => {
       </Grid>
         {!loadingPlaylists && 
           playlists?.map(playlist => <Grid item xs={12} sm={6} md={4} lg={3} key={playlist.id}>
-            <PlaylistItem playlist={playlist} action={<IconButton 
-              id={`playlist-${playlist.id}`}
-              aria-controls={!!anchorEl ? 'playlist-menu' : undefined}
-              aria-haspopup={true}
-              aria-expanded={!!anchorEl}
-              onClick={handleMenuClick(playlist.id)}>
-                <MoreVertIcon />
-              </IconButton>}/>
+            <PlaylistItem playlist={playlist} 
+              component={Link}
+              to={`/playlist/${playlist.id}`}
+              action={<IconButton 
+                id={`playlist-${playlist.id}`}
+                aria-controls={!!anchorEl ? 'playlist-menu' : undefined}
+                aria-haspopup={true}
+                aria-expanded={!!anchorEl}
+                onClick={handleMenuClick(playlist.id)}>
+                  <MoreVertIcon />
+                </IconButton>}/>
           </Grid>)}
     </Grid>
     <Menu

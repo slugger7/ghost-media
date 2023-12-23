@@ -146,7 +146,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
       <WatchState watchState={watchState} setWatchState={(...args) => {
         setWatchState(...args, { page: 1 });
       }} />
-      {!selectedVideos && <RandomVideoButton fetchFn={fetchRandomVideoFn} />}
+      {!selectedVideos && fetchRandomVideoFn && <RandomVideoButton fetchFn={fetchRandomVideoFn} />}
       {selectedVideos && <Button onClick={() => setSelectedVideos(null)}>Clear selected</Button>}
     </Box>
   )
@@ -201,6 +201,6 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
 
 VideoView.propTypes = {
   fetchFn: PropTypes.func.isRequired,
-  fetchRandomVideoFn: PropTypes.func.isRequired,
+  fetchRandomVideoFn: PropTypes.func,
   children: PropTypes.node,
 }

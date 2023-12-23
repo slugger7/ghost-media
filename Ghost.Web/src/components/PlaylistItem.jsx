@@ -2,11 +2,13 @@ import React from "react";
 import PropTypes from 'prop-types'
 import { Card, CardHeader } from "@mui/material";
 
-export const PlaylistItem = ({ playlist, action, onClick, selected }) => {
+export const PlaylistItem = ({ playlist, action, selected, component, to, ...props}) => {
 
   return <>
-    <Card onClick={onClick} raised={selected} sx={{cursor: onClick ? 'pointer': null}}>
+    <Card raised={selected} sx={{cursor: props.onClick ? 'pointer': null}} {...props}>
       <CardHeader 
+        component={component}
+        to={to}
         title={playlist.name} 
         action={action}
       />
@@ -25,5 +27,7 @@ PlaylistItem.propTypes = {
   }).isRequired,  
   action: PropTypes.node,
   onClick: PropTypes.func,
-  selected: PropTypes.bool
+  selected: PropTypes.bool,
+  component: PropTypes.elementType,
+  to: PropTypes.string,
 }
