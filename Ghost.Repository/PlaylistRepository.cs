@@ -1,5 +1,6 @@
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
+using Ghost.Repository.Extensions;
 
 namespace Ghost.Repository;
 
@@ -27,6 +28,41 @@ public class PlaylistRepository : IPlaylistRepository
       .Include("User")
       .Include("PlaylistVideos.Video")
       .FirstOrDefaultAsync(p => p.Id == id);
+  }
+
+  public PageResult<Video> GetVideos(int playlistId, int userId, string watchState, string[]? genres, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
+  {
+    var playlistVideosQueryable = context.PlaylistVideos
+      .Include("Video.VideoImages.Image")
+      .Include("Video.FavouritedBy.User")
+      .Include("Video.VideoActors.Actor")
+      .Include("Video.VideoActors.Actor.FavouritedBy.User")
+      .Include("Video.WatchedBy.User");
+
+    if (genres != null)
+    {
+      playlistVideosQueryable = playlistVideosQueryable.Include("Video.VideoGenres.Genre");
+    }
+
+    var playlistVideos = playlistVideosQueryable
+      .Where(pv => pv.Playlist.User.Id == userId
+      && pv.Playlist.Id == playlistId);
+
+    var videos = playlistVideos
+      .Select(pv => pv.Video)
+      .TitleSearch(search)
+      .FilterWatchedState(watchState, userId)
+      .FilterGenres(genres)
+      .SortAndOrderVideos(sortBy, ascending);
+
+    return new PageResult<Video>
+    {
+      Total = videos.Count(),
+      Page = page,
+      Content = videos
+        .Skip(page * limit)
+        .Take(limit)
+    };
   }
 
   public async Task<Playlist> CreatePlaylist(Playlist playlist)

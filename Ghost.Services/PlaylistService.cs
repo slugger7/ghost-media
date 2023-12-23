@@ -122,4 +122,25 @@ public class PlaylistService : IPlaylistService
 
     return new PlaylistDto(playlist);
   }
+
+  public PageResultDto<VideoDto> GetVideos(int playlistId, int userId, PageRequestDto pageRequest, FilterQueryDto filters)
+  {
+    var videosPage = playlistRepository.GetVideos(
+      playlistId,
+      userId,
+      filters.WatchState,
+      filters.Genres,
+      pageRequest.Page,
+      pageRequest.Limit,
+      pageRequest.Search,
+      pageRequest.SortBy,
+      pageRequest.Ascending);
+
+    return new PageResultDto<VideoDto>
+    {
+      Total = videosPage.Total,
+      Page = videosPage.Page,
+      Content = videosPage.Content.Select(v => new VideoDto(v)).ToList(),
+    };
+  }
 }

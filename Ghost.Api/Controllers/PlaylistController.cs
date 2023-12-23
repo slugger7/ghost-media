@@ -39,6 +39,19 @@ public class PlaylistController : Controller
     return playlist;
   }
 
+  [HttpGet("{id}/videos")]
+  [Authorize]
+  public ActionResult<PageResultDto<VideoDto>> GetVideos(
+    [FromHeader(Name = "User-Id")] int userId,
+    int id,
+    [FromQuery] PageRequestDto pageRequest,
+    [FromQuery] FilterQueryDto filters)
+  {
+    var videos = playlistService.GetVideos(id, userId, pageRequest, filters);
+
+    return videos;
+  }
+
   [HttpPost]
   [Authorize]
   public async Task<ActionResult<PlaylistDto>> CreatePlaylist(

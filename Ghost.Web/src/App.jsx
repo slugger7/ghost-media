@@ -23,6 +23,7 @@ import { AuthenticatedRoute } from './components/AuthenticatedRoute.jsx';
 import { Playlists } from './pages/Playlists.jsx';
 import { CreatePlaylist } from './pages/CreatePlaylist.jsx';
 import { AddVideoToPlaylist } from './pages/AddVideoToPlaylist.jsx';
+import { Playlist } from './pages/Playlist.jsx';
 
 export const App = ({ baseUrl }) => {
   return (
@@ -45,6 +46,7 @@ export const App = ({ baseUrl }) => {
               <Route path='/playlists' element={<AuthenticatedRoute><Playlists /></AuthenticatedRoute>} />
               <Route path='/new-playlist' element={<AuthenticatedRoute><CreatePlaylist /></AuthenticatedRoute>} />
               <Route path='/add-video-to-playlist/:videoId' element={<AuthenticatedRoute><AddVideoToPlaylist /></AuthenticatedRoute>} />
+              <Route path='playlist/:playlistId' element={<AuthenticatedRoute><Playlist /></AuthenticatedRoute>} />
               <Route path='/login' element={<Login />} />
             </Routes>
           </Layout>
