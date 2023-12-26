@@ -17,10 +17,6 @@ export const Playlists = () => {
 
   const [playlists, , loadingPlaylists, setPlaylist] = usePromise(fetchPlaylists, []);
 
-  const handleDeleteVideo = (id) => {
-    
-  }
-
   const handleMenuClick = (id) => (event) => {
     setMenuPlaylistId(id)
     setAnchorEl(event.currentTarget)
