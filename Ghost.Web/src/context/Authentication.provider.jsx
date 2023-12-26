@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { AuthenticationContext } from './authentication.context'
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthenticationProvider = ({ children }) => {

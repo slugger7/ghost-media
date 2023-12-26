@@ -59,3 +59,5 @@ export const App = ({ baseUrl }) => {
 App.propTypes = {
   baseUrl: PropTypes.string.isRequired
 }
+
+export default App;

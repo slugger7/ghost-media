@@ -5,7 +5,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_SERVER_URL=http://<ip-address>:5120
+      - VITE_APP_SERVER_URL=http://<ip-address>:5120
   api:
     build: .
     container_name: ghost-media-api

@@ -3,7 +3,7 @@ import { head } from 'ramda'
 
 export const setupAxios = () => {
   const serverUrl = [
-    process.env.REACT_APP_SERVER_URL ||
+    import.meta.env.VITE_APP_SERVER_URL ||
     [
       window.location.protocol,
       '//',
