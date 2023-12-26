@@ -35,7 +35,7 @@ docker run -d \
 
 ### Web in docker container
 
-1. `cd Ghost.Web.React
+1. `cd Ghost.Web
 1. `docker build -t ghost-media-react -f Dockerfile .` same as production build
 1. `npm i`
 1.
@@ -44,7 +44,7 @@ docker run -d \
 docker run -d \
   -p 3000:3000 \
   -v $(pwd):/app
-  -e REACT_APP_SERVER_URL=http://192.168.178.27:5120 \
+  -e VITE_APP_SERVER_URL=http://192.168.178.27:5120 \
   --name ghost-media-react-dev ghost-media-react
 ```
 
@@ -89,14 +89,14 @@ docker run -d \
 
 This container is the frontend container that connects to the API
 
-1. `docker build -t ghost-media-react -f Ghost.Web.React/Dockerfile Ghost.Web.React`
+1. `docker build -t ghost-media-react -f Ghost.Web/Dockerfile Ghost.Web`
 
-1. You can replace the `REACT_APP_SERVER_URL` with the the IP address of the running server
+1. You can replace the `VITE_APP_SERVER_URL` with the the IP address of the running server
 
 ```bash
 docker run -d \
   -p 3001:3000 \
-  -e REACT_APP_SERVER_URL=http://localhost:8080 \
+  -e VITE_APP_SERVER_URL=http://localhost:8080 \
   --name ghost-media-react ghost-media-react
 ```
 
