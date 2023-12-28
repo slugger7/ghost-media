@@ -26,6 +26,8 @@ public class Video
     sortBy.ToLower().Equals("title") ? video.Title
       : sortBy.ToLower().Equals("date-added") ? video.DateAdded.Ticks.ToString()
       : sortBy.ToLower().Equals("date-created") ? video.Created.Ticks.ToString()
-      : sortBy.ToLower().Equals("size") ? video.Size.ToString()
-      : sortBy.ToLower().Equals("runtime") ? video.Runtime.ToString() : video.Title;
+      : sortBy.ToLower().Equals("size") ? video.Size.ToString($"D{long.MaxValue.ToString().Length}")
+      : sortBy.ToLower().Equals("runtime") ? ((int)video.Runtime).ToString($"D{long.MaxValue.ToString().Length}") : video.Title;
 }
+
+//
