@@ -10,7 +10,7 @@ public static class AddIncludesExtension
 
     foreach (var include in includes)
     {
-      query.Include(include);
+      query = query.Include(include);
     }
 
     return query;
