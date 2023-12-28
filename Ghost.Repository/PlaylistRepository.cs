@@ -32,17 +32,21 @@ public class PlaylistRepository : IPlaylistRepository
 
   public PageResult<Video> GetVideos(int playlistId, int userId, string watchState, string[]? genres, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
   {
-    var playlistVideosQueryable = context.PlaylistVideos
-      .Include("Video.VideoImages.Image")
-      .Include("Video.FavouritedBy.User")
-      .Include("Video.VideoActors.Actor")
-      .Include("Video.VideoActors.Actor.FavouritedBy.User")
-      .Include("Video.WatchedBy.User");
+    var includes = new List<string> {
+      "Video.VideoImages.Image",
+      "Video.FavouritedBy.User",
+      "Video.VideoActors.Actor",
+      "Video.VideoActors.Actor.FavouritedBy.User",
+      "Video.WatchedBy.User"
+    };
 
     if (genres != null)
     {
-      playlistVideosQueryable = playlistVideosQueryable.Include("Video.VideoGenres.Genre");
+      includes.Add("Video.VideoGenres.Genre");
     }
+
+    var playlistVideosQueryable = context.PlaylistVideos
+      .AddIncludes(includes);
 
     var playlistVideos = playlistVideosQueryable
       .Where(pv => pv.Playlist.User.Id == userId
