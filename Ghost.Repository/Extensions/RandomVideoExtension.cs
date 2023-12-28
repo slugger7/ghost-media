@@ -14,7 +14,7 @@ public static class RandomVideoExtension
 
     var result = videos
         .FilterWatchedState(randomVideoRequest.WatchState, userId)
-        .TitleSearch(randomVideoRequest.Search)
+        .Search(randomVideoRequest.Search)
         .FilterGenres(randomVideoRequest.Genres);
 
     var count = result.Count();
