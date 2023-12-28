@@ -1,5 +1,6 @@
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
+using Ghost.Repository.Extensions;
 
 namespace Ghost.Repository;
 public class GenreRepository : IGenreRepository
@@ -29,19 +30,9 @@ public class GenreRepository : IGenreRepository
 
   public Genre? GetByName(string name, List<string>? includes)
   {
-    var genres = context.Genres;
-    if (includes != null && includes.Count() > 0)
-    {
-      var genresQueryable = genres.Include(includes.ElementAt(0));
-      for (int i = 1; i < includes.Count(); i++)
-      {
-        genresQueryable = genresQueryable.Include(includes.ElementAt(i));
-      }
-      return genresQueryable
-        .FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
-    }
-
-    return genres.FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
+    return context.Genres
+    .AddIncludes(includes)
+      .FirstOrDefault(g => g.Name.ToUpper().Equals(name.ToUpper()));
   }
 
   public IEnumerable<Genre> GetGenres()
