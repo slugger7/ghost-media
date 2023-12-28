@@ -165,7 +165,7 @@ public class UserRepository : IUserRepository
     if (user == null) throw new NullReferenceException("User not found");
     var videos = user.FavouriteVideos
         .Select(fv => fv.Video)
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genresFilter)
         .SortAndOrderVideos(sortBy, ascending);

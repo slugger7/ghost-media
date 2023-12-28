@@ -54,7 +54,7 @@ public class PlaylistRepository : IPlaylistRepository
 
     var videos = playlistVideos
       .Select(pv => pv.Video)
-      .TitleSearch(search)
+      .Search(search)
       .FilterWatchedState(watchState, userId)
       .FilterGenres(genres)
       .SortAndOrderVideos(sortBy, ascending);

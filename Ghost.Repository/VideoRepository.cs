@@ -118,7 +118,7 @@ public class VideoRepository : IVideoRepository
     if (genre == null) throw new NullReferenceException("Genre not found");
     var videos = genre.VideoGenres
         .Select(vg => vg.Video)
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genresFilter)
         .SortAndOrderVideos(sortBy, ascending);
@@ -155,7 +155,7 @@ public class VideoRepository : IVideoRepository
     if (actor == null) throw new NullReferenceException("Actor not found");
     var videos = actor.VideoActors
         .Select(va => va.Video)
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genresFilter)
         .SortAndOrderVideos(sortBy, ascending);
@@ -207,7 +207,7 @@ public class VideoRepository : IVideoRepository
     }
 
     var videos = videosQueryable
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genres)
         .SortAndOrderVideos(sortBy, ascending);
