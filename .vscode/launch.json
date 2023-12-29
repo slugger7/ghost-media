@@ -9,7 +9,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/Ghost.Api/bin/Debug/net7.0/Ghost.Api.dll",
+      "program": "${workspaceFolder}/Ghost.Api/bin/Debug/net8.0/Ghost.Api.dll",
       "args": [
         "--urls=http://0.0.0.0:5120"
       ],

@@ -16,7 +16,7 @@
   "rest-client.environmentVariables": {
     "local": {
       "host": "http://localhost",
-      "port": 5120,
+      "port": "5120",
       "username": "slugger",
       "password": "password1234"
     },
