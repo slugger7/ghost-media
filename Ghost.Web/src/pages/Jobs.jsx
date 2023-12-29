@@ -13,7 +13,7 @@ export const Jobs = () => {
         await axios.delete('job/status/completed')
         const jobs = await getJobs();
         setJobs(jobs);
-    });
+    }, [setJobs]);
 
     return <Box>
         <Box

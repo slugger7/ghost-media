@@ -14,7 +14,8 @@ import { VideoGenres } from '../components/VideoGenres.jsx'
 import { VideoActors } from '../components/VideoActors.jsx'
 import { TextEdit } from '../components/TextEdit.jsx'
 import { VideoMetaData } from '../components/VideoMetaData.jsx'
-import { items, VideoMenu } from '../components/VideoMenu.jsx'
+import { VideoMenu } from '../components/VideoMenu.jsx'
+import { videoMenuItems } from '../constants/video-menu-items'
 import { ChipSkeleton } from '../components/ChipSkeleton.jsx'
 import { Chapters } from '../components/Chapters.jsx'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service.js'
@@ -90,49 +91,50 @@ export const Media = () => {
     }
   }, [editMode])
 
-  const handleMenuClick = useCallback((event) => setMenuAnchorEl(event.target))
-  const handleMenuClose = useCallback(() => setMenuAnchorEl(null))
+  const handleMenuClick = useCallback((event) => setMenuAnchorEl(event.target), [])
+  const handleMenuClose = useCallback(() => setMenuAnchorEl(null), [])
   const handleProgressUpdate = useCallback(async (progress) => {
     setProgress(progress)
     await updateProgress(params.id, progress)
-  })
+  }, [params.id])
 
   const handleProgressStatusUpdate = useCallback(async (progress) => {
     setProgress(progress)
     await updateProgress(params.id, progress, true)
-  })
+  }, [params.id])
 
   const updateMedia = useCallback((val) => {
     setMedia(mergeDeepLeft(val))
-  })
+  }, [setMedia])
 
   const focusVideo = useCallback((fn) => {
     videoRef?.current?.focus()
     setRefocusFn(() => fn)
-  })
+  }, [videoRef])
 
   const handleRelationRemoval = useCallback((id, relatedTo) => async () => {
     const relatedVideos = await removeRelation(id, relatedTo)
 
     updateMedia({ relatedVideos })
-  })
+  }, [updateMedia])
 
   const handleStartMarkerClick = useCallback(() => {
     if (editMode) {
       setStartMarker(progress);
     }
-  })
+  }, [editMode, progress])
+
   const handleEndMarkerClick = useCallback(() => {
     if (editMode) {
       setEndMarker(progress);
     }
-  })
+  }, [editMode, progress])
 
   const handleSubVideoClick = useCallback(() => {
     if (editMode) {
       setSubVideoNameModalOpen(true);
     }
-  })
+  }, [editMode])
 
   const handleSubVideoSubmit = useCallback(async (newVideoName) => {
     await createSubVideo(media.id, newVideoName, startMarker, endMarker);
@@ -140,7 +142,7 @@ export const Media = () => {
     const updatedVideo = await fetchMedia(media.id);
     updateMedia({ relatedVideos: updatedVideo.relatedVideos })
     setSubVideoNameModalOpen(false)
-  })
+  }, [media?.id, startMarker, endMarker, updateMedia])
 
   return (
     <Box>
@@ -202,7 +204,7 @@ export const Media = () => {
                 sx={{ marginLeft: 'auto' }}
                 onClick={handleMenuClick}
                 id={`${params.id}-video-card-menu-button`}
-                aria-controls={!!menuAnchorEl ? 'video-card-menu' : undefined}
+                aria-controls={menuAnchorEl ? 'video-card-menu' : undefined}
                 aria-haspopup={true}
                 aria-expanded={!!menuAnchorEl}
               >
@@ -318,7 +320,11 @@ export const Media = () => {
           setVideo={updateMedia}
           favourite={!!media.favourite}
           progress={progress}
-          hideItems={[items.favourite, items.resetProgress]}
+          hideItems={[
+            videoMenuItems.favourite, 
+            videoMenuItems.resetProgress, 
+            videoMenuItems.toggleSelected, 
+            videoMenuItems.removeFromPlaylist]}
           editing={editMode}
           setEditing={setEditMode}
         />

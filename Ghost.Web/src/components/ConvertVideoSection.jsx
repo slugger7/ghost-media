@@ -25,14 +25,12 @@ export const ConvertVideoSection = ({ videoId }) => {
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
   const [originalAspectRatio, setOriginalAspectRatio] = useState(true);
-  const [aspectRatio, setAspectRatio] = useState(0)
 
   useEffect(() => {
     if (video) {
       setTitle(video.title);
       setHeight(video.height);
       setWidth(video.width);
-      setAspectRatio(height / width)
     }
   }, [video])
 
@@ -103,7 +101,7 @@ export const ConvertVideoSection = ({ videoId }) => {
         setSelectedVideos(remainingVideos)
       }
     } else { navigate(-1) }
-  })
+  }, [selectedVideos, navigate, videoId, setSelectedVideos])
 
   return <>
     {/*create skeleton while loading */}

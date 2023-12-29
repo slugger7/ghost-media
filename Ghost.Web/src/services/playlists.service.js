@@ -10,3 +10,5 @@ export const deletePlaylist = async (id) => (await axios.delete(`/playlist/${id}
 export const addVideosToPlaylist = async (playlistId, videoIds) => (await axios.post(`/playlist/${playlistId}/videos`, {videoIds})).data;
 
 export const fetchVideosFromPlaylist = async (playlistId, params) => (await axios.get(`/playlist/${playlistId}/videos?${constructVideoParams(params)}`)).data;
+
+export const removeFromPlaylist = async (playlistId, videoId) => (await axios.delete(`/playlist/${playlistId}/videos/${videoId}`)).data;

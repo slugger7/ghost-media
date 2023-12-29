@@ -25,7 +25,7 @@ export default function useQueryState(key, initialState) {
     if (value && parsedParam !== value) {
       setValue(parsedParam)
     }
-  }, [searchParam])
+  }, [searchParam, initialState, value])
 
   const modifiedSet = (newValue, otherSearchParams) => {
     setValue(newValue);

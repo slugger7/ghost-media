@@ -28,7 +28,6 @@ export const AddLibrary = () => {
   const [libraryName, setLibraryName] = useState();
   const [chosenPaths, setChosenPaths] = useState([]);
   const [addingPath, setAddingPath] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   const addPath = (path) => {
     setChosenPaths(append(path))
@@ -39,14 +38,9 @@ export const AddLibrary = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true)
-    try {
-      const newLibrary = await createLibrary(libraryName)
-      await createPaths({ id: newLibrary.id, paths: chosenPaths })
-      navigate('/libraries')
-    } finally {
-      setSubmitting(false)
-    }
+    const newLibrary = await createLibrary(libraryName)
+    await createPaths({ id: newLibrary.id, paths: chosenPaths })
+    navigate('/libraries')
   }
 
   const handleCancel = () => {

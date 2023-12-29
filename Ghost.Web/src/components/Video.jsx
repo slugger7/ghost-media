@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 import axios from 'axios'
@@ -40,25 +40,25 @@ export const Video = ({
         setCurrentTime(videoRef?.current?.currentTime) // <-- this was the problem not any of the others (that I know of)
       }
     }
-  }, [source])
+  }, [source, videoRef])
 
   useEffect(() => {
     if (videoRef && videoRef.current && currentProgress !== undefined) {
       videoRef.current.currentTime = currentProgress
       setCurrentTime(currentProgress)
     }
-  }, [currentProgress])
+  }, [currentProgress, videoRef])
 
   useEffect(() => {
     if (chapter && videoRef && videoRef.current) {
       videoRef.current.currentTime = chapter.timestamp / 1000
       videoRef?.current.play()
     }
-  }, [chapter])
+  }, [chapter, videoRef])
 
   useEffect(() => {
     progressUpdate(currentTime)
-  }, [currentTime])
+  }, [currentTime, progressUpdate])
 
   const handleKeyUp = (event) => {
     if ((keysDown.ControlLeft || keysDown.ControlRight) && event.code === "Enter") {

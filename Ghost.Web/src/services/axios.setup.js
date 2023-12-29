@@ -35,7 +35,7 @@ export const setupAxios = () => {
       localStorage.clear();
     }
     return res;
-  }, (error, ...args) => {
+  }, (error) => {
     return Promise.reject(error)
   })
 }

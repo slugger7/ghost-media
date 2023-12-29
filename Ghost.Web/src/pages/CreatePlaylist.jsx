@@ -9,7 +9,7 @@ export const CreatePlaylist = () => {
 
   const navigate = useNavigate()
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     setLoading(true)
 
     try {

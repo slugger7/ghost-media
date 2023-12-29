@@ -48,9 +48,9 @@ docker run -d \
   --name ghost-media-react-dev ghost-media-react
 ```
 
-# Building
+## Building
 
-## Ghost Data
+### Ghost Data
 
 This container is used to update the database if there are any migrations that need to be run on the data
 
@@ -67,7 +67,7 @@ docker run --rm \
   ghost-updater
 ```
 
-## Ghost API
+### Ghost API
 
 This container uses the database that we created or updated with the Ghost Data container to run the API
 
@@ -85,7 +85,7 @@ docker run -d \
   --name ghost-media ghost-media
 ```
 
-## Ghost Web React
+### Ghost Web React
 
 This container is the frontend container that connects to the API
 
@@ -100,7 +100,7 @@ docker run -d \
   --name ghost-media-react ghost-media-react
 ```
 
-# Adding a library
+## Adding a library
 
 Currently this project is in MVP state so there is no fancy library path picker.
 To add a library to your application
@@ -113,11 +113,11 @@ To add a library to your application
 1. Click the options on the library and select `Sync` to search for any media within the library folders. (this may take a while depending on the size of your library)
 1. Navigate to home and you should see your media and images start to load and be generated.
 
-# Adding a user
+## Adding a user
 
 There is no functionality yet to add a user from the frontend yet soo you will have to post to an endpoint of the API in order to create a user for the time being.
 
-```
+```rest
 POST http://localhost:5120/api/user
 Content-Type: application/json
 

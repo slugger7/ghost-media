@@ -24,7 +24,7 @@ export const UserCard = ({ user, updateUser }) => {
     if (+userId === user.id) {
       setIsSelected(true)
     }
-  }, [localStorage])
+  }, [user.id])
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -55,7 +55,7 @@ export const UserCard = ({ user, updateUser }) => {
             <IconButton
               id={`${user.id}-user-menu-button`}
               onClick={handleMenuClick}
-              aria-controls={!!anchorEl ? 'user-menu' : undefined}
+              aria-controls={anchorEl ? 'user-menu' : undefined}
               aria-haspopup={true}
               aria-expanded={!!anchorEl}
             >
