@@ -61,18 +61,9 @@ public class UserRepository : IUserRepository
 
   public User? FindById(int id, List<string>? includes)
   {
-    var users = context.Users;
-    if (includes != null && includes.Count() > 0)
-    {
-      var userQueryable = users.Include(includes.ElementAt(0));
-      for (int i = 1; i < includes.Count(); i++)
-      {
-        userQueryable = userQueryable.Include(includes.ElementAt(i));
-      }
-      return userQueryable.FirstOrDefault(v => v.Id == id);
-    }
-
-    return users.FirstOrDefault(v => v.Id == id);
+    return context.Users
+      .AddIncludes(includes)
+      .FirstOrDefault(v => v.Id == id);
   }
 
   public IEnumerable<User> GetUsers()
@@ -158,11 +149,11 @@ public class UserRepository : IUserRepository
   public PageResult<Video> Favourites(int userId, string watchState, string[]? genresFilter, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
   {
     var userIncludes = new List<string>
-            {
-                "FavouriteVideos.Video.VideoImages.Image",
-                "FavouriteVideos.Video.VideoActors.Actor.FavouritedBy.User",
-                "FavouriteVideos.Video.WatchedBy.User"
-            };
+      {
+          "FavouriteVideos.Video.VideoImages.Image",
+          "FavouriteVideos.Video.VideoActors.Actor.FavouritedBy.User",
+          "FavouriteVideos.Video.WatchedBy.User"
+      };
 
     if (genresFilter != null)
     {
@@ -174,7 +165,7 @@ public class UserRepository : IUserRepository
     if (user == null) throw new NullReferenceException("User not found");
     var videos = user.FavouriteVideos
         .Select(fv => fv.Video)
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genresFilter)
         .SortAndOrderVideos(sortBy, ascending);
@@ -226,10 +217,10 @@ public class UserRepository : IUserRepository
   public Video GetRandomVideoFromFavourites(int userId, RandomVideoRequestDto randomVideoRequest)
   {
     var userIncludes = new List<string> {
-                "FavouriteVideos.Video",
-                "FavouriteVideos.Video.WatchedBy.User",
-                "FavouriteVideos.Video.VideoGenres.Genre"
-            };
+      "FavouriteVideos.Video",
+      "FavouriteVideos.Video.WatchedBy.User",
+      "FavouriteVideos.Video.VideoGenres.Genre"
+    };
 
     var user = this.FindById(userId, userIncludes);
 

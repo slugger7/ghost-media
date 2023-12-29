@@ -1,5 +1,6 @@
 using Ghost.Data;
 using Microsoft.EntityFrameworkCore;
+using Ghost.Repository.Extensions;
 
 namespace Ghost.Repository;
 public class ActorRepository : IActorRepository
@@ -14,38 +15,31 @@ public class ActorRepository : IActorRepository
   public Actor? FindById(int id)
   {
     return this.FindById(id, new List<string>
-            {
-                "VideoActors.Video",
-                "VideoActors.Video.VideoImages.Image",
-                "VideoActors.Video.FavouritedBy.User",
-                "VideoActors.Video.VideoActors.Actor.FavouritedBy.User",
-                "VideoActors.Video.WatchedBy.User",
-                "FavouritedBy.User"
-            });
+    {
+      "VideoActors.Video",
+      "VideoActors.Video.VideoImages.Image",
+      "VideoActors.Video.FavouritedBy.User",
+      "VideoActors.Video.VideoActors.Actor.FavouritedBy.User",
+      "VideoActors.Video.WatchedBy.User",
+      "FavouritedBy.User"
+    });
   }
 
   public Actor? FindById(int id, List<string>? includes)
   {
-    var actors = context.Actors;
-    if (includes != null && includes.Count() > 0)
-    {
-      var actorQueryable = actors.Include(includes.ElementAt(0));
-      for (int i = 1; i < includes.Count(); i++)
-      {
-        actorQueryable = actorQueryable.Include(includes.ElementAt(i));
-      }
-      return actorQueryable.FirstOrDefault(v => v.Id == id);
-    }
-
-    return actors.FirstOrDefault(v => v.Id == id);
+    return context.Actors
+      .AddIncludes(includes)
+      .FirstOrDefault(v => v.Id == id);
   }
 
   public Actor? GetActorByName(string name)
   {
     return context.Actors
-      .Include("VideoActors.Video")
-      .Include("VideoActors.Video.VideoImages.Image")
-      .Include("FavouritedBy.User")
+      .AddIncludes(new List<string> {
+        "VideoActors.Video",
+        "VideoActors.Video.VideoImages.Image",
+        "FavouritedBy.User"
+      })
       .FirstOrDefault(a => a.Name.ToUpper().Equals(name.Trim().ToUpper()));
   }
 

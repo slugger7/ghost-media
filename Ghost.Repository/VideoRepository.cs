@@ -100,23 +100,25 @@ public class VideoRepository : IVideoRepository
   public PageResult<Video> GetForGenre(int userId, string watchState, string[]? genresFilter, string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
   {
     var genreIncludes = new List<string> {
-              "VideoGenres.Video",
-              "VideoGenres.Video.VideoImages.Image",
-              "VideoGenres.Video.FavouritedBy.User",
-              "VideoGenres.Video.VideoActors.Actor",
-              "VideoGenres.Video.WatchedBy.User",
-              "VideoGenres.Video.VideoActors.Actor.FavouritedBy.User"
-            };
+      "VideoGenres.Video",
+      "VideoGenres.Video.VideoImages.Image",
+      "VideoGenres.Video.FavouritedBy.User",
+      "VideoGenres.Video.VideoActors.Actor",
+      "VideoGenres.Video.WatchedBy.User",
+      "VideoGenres.Video.VideoActors.Actor.FavouritedBy.User"
+    };
+
     if (genresFilter != null)
     {
       genreIncludes.Add("VideoGenres.Video.VideoGenres.Genre");
     }
+
     var genre = genreRepository.GetByName(name, genreIncludes);
 
     if (genre == null) throw new NullReferenceException("Genre not found");
     var videos = genre.VideoGenres
         .Select(vg => vg.Video)
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genresFilter)
         .SortAndOrderVideos(sortBy, ascending);
@@ -134,14 +136,14 @@ public class VideoRepository : IVideoRepository
   public PageResult<Video> GetForActor(int userId, string watchState, string[]? genresFilter, int actorId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
   {
     var actorIncludes = new List<string>
-            {
-                "VideoActors.Video",
-                "VideoActors.Video.VideoImages.Image",
-                "VideoActors.Video.FavouritedBy.User",
-                "VideoActors.Video.VideoActors.Actor.FavouritedBy.User",
-                "VideoActors.Video.WatchedBy.User",
-                "FavouritedBy.User"
-            };
+    {
+      "VideoActors.Video",
+      "VideoActors.Video.VideoImages.Image",
+      "VideoActors.Video.FavouritedBy.User",
+      "VideoActors.Video.VideoActors.Actor.FavouritedBy.User",
+      "VideoActors.Video.WatchedBy.User",
+      "FavouritedBy.User"
+  };
 
     if (genresFilter != null)
     {
@@ -153,7 +155,7 @@ public class VideoRepository : IVideoRepository
     if (actor == null) throw new NullReferenceException("Actor not found");
     var videos = actor.VideoActors
         .Select(va => va.Video)
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genresFilter)
         .SortAndOrderVideos(sortBy, ascending);
@@ -191,11 +193,13 @@ public class VideoRepository : IVideoRepository
   public PageResult<Video> SearchVideos(int userId, string watchState, string[]? genres, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true)
   {
     var videosQueryable = context.Videos
-      .Include("VideoImages.Image")
-      .Include("FavouritedBy.User")
-      .Include("VideoActors.Actor")
-      .Include("VideoActors.Actor.FavouritedBy.User")
-      .Include("WatchedBy.User");
+      .AddIncludes(new List<string> {
+        "VideoImages.Image",
+        "FavouritedBy.User",
+        "VideoActors.Actor",
+        "VideoActors.Actor.FavouritedBy.User",
+        "WatchedBy.User"
+      });
 
     if (genres != null)
     {
@@ -203,7 +207,7 @@ public class VideoRepository : IVideoRepository
     }
 
     var videos = videosQueryable
-        .TitleSearch(search)
+        .Search(search)
         .FilterWatchedState(watchState, userId)
         .FilterGenres(genres)
         .SortAndOrderVideos(sortBy, ascending);
