@@ -30,6 +30,7 @@ import { toggleFavourite } from '../services/video.service'
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
 import SelectedVideoContext from '../context/selectedVideos.context.js'
 import { videoMenuItems } from '../constants/video-menu-items'
+import { removeFromPlaylist } from '../services/playlists.service.js'
 
 const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) =>
@@ -174,8 +175,15 @@ export const VideoMenu = ({
     toggleSelected()
   }
 
-  const handleRemoveFromPlaylist = () => {
-    handleClose()
+  const handleRemoveFromPlaylist = async () => {
+    try {
+      await removeFromPlaylist(params.playlistId, videoId);
+      if (removeVideo) {
+        removeVideo()
+      }
+    } finally {
+      handleClose()
+    }
   }
   
   return (
