@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { Card, CardActionArea, CardHeader, CardMedia, Stack, Typography, IconButton, Tooltip, Skeleton, CardActions, Chip } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { items, VideoMenu } from './VideoMenu.jsx'
+import { VideoMenu } from './VideoMenu.jsx'
+import { videoMenuItems } from '../constants/video-menu-items'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service.js'
 import { mergeDeepLeft } from 'ramda'
 import { VideoProgress } from './VideoProgress.jsx'
@@ -132,7 +133,7 @@ export const VideoCard = ({
       title={localVideo.title}
       favourite={!!localVideo.favourite}
       progress={localVideo.progress}
-      hideItems={[items.favourite, items.chooseThumbnail, items.edit]}
+      hideItems={[videoMenuItems.favourite, videoMenuItems.chooseThumbnail, videoMenuItems.edit]}
       toggleSelected={toggleSelected}
       selected={selected}
     />

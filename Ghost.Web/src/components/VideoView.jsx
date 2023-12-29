@@ -90,7 +90,7 @@ export const VideoView = ({ fetchFn, fetchRandomVideoFn, children }) => {
     } else {
       setSelectedVideos([...selectedVideos, id])
     }
-  });
+  }, [selectedVideos, setSelectedVideos]);
 
   const paginationComponent = (
     <>

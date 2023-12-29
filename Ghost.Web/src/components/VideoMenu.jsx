@@ -8,7 +8,7 @@ import {
   ListItemText,
   Divider,
 } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import SyncIcon from '@mui/icons-material/Sync'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -29,6 +29,7 @@ import { toggleFavourite } from '../services/video.service'
 
 import { DeleteConfirmationModal } from './DeleteConfirmationModal.jsx'
 import SelectedVideoContext from '../context/selectedVideos.context.js'
+import { videoMenuItems } from '../constants/video-menu-items'
 
 const syncFromNfo = async (id) => (await axios.put(`/media/${id}/nfo`)).data
 const updateVideoMetaData = async (id) =>
@@ -44,21 +45,6 @@ const chooseThumbnail = async (videoId, progress) => {
       )}&overwrite=true`,
     )
   }
-}
-
-export const items = {
-  favourite: 'favourite',
-  chooseThumbnail: 'chooseThumbnail',
-  generateChapters: 'generateChapters',
-  copyStreamUrl: 'copyStreamUrl',
-  sync: 'sync',
-  syncNfo: 'syncNfo',
-  convert: 'convert',
-  delete: 'delete',
-  edit: 'edit',
-  toggleSelected: 'toggleSelected',
-  addToPlaylist: 'addToPlaylist',
-  removeFromPlaylist: 'removeFromPlaylist'
 }
 
 export const VideoMenu = ({
@@ -78,6 +64,8 @@ export const VideoMenu = ({
   setEditing = () => { }
 }) => {
   const { selectedVideos } = useContext(SelectedVideoContext)
+
+  const params = useParams()
 
   const [loadingSync, setLoadingSync] = useState(false)
   const [loadingSyncNfo, setLoadingSyncNfo] = useState(false)
@@ -201,7 +189,7 @@ export const VideoMenu = ({
           'aria-labelledby': `${videoId}-video-card-menu-button`,
         }}
       >
-        {!hideItems.includes(items.toggleSelected) &&
+        {!hideItems.includes(videoMenuItems.toggleSelected) &&
           <MenuItem onClick={handleSelectedClick}>
             <ListItemIcon>
               {selected && <CheckBoxIcon fontSize='small' />}
@@ -210,7 +198,7 @@ export const VideoMenu = ({
             <ListItemText>Select</ListItemText>
           </MenuItem>
         }
-        {!hideItems.includes(items.favourite) && (
+        {!hideItems.includes(videoMenuItems.favourite) && (
           <MenuItem onClick={handleFavourite}>
             <ListItemIcon>
               {!loadingFavourite &&
@@ -224,7 +212,7 @@ export const VideoMenu = ({
             <ListItemText>Favourite</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.addToPlaylist) && (
+        {!hideItems.includes(videoMenuItems.addToPlaylist) && (
           <MenuItem component={Link} to={`/add-video-to-playlist/${videoId}`} state={{title}}>
             <ListItemIcon>
               <PlaylistAddIcon fontSize="small" />
@@ -232,7 +220,7 @@ export const VideoMenu = ({
             <ListItemText>Add {selectedVideos?.length ? 'multiple ' : ''} to playlist</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.removeFromPlaylist) && (
+        {!hideItems.includes(videoMenuItems.removeFromPlaylist) && params.playlistId && (
           <MenuItem onClick={handleRemoveFromPlaylist}>
             <ListItemIcon>
               <PlaylistRemoveIcon fontSize="small" />
@@ -243,7 +231,7 @@ export const VideoMenu = ({
 
         <Divider /> 
 
-        {progress !== undefined && !hideItems.includes(items.chooseThumbnail) && (
+        {progress !== undefined && !hideItems.includes(videoMenuItems.chooseThumbnail) && (
           <MenuItem onClick={handleChooseThumbnail}>
             <ListItemIcon>
               {!loadingChooseThumbnail && <ImageIcon fontSize="small" />}
@@ -252,7 +240,7 @@ export const VideoMenu = ({
             <ListItemText>Set thumbnail</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.generateChapters) && (
+        {!hideItems.includes(videoMenuItems.generateChapters) && (
           <MenuItem onClick={handleGenerateChapters}>
             <ListItemIcon>
               {!loadingGenerateChapter && <BurstModeIcon fontSize="small" />}
@@ -261,7 +249,7 @@ export const VideoMenu = ({
             <ListItemText>Generate Chapters</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.copyStreamUrl) && (
+        {!hideItems.includes(videoMenuItems.copyStreamUrl) && (
           <MenuItem onClick={handleCopyStreamUrl}>
             <ListItemIcon>
               <OfflineShareIcon fontSize="small" />
@@ -272,7 +260,7 @@ export const VideoMenu = ({
 
         <Divider />
 
-        {!hideItems.includes(items.sync) && (
+        {!hideItems.includes(videoMenuItems.sync) && (
           <MenuItem onClick={handleSync}>
             <ListItemIcon>
               {!loadingSync && <SyncIcon fontSize="small" />}
@@ -281,7 +269,7 @@ export const VideoMenu = ({
             <ListItemText>Sync metadata</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.syncNfo) && (
+        {!hideItems.includes(videoMenuItems.syncNfo) && (
           <MenuItem onClick={handleSyncFromNfo} disabled={true}>
             <ListItemIcon>
               {!loadingSyncNfo && <SyncAltIcon fontSize="small" />}
@@ -290,7 +278,7 @@ export const VideoMenu = ({
             <ListItemText>Sync from NFO</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.convert) && (
+        {!hideItems.includes(videoMenuItems.convert) && (
           <MenuItem
             component={Link}
             to={`/convert/${videoId}`}>
@@ -301,7 +289,7 @@ export const VideoMenu = ({
             <ListItemText>{selectedVideos?.length ? "Bulk convert videos" : "Convert Video"}</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.edit) && (
+        {!hideItems.includes(videoMenuItems.edit) && (
           <MenuItem onClick={handleEditMenuClick}>
             <ListItemIcon>
               <EditIcon fontSize="small" />
@@ -309,7 +297,7 @@ export const VideoMenu = ({
             <ListItemText>{editing ? "Finished Edit" : "Edit"}</ListItemText>
           </MenuItem>
         )}
-        {!hideItems.includes(items.delete) && (
+        {!hideItems.includes(videoMenuItems.delete) && (
           <MenuItem onClick={handleDeleteMenuClick}>
             <ListItemIcon>
               <DeleteForeverIcon fontSize="small" />

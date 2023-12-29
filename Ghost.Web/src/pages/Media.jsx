@@ -14,7 +14,8 @@ import { VideoGenres } from '../components/VideoGenres.jsx'
 import { VideoActors } from '../components/VideoActors.jsx'
 import { TextEdit } from '../components/TextEdit.jsx'
 import { VideoMetaData } from '../components/VideoMetaData.jsx'
-import { items, VideoMenu } from '../components/VideoMenu.jsx'
+import { VideoMenu } from '../components/VideoMenu.jsx'
+import { videoMenuItems } from '../constants/video-menu-items'
 import { ChipSkeleton } from '../components/ChipSkeleton.jsx'
 import { Chapters } from '../components/Chapters.jsx'
 import { generateVideoUrl, toggleFavourite } from '../services/video.service.js'
@@ -320,10 +321,10 @@ export const Media = () => {
           favourite={!!media.favourite}
           progress={progress}
           hideItems={[
-            items.favourite, 
-            items.resetProgress, 
-            items.toggleSelected, 
-            items.removeFromPlaylist]}
+            videoMenuItems.favourite, 
+            videoMenuItems.resetProgress, 
+            videoMenuItems.toggleSelected, 
+            videoMenuItems.removeFromPlaylist]}
           editing={editMode}
           setEditing={setEditMode}
         />
