@@ -117,7 +117,7 @@ export const LibraryCard = ({ library, updateLibraries }) => {
             <IconButton
               id={`${library.id}-library-menu-button`}
               onClick={handleMenuClick}
-              aria-controls={!!anchorEl ? 'library-menu' : undefined}
+              aria-controls={anchorEl ? 'library-menu' : undefined}
               aria-haspopup={true}
               aria-expanded={!!anchorEl}
             >

@@ -26,6 +26,7 @@ export default function usePromise(f, deps) {
     return () => {
       subscribed = false
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps || [])
 
   return [result, error, loading, setResult]

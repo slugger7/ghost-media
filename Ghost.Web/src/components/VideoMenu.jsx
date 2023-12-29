@@ -22,6 +22,7 @@ import CompareIcon from '@mui/icons-material/Compare';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { toggleFavourite } from '../services/video.service'
@@ -56,7 +57,8 @@ export const items = {
   delete: 'delete',
   edit: 'edit',
   toggleSelected: 'toggleSelected',
-  addToPlaylist: 'addToPlaylist'
+  addToPlaylist: 'addToPlaylist',
+  removeFromPlaylist: 'removeFromPlaylist'
 }
 
 export const VideoMenu = ({
@@ -183,6 +185,10 @@ export const VideoMenu = ({
     handleClose()
     toggleSelected()
   }
+
+  const handleRemoveFromPlaylist = () => {
+    handleClose()
+  }
   
   return (
     <>
@@ -224,6 +230,14 @@ export const VideoMenu = ({
               <PlaylistAddIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText>Add {selectedVideos?.length ? 'multiple ' : ''} to playlist</ListItemText>
+          </MenuItem>
+        )}
+        {!hideItems.includes(items.removeFromPlaylist) && (
+          <MenuItem onClick={handleRemoveFromPlaylist}>
+            <ListItemIcon>
+              <PlaylistRemoveIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Remove from playlist</ListItemText>
           </MenuItem>
         )}
 

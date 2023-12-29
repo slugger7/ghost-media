@@ -37,7 +37,7 @@ const fetchRandomVideo = async (params) => {
   return videoResult.data;
 }
 
-const fetchFavouriteActors = async (userId) =>
+const fetchFavouriteActors = async () =>
   (await axios.get('/actor/favourites')).data
 
 export const Favourites = () => {

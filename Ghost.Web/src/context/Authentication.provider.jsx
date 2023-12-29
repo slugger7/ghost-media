@@ -38,7 +38,7 @@ export const AuthenticationProvider = ({ children }) => {
         setUsername(null)
         setToken(null)
         navigate("/login")
-    })
+    }, [navigate])
 
     return <AuthenticationContext.Provider value={{ userId, username, setToken, logout }}>
         {children}

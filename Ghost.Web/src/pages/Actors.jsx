@@ -1,7 +1,6 @@
-import { Box, Chip } from '@mui/material'
+import { Box } from '@mui/material'
 import { includes } from 'ramda'
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { fetchActors } from '../services/actor.service'
 import usePromise from '../services/use-promise'
 import { ActorChip } from '../components/ActorChip'

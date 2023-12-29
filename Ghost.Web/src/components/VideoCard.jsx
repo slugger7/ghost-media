@@ -91,6 +91,7 @@ export const VideoCard = ({
     >
       {localVideo.thumbnail && <CardMedia sx={{ height: "200px" }}
         component="img"
+        loading="lazy"
         image={`${axios.defaults.baseURL}/image/${localVideo.thumbnail.id}/${localVideo.thumbnail.name}`}
         alt={localVideo.title}
       />}
@@ -113,7 +114,7 @@ export const VideoCard = ({
         sx={{ marginLeft: "auto" }}
         onClick={handleMenuClick}
         id={`${localVideo.id}-video-card-menu-button`}
-        aria-controls={!!anchorEl ? 'video-card-menu' : undefined}
+        aria-controls={anchorEl ? 'video-card-menu' : undefined}
         aria-haspopup={true}
         aria-expanded={!!anchorEl}
         disabled={disableActions}

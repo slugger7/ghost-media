@@ -54,7 +54,7 @@ export const Playlists = () => {
               to={`/playlist/${playlist.id}`}
               action={<IconButton 
                 id={`playlist-${playlist.id}`}
-                aria-controls={!!anchorEl ? 'playlist-menu' : undefined}
+                aria-controls={anchorEl ? 'playlist-menu' : undefined}
                 aria-haspopup={true}
                 aria-expanded={!!anchorEl}
                 onClick={handleMenuClick(playlist.id)}>

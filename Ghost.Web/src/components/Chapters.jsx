@@ -9,6 +9,7 @@ export const Chapters = ({ chapters, setChapter = () => { } }) => <Grid containe
       <CardActionArea onClick={() => setChapter(chapter)}>
         <CardMedia
           component="img"
+          loading='lazy'
           sx={{ minHeight: "200px" }}
           image={`${axios.defaults.baseURL}/image/${chapter.image.id}/${chapter.image.name}`}
           alt={chapter.image.name}

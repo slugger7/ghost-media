@@ -4,9 +4,7 @@ export default function useLocalState(key, initialState) {
   let localValue = localStorage.getItem(key);
 
   if (localValue !== null && localValue !== undefined) {
-    try {
-      localValue = JSON.parse(localValue)
-    } catch { }
+    localValue = JSON.parse(localValue)
   } else {
     localValue = initialState;
   }
