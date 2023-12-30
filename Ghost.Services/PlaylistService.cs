@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using Ghost.Data;
 using Ghost.Dtos;
 using Ghost.Repository;
@@ -94,13 +95,17 @@ public class PlaylistService : IPlaylistService
     {
       throw new NullReferenceException($"One or more videos not found to add to playlist with id {id}");
     }
-
-    playlist.PlaylistVideos = videos.Select(v => new PlaylistVideo
-    {
-      Playlist = playlist,
-      Video = v,
-      CreatedAt = DateTime.UtcNow,
-    }).ToList();
+    var existingVideos = playlist.PlaylistVideos.Select(pv => pv.Video);
+    playlist.PlaylistVideos = playlist.PlaylistVideos.Concat(
+      videos
+        .Where(v => !existingVideos.Any(ev => ev.Id == v.Id))
+        .Select(v => new PlaylistVideo
+        {
+          Playlist = playlist,
+          Video = v,
+          CreatedAt = DateTime.UtcNow,
+        })
+      ).ToList();
 
     playlist = await playlistRepository.UpdatePlaylist(userId, id, playlist);
 
