@@ -19,6 +19,7 @@ public abstract class BaseJob
 
   public async void Run()
   {
+    var message = "Success";
     if (await this.PreRun())
     {
       string status;
@@ -26,12 +27,13 @@ public abstract class BaseJob
       {
         status = await this.RunJob();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         status = JobStatus.Error;
+        message = $"{ex.Message}\nStackTrace:\n{ex.StackTrace}";
       }
 
-      await this.PostRun(status);
+      await this.PostRun(status, message);
     }
 
   }
@@ -59,7 +61,7 @@ public abstract class BaseJob
     }
   }
 
-  protected async Task PostRun(string status)
+  protected async Task PostRun(string status, string message)
   {
     using (var scope = scopeFactory.CreateScope())
     {
@@ -67,7 +69,7 @@ public abstract class BaseJob
       var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
       var logger = loggerFactory.CreateLogger<BaseJob>();
 
-      logger.LogInformation($"Completed job {jobId}");
+      logger.LogInformation($"Completed job {jobId} with message: {message}");
 
       await jobRepository.UpdateJobStatus(jobId, status);
 
