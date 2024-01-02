@@ -10,13 +10,12 @@
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/Ghost.Api/bin/Debug/net8.0/Ghost.Api.dll",
-      "args": [
-        "--urls=http://0.0.0.0:5120"
-      ],
+      "args": [],
       "cwd": "${workspaceFolder}/Ghost.Api",
       "stopAtEntry": false,
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "JWT_EXPIRY": "1",
       },
     },
     {
