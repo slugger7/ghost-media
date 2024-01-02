@@ -1,53 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import {
-  Avatar,
-  Card,
-  CardHeader,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-} from '@mui/material'
-import PersonIcon from '@mui/icons-material/Person'
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { Box } from '@mui/system'
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { Avatar, Card, CardHeader, IconButton, Menu } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Box } from "@mui/system";
 
-export const UserCard = ({ user, updateUser }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [isSelected, setIsSelected] = useState(false)
-
-  useEffect(() => {
-    const userId = localStorage.getItem('userId')
-    if (+userId === user.id) {
-      setIsSelected(true)
-    }
-  }, [user.id])
+export const UserCard = ({ user }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
-
-  const handleChooseUser = () => {
-    localStorage.setItem('username', user.username)
-    localStorage.setItem('userId', user.id)
-    handleMenuClose()
-
-    updateUser()
-  }
+    setAnchorEl(null);
+  };
 
   return (
     <Box>
       <Card>
         <CardHeader
           avatar={
-            <Avatar variant={isSelected ? 'rounded' : 'circular'}>
+            <Avatar variant={"circular"}>
               <PersonIcon />
             </Avatar>
           }
@@ -55,7 +29,7 @@ export const UserCard = ({ user, updateUser }) => {
             <IconButton
               id={`${user.id}-user-menu-button`}
               onClick={handleMenuClick}
-              aria-controls={anchorEl ? 'user-menu' : undefined}
+              aria-controls={anchorEl ? "user-menu" : undefined}
               aria-haspopup={true}
               aria-expanded={!!anchorEl}
             >
@@ -72,21 +46,20 @@ export const UserCard = ({ user, updateUser }) => {
         open={!!anchorEl}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleChooseUser}>
+        {/* <MenuItem onClick={handleChooseUser}>
           <ListItemIcon>
             <PersonAddAltIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Choose user</ListItemText>
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
     </Box>
-  )
-}
+  );
+};
 
 UserCard.propTypes = {
   user: PropTypes.shape({
     id: PropTypes.number.isRequired,
     username: PropTypes.string.isRequired,
   }),
-  updateUser: PropTypes.func.isRequired,
-}
+};

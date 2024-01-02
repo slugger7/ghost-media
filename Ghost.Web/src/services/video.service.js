@@ -71,5 +71,5 @@ export const constructVideoParams = ({
 export const generateVideoUrl = (id) => `${axios.defaults.baseURL}/media/${id}`
 
 export const toggleFavourite = async (videoId) =>
-  (await axios.put(`/user/${localStorage.getItem('userId')}/video/${videoId}`))
+  (await axios.put(`/user/video/${videoId}`))
     .data
