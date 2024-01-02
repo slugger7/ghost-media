@@ -3,11 +3,12 @@ using Ghost.Dtos;
 using Ghost.Services;
 using Microsoft.AspNetCore.Authorization;
 using Ghost.Exceptions;
+using System.Security.Claims;
 
 namespace Ghost.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class MediaController : Controller
+public class MediaController : BaseController
 {
   private readonly IVideoService videoService;
   private readonly ILogger<MediaController> logger;
@@ -22,10 +23,9 @@ public class MediaController : Controller
   [Authorize]
   public ActionResult<PageResultDto<VideoDto>> SearchVideos(
     [FromQuery] PageRequestDto pageRequest,
-    [FromQuery] FilterQueryDto filters,
-    [FromHeader(Name = "User-Id")] int userId)
+    [FromQuery] FilterQueryDto filters)
   {
-    return videoService.SearchVideos(pageRequest, filters, userId);
+    return videoService.SearchVideos(pageRequest, filters, UserId);
   }
 
   [HttpPut("{id}/title")]
@@ -44,9 +44,9 @@ public class MediaController : Controller
 
   [HttpGet("{id}/info")]
   [Authorize]
-  public ActionResult<VideoDto> GetVideoInfo(int id, [FromHeader(Name = "User-Id")] int userId)
+  public ActionResult<VideoDto> GetVideoInfo(int id)
   {
-    var video = videoService.GetVideoInfo(id, userId);
+    var video = videoService.GetVideoInfo(id, UserId);
 
     return video;
   }
@@ -68,11 +68,11 @@ public class MediaController : Controller
   }
 
   [HttpGet("{id}")]
-  public ActionResult GetVideo(int id, [FromHeader(Name = "User-Id")] int userId)
+  public ActionResult GetVideo(int id)
   {
     try
     {
-      var video = videoService.GetVideoById(id, userId, null);
+      var video = videoService.GetVideoById(id, UserId, null);
       if (video != null)
       {
         return PhysicalFile(video.Path ?? "", "video/mp4", true);
@@ -119,21 +119,19 @@ public class MediaController : Controller
   public ActionResult<PageResultDto<VideoDto>> GetVideosForGenre(
     string genre,
     [FromQuery] PageRequestDto pageRequest,
-    [FromQuery] FilterQueryDto filters,
-    [FromHeader(Name = "User-Id")] int userId)
+    [FromQuery] FilterQueryDto filters)
   {
-    return videoService.GetVideosForGenre(genre, userId, pageRequest, filters);
+    return videoService.GetVideosForGenre(genre, UserId, pageRequest, filters);
   }
 
   [HttpGet("genre/{genre}/random")]
   [Authorize]
   public ActionResult<VideoDto> GetRandomVideoForGenre(
       string genre,
-      [FromHeader(Name = "User-Id")] int userId,
       [FromQuery] RandomVideoRequestDto randomVideoRequest
   )
   {
-    return videoService.GetRandomVideoForGenre(genre, userId, randomVideoRequest);
+    return videoService.GetRandomVideoForGenre(genre, UserId, randomVideoRequest);
   }
 
   [HttpPut("{id}/actors")]
@@ -155,12 +153,11 @@ public class MediaController : Controller
   public ActionResult<PageResultDto<VideoDto>> GetVideosForActor(
     int id,
     [FromQuery] PageRequestDto pageRequest,
-    [FromQuery] FilterQueryDto filters,
-    [FromHeader(Name = "User-Id")] int userId)
+    [FromQuery] FilterQueryDto filters)
   {
     try
     {
-      return videoService.GetVideosForActor(id, userId, pageRequest, filters);
+      return videoService.GetVideosForActor(id, UserId, pageRequest, filters);
     }
     catch (NullReferenceException ex)
     {
@@ -172,13 +169,12 @@ public class MediaController : Controller
   [Authorize]
   public ActionResult<VideoDto> GetRandomVideoForActor(
       int id,
-      [FromHeader(Name = "User-Id")] int userId,
       [FromQuery] RandomVideoRequestDto randomVideoRequest
   )
   {
     try
     {
-      return videoService.GetRandomVideoForActor(id, userId, randomVideoRequest);
+      return videoService.GetRandomVideoForActor(id, UserId, randomVideoRequest);
     }
     catch (NullReferenceException ex)
     {
@@ -218,12 +214,11 @@ public class MediaController : Controller
   [Authorize]
   public async Task<ActionResult> LogProgress(
     int id,
-    [FromHeader(Name = "User-Id")] int userId,
     [FromBody] ProgressUpdateDto progress)
   {
     try
     {
-      await videoService.LogProgress(id, userId, progress);
+      await videoService.LogProgress(id, UserId, progress);
       return Ok();
     }
     catch (NullReferenceException ex)
@@ -235,14 +230,13 @@ public class MediaController : Controller
   [HttpGet("favourites")]
   [Authorize]
   public ActionResult<PageResultDto<VideoDto>> GetFavourites(
-    [FromHeader(Name = "User-Id")] int userId,
     [FromQuery] PageRequestDto pageRequest,
     [FromQuery] FilterQueryDto filterQueryDto
   )
   {
     try
     {
-      return videoService.Favourites(userId, pageRequest, filterQueryDto);
+      return videoService.Favourites(UserId, pageRequest, filterQueryDto);
     }
     catch (NullReferenceException ex)
     {
@@ -253,13 +247,12 @@ public class MediaController : Controller
   [HttpGet("favourites/random")]
   [Authorize]
   public ActionResult<VideoDto> GetRandomVideoFromFavourites(
-      [FromHeader(Name = "User-Id")] int userId,
       [FromQuery] RandomVideoRequestDto randomVideoRequest
   )
   {
     try
     {
-      return videoService.GetRandomVideoFromFavourites(userId, randomVideoRequest);
+      return videoService.GetRandomVideoFromFavourites(UserId, randomVideoRequest);
     }
     catch (NullReferenceException ex)
     {
@@ -270,13 +263,12 @@ public class MediaController : Controller
   [HttpGet("random")]
   [Authorize]
   public ActionResult<VideoDto> RandomVideo(
-      [FromHeader(Name = "User-Id")] int userId,
       [FromQuery] RandomVideoRequestDto randomVideoRequest
   )
   {
     try
     {
-      return videoService.Random(userId, randomVideoRequest);
+      return videoService.Random(UserId, randomVideoRequest);
     }
     catch (NullReferenceException ex)
     {
@@ -320,7 +312,6 @@ public class MediaController : Controller
   [Authorize]
   public async Task<ActionResult> CreateSubVideo(
       int id,
-      [FromHeader(Name = "User-Id")] int userId,
       [FromBody] SubVideoRequestDto subVideoRequest)
   {
     if (subVideoRequest.EndMillis <= subVideoRequest.StartMillis)
@@ -329,7 +320,7 @@ public class MediaController : Controller
     }
     try
     {
-      await videoService.CreateSubVideo(id, userId, subVideoRequest);
+      await videoService.CreateSubVideo(id, UserId, subVideoRequest);
       return Ok();
     }
     catch (NullReferenceException ex)
