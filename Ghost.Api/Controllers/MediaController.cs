@@ -3,7 +3,6 @@ using Ghost.Dtos;
 using Ghost.Services;
 using Microsoft.AspNetCore.Authorization;
 using Ghost.Exceptions;
-using System.Security.Claims;
 
 namespace Ghost.Api.Controllers;
 [ApiController]
@@ -247,7 +246,7 @@ public class MediaController : BaseController
   [HttpGet("favourites/random")]
   [Authorize]
   public ActionResult<VideoDto> GetRandomVideoFromFavourites(
-      [FromQuery] RandomVideoRequestDto randomVideoRequest
+    [FromQuery] RandomVideoRequestDto randomVideoRequest
   )
   {
     try

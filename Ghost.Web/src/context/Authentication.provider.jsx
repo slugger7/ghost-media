@@ -20,9 +20,7 @@ export const AuthenticationProvider = ({ children }) => {
     if (token) {
       const user = jwtDecode(token);
       setUsername(user.name);
-
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", user.primarysid);
     }
   }, [token]);
 

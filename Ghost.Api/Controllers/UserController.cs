@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Ghost.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : Controller
+public class UserController : BaseController
 {
   private readonly IUserService userService;
   private readonly ILogger<UserController> logger;
@@ -98,17 +98,17 @@ public class UserController : Controller
     return JWTAuthentication.BuildSymKey();
   }
 
-  [HttpPut("{id}/video/{videoId}")]
+  [HttpPut("video/{videoId}")]
   [Authorize]
-  public async Task<ActionResult<bool>> ToggleFavouriteVideo(int id, int videoId)
+  public async Task<ActionResult<bool>> ToggleFavouriteVideo(int videoId)
   {
-    return await userService.ToggleFavouriteVideo(id, videoId);
+    return await userService.ToggleFavouriteVideo(UserId, videoId);
   }
 
-  [HttpPut("{id}/actor/{actorId}")]
+  [HttpPut("actor/{actorId}")]
   [Authorize]
-  public async Task<ActionResult<bool>> ToggleFavouriteActor(int id, int actorId)
+  public async Task<ActionResult<bool>> ToggleFavouriteActor(int actorId)
   {
-    return await userService.ToggleFavouriteActor(id, actorId);
+    return await userService.ToggleFavouriteActor(UserId, actorId);
   }
 }
