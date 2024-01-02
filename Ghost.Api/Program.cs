@@ -11,19 +11,7 @@ internal class Program
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
-    var AllowSpecificOrigins = "_allowFrontend";
-
-    builder.Services.AddCors(options =>
-    {
-      options.AddPolicy(name: AllowSpecificOrigins,
-          builder =>
-          {
-            builder
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-          });
-    });
+    builder.Services.AddCors();
 
     builder.Services.AddControllers();
     // Services
@@ -61,19 +49,20 @@ internal class Program
       app.UseHsts();
     }
 
-    app.UseHttpsRedirection();
-    app.UseStaticFiles();
     app.UseRouting();
+
+    app.UseCors(cors => cors
+      .AllowAnyOrigin()
+      .AllowAnyHeader()
+      .AllowAnyMethod()
+    );
 
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseCors(AllowSpecificOrigins);
 
     app.MapControllerRoute(
         name: "default",
         pattern: "api/{controller}/{action=Index}/{id?}");
-
-    app.MapFallbackToFile("index.html"); ;
 
     app.Run();
   }
