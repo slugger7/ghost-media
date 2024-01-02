@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ghost.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class ActorController : Controller
+public class ActorController : BaseController
 {
   private readonly IActorService actorService;
   private readonly ILogger<ActorController> logger;
@@ -19,11 +19,11 @@ public class ActorController : Controller
 
   [HttpGet("{name}")]
   [Authorize]
-  public ActionResult<ActorDto> GetActorByName(string name, [FromHeader(Name = "User-Id")] int userId)
+  public ActionResult<ActorDto> GetActorByName(string name)
   {
     try
     {
-      return actorService.GetActorByName(name, userId);
+      return actorService.GetActorByName(name, UserId);
     }
     catch (NullReferenceException)
     {
@@ -33,25 +33,25 @@ public class ActorController : Controller
 
   [HttpGet]
   [Authorize]
-  public ActionResult<List<ActorDto>> GetActors([FromHeader(Name = "User-Id")] int userId)
+  public ActionResult<List<ActorDto>> GetActors()
   {
-    return actorService.GetActors(userId);
+    return actorService.GetActors(UserId);
   }
 
   [HttpGet("favourites")]
   [Authorize]
-  public ActionResult<List<ActorDto>> GetFavouriteActors([FromHeader(Name = "User-Id")] int userId)
+  public ActionResult<List<ActorDto>> GetFavouriteActors()
   {
-    return actorService.GetFavouriteActors(userId);
+    return actorService.GetFavouriteActors(UserId);
   }
 
   [HttpGet("video/{videoId}")]
   [Authorize]
-  public ActionResult<List<ActorDto>> GetActorsForVideo(int videoId, [FromHeader(Name = "User-Id")] int userId)
+  public ActionResult<List<ActorDto>> GetActorsForVideo(int videoId)
   {
     try
     {
-      return actorService.GetActorsForVideo(videoId, userId);
+      return actorService.GetActorsForVideo(videoId, UserId);
     }
     catch (NullReferenceException ex)
     {
