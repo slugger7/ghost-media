@@ -12,7 +12,7 @@ Content-Type: application/json
 GET {{host}}:{{port}}/api/media?sortBy=date-added&ascending=false
 Authorization: Bearer {{authToken}}
 
-###
+### Convert video
 
 POST {{host}}:{{port}}/api/media/96/convert
 Authorization: Bearer {{authToken}}
