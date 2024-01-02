@@ -31,11 +31,11 @@ export const setupAxios = () => {
   )
 
   axios.interceptors.response.use(res => {
-    if (+res.status === 401) {
-      localStorage.clear();
-    }
     return res;
   }, (error) => {
-    return Promise.reject(error)
+    if (+error?.response?.status === 401) {
+      localStorage.clear();
+      window.location.reload();
+    }
   })
 }
