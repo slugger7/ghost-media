@@ -7,7 +7,7 @@ namespace Ghost.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlaylistController : Controller
+public class PlaylistController : BaseController
 {
   private readonly ILogger<PlaylistController> logger;
   private readonly IPlaylistService playlistService;
@@ -20,16 +20,16 @@ public class PlaylistController : Controller
 
   [HttpGet]
   [Authorize]
-  public async Task<ActionResult<List<PlaylistDto>>> GetPlaylists([FromHeader(Name = "User-Id")] int userId)
+  public async Task<ActionResult<List<PlaylistDto>>> GetPlaylists()
   {
-    return await playlistService.GetPlaylists(userId);
+    return await playlistService.GetPlaylists(UserId);
   }
 
   [HttpGet("{id}")]
   [Authorize]
-  public async Task<ActionResult<PlaylistDto>> GetPlaylistById([FromHeader(Name = "User-Id")] int userId, int id)
+  public async Task<ActionResult<PlaylistDto>> GetPlaylistById(int id)
   {
-    var playlist = await playlistService.GetPlaylistById(userId, id);
+    var playlist = await playlistService.GetPlaylistById(UserId, id);
 
     if (playlist == null)
     {
@@ -42,12 +42,11 @@ public class PlaylistController : Controller
   [HttpGet("{id}/videos")]
   [Authorize]
   public ActionResult<PageResultDto<VideoDto>> GetVideos(
-    [FromHeader(Name = "User-Id")] int userId,
     int id,
     [FromQuery] PageRequestDto pageRequest,
     [FromQuery] FilterQueryDto filters)
   {
-    var videos = playlistService.GetVideos(id, userId, pageRequest, filters);
+    var videos = playlistService.GetVideos(id, UserId, pageRequest, filters);
 
     return videos;
   }
@@ -55,10 +54,9 @@ public class PlaylistController : Controller
   [HttpPost]
   [Authorize]
   public async Task<ActionResult<PlaylistDto>> CreatePlaylist(
-    [FromHeader(Name = "User-Id")] int userId,
     CreatePlaylistDto playlistDto)
   {
-    var playlist = await playlistService.CreatePlaylist(userId, playlistDto);
+    var playlist = await playlistService.CreatePlaylist(UserId, playlistDto);
 
     return CreatedAtAction(nameof(GetPlaylistById), new { id = playlist.Id }, playlist);
   }
@@ -75,13 +73,12 @@ public class PlaylistController : Controller
   [HttpPut("{id}")]
   [Authorize]
   public async Task<ActionResult<PlaylistDto>> UpdatePlaylist(
-    [FromHeader(Name = "User-Id")] int userId,
     int id,
     UpdatePlaylistDto playlistDto)
   {
     try
     {
-      var playlist = await playlistService.UpdatePlaylist(userId, id, playlistDto);
+      var playlist = await playlistService.UpdatePlaylist(UserId, id, playlistDto);
 
       return Ok(playlist);
     }
@@ -94,13 +91,12 @@ public class PlaylistController : Controller
   [HttpPost("{id}/videos")]
   [Authorize]
   public async Task<ActionResult<PlaylistDto>> AddVideoToPlaylist(
-    [FromHeader(Name = "User-Id")] int userId,
     int id,
     AddVideosToPlaylistDto addVideosToPlaylistDto)
   {
     try
     {
-      var playlist = await playlistService.AddVideosToPlaylist(userId, id, addVideosToPlaylistDto);
+      var playlist = await playlistService.AddVideosToPlaylist(UserId, id, addVideosToPlaylistDto);
 
       return Ok(playlist);
     }
@@ -113,13 +109,12 @@ public class PlaylistController : Controller
   [HttpDelete("{id}/videos/{videoId}")]
   [Authorize]
   public async Task<ActionResult<PlaylistDto>> RemoveVideoFromPlaylist(
-    [FromHeader(Name = "User-Id")] int userId,
     int id,
     int videoId)
   {
     try
     {
-      var playlist = await playlistService.RemoveVideoFromPlaylist(userId, id, videoId);
+      var playlist = await playlistService.RemoveVideoFromPlaylist(UserId, id, videoId);
 
       return Ok(playlist);
     }
