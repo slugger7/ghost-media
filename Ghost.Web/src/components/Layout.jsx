@@ -1,28 +1,30 @@
-import React, { useContext } from 'react';
-import { ThemeProvider, Container, CssBaseline } from '@mui/material'
-import { createTheme } from '@mui/material/styles'
-import PropTypes from 'prop-types'
+import React, { useContext } from "react";
+import { ThemeProvider, Container, CssBaseline } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
+import PropTypes from "prop-types";
 
-import { NavMenu } from './NavMenu.jsx';
-import AuthenticationContext from '../context/authentication.context.js';
+import { NavMenu } from "./NavMenu.jsx";
+import AuthenticationContext from "../context/authentication.context.js";
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark'
-  }
-})
+    mode: "dark",
+  },
+});
 
 export const Layout = ({ children }) => {
-  const { userId } = useContext(AuthenticationContext);
-  return <ThemeProvider theme={darkTheme}>
-    <CssBaseline />
-    <Container maxWidth={false}>
-      {userId && <NavMenu />}
-      {children}
-    </Container>
-  </ThemeProvider>
-}
+  const { token } = useContext(AuthenticationContext);
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Container maxWidth={false}>
+        {token && <NavMenu />}
+        {children}
+      </Container>
+    </ThemeProvider>
+  );
+};
 
 Layout.propTypes = {
-  children: PropTypes.node
-}
+  children: PropTypes.node,
+};

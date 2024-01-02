@@ -20,7 +20,9 @@ export const AuthenticationProvider = ({ children }) => {
     if (token) {
       const user = jwtDecode(token);
       setUsername(user.name);
+
       localStorage.setItem("token", token);
+      localStorage.setItem("userId", user.primarysid);
     }
   }, [token]);
 
@@ -31,7 +33,9 @@ export const AuthenticationProvider = ({ children }) => {
   }, [navigate]);
 
   return (
-    <AuthenticationContext.Provider value={{ username, setToken, logout }}>
+    <AuthenticationContext.Provider
+      value={{ username, setToken, logout, token }}
+    >
       {children}
     </AuthenticationContext.Provider>
   );
