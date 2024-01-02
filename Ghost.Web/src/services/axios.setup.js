@@ -16,11 +16,7 @@ export const setupAxios = () => {
 
   axios.interceptors.request.use(
     (config) => {
-      const userId = localStorage.getItem('userId')
       const token = localStorage.getItem('token')
-      if (userId) {
-        config.headers['User-Id'] = userId //replace this with only JWT being sent back
-      }
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
       }
