@@ -158,7 +158,6 @@ export const Media = () => {
               : undefined
           }
           duration={media.runtime}
-          currentProgress={media?.progress}
           progressUpdate={handleProgressUpdate}
           videoRef={videoRef}
           loseFocus={refocusFn}
@@ -321,9 +320,9 @@ export const Media = () => {
           favourite={!!media.favourite}
           progress={progress}
           hideItems={[
-            videoMenuItems.favourite, 
-            videoMenuItems.resetProgress, 
-            videoMenuItems.toggleSelected, 
+            videoMenuItems.favourite,
+            videoMenuItems.resetProgress,
+            videoMenuItems.toggleSelected,
             videoMenuItems.removeFromPlaylist]}
           editing={editMode}
           setEditing={setEditMode}

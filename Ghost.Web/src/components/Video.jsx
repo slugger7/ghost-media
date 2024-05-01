@@ -21,7 +21,6 @@ export const Video = ({
   poster,
   chapter,
   duration,
-  currentProgress,
   progressUpdate,
   videoRef,
   loseFocus,
@@ -37,17 +36,10 @@ export const Video = ({
     videoRef?.current?.focus()
     if (videoRef && videoRef.current) {
       videoRef.current.ontimeupdate = () => {
-        setCurrentTime(videoRef?.current?.currentTime) // <-- this was the problem not any of the others (that I know of)
+        setCurrentTime(videoRef?.current?.currentTime)
       }
     }
   }, [source, videoRef])
-
-  useEffect(() => {
-    if (videoRef && videoRef.current && currentProgress !== undefined) {
-      videoRef.current.currentTime = currentProgress
-      setCurrentTime(currentProgress)
-    }
-  }, [currentProgress, videoRef])
 
   useEffect(() => {
     if (chapter && videoRef && videoRef.current) {
@@ -133,7 +125,6 @@ Video.propTypes = {
   }),
   duration: PropTypes.number.isRequired,
   progressUpdate: PropTypes.func.isRequired,
-  currentProgress: PropTypes.number,
   videoRef: PropTypes.object.isRequired,
   loseFocus: PropTypes.func,
   setStartMark: PropTypes.func,
