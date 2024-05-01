@@ -22,7 +22,7 @@ public static class JWTAuthentication
                     new Claim(ClaimTypes.Name, username),
                     new Claim(ClaimTypes.PrimarySid, userId.ToString())
                 }),
-      Expires = now.AddMinutes(Convert.ToInt32(Environment.GetEnvironmentVariable("JWT_EXPIRY") ?? "60")),
+      Expires = now.AddMinutes(Convert.ToInt32(Environment.GetEnvironmentVariable("JWT_EXPIRY") ?? "600")),
       SigningCredentials = new SigningCredentials(
             new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256Signature
