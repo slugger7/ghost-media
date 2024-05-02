@@ -27,6 +27,7 @@ export const AuthenticationProvider = ({ children }) => {
   const logout = useCallback(() => {
     setUsername(null);
     setToken(null);
+    localStorage.clear()
     navigate("/login");
   }, [navigate]);
 
