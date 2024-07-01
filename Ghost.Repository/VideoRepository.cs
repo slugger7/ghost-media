@@ -28,13 +28,13 @@ public class VideoRepository : IVideoRepository
     this.imageRepository = imageRepository;
   }
 
-  public async Task<Video> CreateVideo(string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath)
+  public async Task<Video> CreateVideo(string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath, string? title = null)
   {
     var video = new Video
     {
       Path = path,
       FileName = Path.GetFileName(path),
-      Title = Path.GetFileNameWithoutExtension(path),
+      Title = title != null ? title : Path.GetFileNameWithoutExtension(path),
       Height = videoMetaData.Height,
       Width = videoMetaData.Width,
       Runtime = videoMetaData.Duration.TotalMilliseconds,

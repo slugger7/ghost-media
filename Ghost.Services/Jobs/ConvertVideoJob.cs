@@ -49,7 +49,7 @@ public class ConvertVideoJob : BaseJob
       var libraryPath = await libraryRepository.GetLibraryPathById(video.LibraryPath.Id);
       if (libraryPath == null) throw new NullReferenceException("Library path for converted video was not found");
 
-      var newVideoEntity = await videoRepository.CreateVideo(newPath, newVideoInfo, libraryPath);
+      var newVideoEntity = await videoRepository.CreateVideo(newPath, newVideoInfo, libraryPath, video.Title);
 
       imageService.GenerateThumbnailForVideo(new GenerateImageRequestDto
       {
