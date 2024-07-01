@@ -27,6 +27,8 @@ import { VideoCard } from '../components/VideoCard.jsx'
 import { AddVideoCard } from '../components/AddVideoCard.jsx'
 import { TextInputModal } from '../components/TextInputModal.jsx'
 import { fetchMedia } from '../services/media.service.js'
+import { DeleteForeverIconButton } from '../components/DeleteForeverIconButton.jsx'
+import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal.jsx'
 
 const fetchGenres = async (id) => (await axios.get(`/genre/video/${id}`)).data
 const fetchActors = async (id) => (await axios.get(`/actor/video/${id}`)).data
@@ -50,6 +52,7 @@ const createSubVideo = async (id, name, start, end) => (await axios.post(`/media
   endMillis: parseInt(end * 1000)
 })).data
 const removeRelation = async (id, relatedTo) => (await axios.delete(`/media/${id}/relations/${relatedTo}`)).data
+const deleteVideo = async (videoId) => await axios.delete(`/media/${videoId}`)
 
 export const Media = () => {
   const params = useParams()
@@ -78,6 +81,9 @@ export const Media = () => {
   const [endMarker, setEndMarker] = useState(null);
   const [subVideoNameModalOpen, setSubVideoNameModalOpen] = useState(false);
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [loadingDelete, setLoadingDelete] = useState(false)
+
   useEffect(() => {
     if (media?.progress !== undefined) {
       setProgress(media.progress)
@@ -90,6 +96,34 @@ export const Media = () => {
       setEndMarker(null);
     }
   }, [editMode])
+
+  const handleDeleteModalClose = () => {
+    if (!loadingDelete) {
+      setDeleteModalOpen(false)
+    }
+  }
+
+  const handleDeleteMenuClick = () => {
+    setDeleteModalOpen(true)
+  }
+
+  const handleDelete = async () => {
+    if (loadingDelete) return
+    setLoadingDelete(true)
+    try {
+      await deleteVideo(media.id)
+
+      const historyLength = history.length;
+      if (historyLength === 1) {
+        navigate("/")
+      } else {
+        navigate(-1);
+      }
+    } finally {
+      setLoadingDelete(false)
+      handleDeleteModalClose()
+    }
+  }
 
   const handleMenuClick = useCallback((event) => setMenuAnchorEl(event.target), [])
   const handleMenuClose = useCallback(() => setMenuAnchorEl(null), [])
@@ -199,6 +233,9 @@ export const Media = () => {
                 >
                   <TheatersIcon />
                 </IconButton>}
+              <DeleteForeverIconButton
+                onClick={handleDeleteMenuClick}
+              />
               <IconButton
                 sx={{ marginLeft: 'auto' }}
                 onClick={handleMenuClick}
@@ -222,6 +259,7 @@ export const Media = () => {
                 const video = await updateTitle(params.id, title)
                 updateMedia({ title: video.title })
               }}
+              copyTextToClipboard={true}
             />
           </MediaSection>
         )}
@@ -302,31 +340,42 @@ export const Media = () => {
       </Container>
 
       {!loadingMedia && (
-        <VideoMenu
-          source={videoSource}
-          anchorEl={menuAnchorEl}
-          handleClose={handleMenuClose}
-          videoId={+params.id}
-          title={media.title}
-          removeVideo={() => {
-            const historyLength = history.length;
-            if (historyLength === 1) {
-              navigate("/")
-            } else {
-              navigate(-1);
-            }
-          }}
-          setVideo={updateMedia}
-          favourite={!!media.favourite}
-          progress={progress}
-          hideItems={[
-            videoMenuItems.favourite,
-            videoMenuItems.resetProgress,
-            videoMenuItems.toggleSelected,
-            videoMenuItems.removeFromPlaylist]}
-          editing={editMode}
-          setEditing={setEditMode}
-        />
+        <>
+          <VideoMenu
+            source={videoSource}
+            anchorEl={menuAnchorEl}
+            handleClose={handleMenuClose}
+            videoId={+params.id}
+            title={media.title}
+            removeVideo={() => {
+              const historyLength = history.length;
+              if (historyLength === 1) {
+                navigate("/")
+              } else {
+                navigate(-1);
+              }
+            }}
+            setVideo={updateMedia}
+            favourite={!!media.favourite}
+            progress={progress}
+            hideItems={[
+              videoMenuItems.favourite,
+              videoMenuItems.resetProgress,
+              videoMenuItems.toggleSelected,
+              videoMenuItems.removeFromPlaylist,
+              videoMenuItems.delete
+            ]}
+            editing={editMode}
+            setEditing={setEditMode}
+          />
+          <DeleteConfirmationModal
+            open={deleteModalOpen}
+            onClose={handleDeleteModalClose}
+            title={media.title}
+            loadingConfirm={loadingDelete}
+            onConfirm={handleDelete}
+          />
+        </>
       )}
       {!loadingMedia && <TextInputModal
         open={subVideoNameModalOpen}
