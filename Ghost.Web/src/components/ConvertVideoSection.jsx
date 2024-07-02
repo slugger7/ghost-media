@@ -18,7 +18,7 @@ export const ConvertVideoSection = ({ videoId }) => {
   const [video, , videoLoading] = usePromise(() => fetchMedia(videoId), [videoId])
 
   const [error, setError] = useState({})
-  const [title, setTitle] = useState("");
+  const [fileName, setFileName] = useState("");
   const [constantRateFactor, setConstantRateFactor] = useState(23);
   const [variableBitrate, setVariableBitrate] = useState();
   const [forcePixelFormat, setForcePixelFormat] = useState('yuv420p');
@@ -28,14 +28,14 @@ export const ConvertVideoSection = ({ videoId }) => {
 
   useEffect(() => {
     if (video) {
-      setTitle(video.title);
+      setFileName(video.title);
       setHeight(video.height);
       setWidth(video.width);
     }
   }, [video])
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
+  const handleFileNameChange = (event) => {
+    setFileName(event.target.value);
     if (event.target.value !== video.title) {
       setError(mergeDeepLeft({ title: undefined }))
     }
@@ -78,13 +78,13 @@ export const ConvertVideoSection = ({ videoId }) => {
   const navigate = useNavigate();
 
   const handleConvertClick = async () => {
-    if (title === video.title) {
-      setError(mergeDeepLeft({ title: "Title cannot be the same as current video title" }))
+    if (fileName === video.title) {
+      setError(mergeDeepLeft({ title: "File name cannot be the same as current video file name" }))
       return;
     }
 
     await convertVideo(videoId, {
-      title, constantRateFactor, variableBitrate, forcePixelFormat, width, height
+      title: fileName, constantRateFactor, variableBitrate, forcePixelFormat, width, height
     });
 
     handleCancelClick()
@@ -108,7 +108,7 @@ export const ConvertVideoSection = ({ videoId }) => {
     {!videoLoading && video && <>
       <Grid item xs={12}><Typography variant="h3" sx={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>Convert video: <strong>{video.title}</strong></Typography></Grid>
       <Grid item xs={12}>
-        <TextField label="Title" fullWidth value={title} onChange={handleTitleChange} error={!!error.title} helperText={error.title} />
+        <TextField label="File name" fullWidth value={fileName} onChange={handleFileNameChange} error={!!error.fileName} helperText={error.fileName} />
       </Grid>
       <Grid item xs={12} sm={5}><TextField fullWidth type="number" label="Width" value={width} onChange={handleWidthChange} /></Grid>
       <Grid item xs={12} sm={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
