@@ -30,7 +30,7 @@ public class SyncLibraryJob : BaseJob
       var library = syncJob.Library;
       if (library == null) throw new NullReferenceException("Library not found");
 
-      var videoTypes = new List<string> { "mp4", "m4v", "mkv", "avi", "wmv", "flv", "webm", "f4v", "mpg" };
+      var videoTypes = new List<string> { "mp4", "m4v", "mkv", "avi", "wmv", "flv", "webm", "f4v", "mpg", "m2ts", "mov" };
 
       foreach (var path in library.Paths)
       {
