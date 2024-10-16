@@ -224,15 +224,37 @@ public class VideoService : IVideoService
     var video = videoRepository.FindById(id, new List<string> { "VideoImages.Image", "Chapters.Image" });
     if (video == null) throw new NullReferenceException("Video was not found to delete");
 
-    File.Delete(video.Path);
+    try
+    {
+      File.Delete(video.Path);
+    }
+    catch (Exception ex)
+    {
+      logger.LogWarning("Something went wrong deleting a video: {} {}", video.Id, ex.Message);
+    }
+
     foreach (var videoImage in video.VideoImages)
     {
-      File.Delete(videoImage.Image.Path);
+      try
+      {
+        File.Delete(videoImage.Image.Path);
+      }
+      catch (Exception ex)
+      {
+        logger.LogWarning("Something went wrong deleting an image for a video: {} {}", videoImage.Id, ex.Message);
+      }
     }
 
     foreach (var chapter in video.Chapters)
     {
-      File.Delete(chapter.Image.Path);
+      try
+      {
+        File.Delete(chapter.Image.Path);
+      }
+      catch (Exception ex)
+      {
+        logger.LogWarning("Something went wrong deleting a chapter image: {} {}", chapter.Id, ex.Message);
+      }
     }
 
     await videoRepository.Delete(id);
