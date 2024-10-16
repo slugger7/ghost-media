@@ -11,6 +11,7 @@ export const Jobs = () => {
 
     const clearCompleted = useCallback(async () => {
         await axios.delete('job/status/completed')
+        await axios.delete('job/status/error')
         const jobs = await getJobs();
         setJobs(jobs);
     }, [setJobs]);
