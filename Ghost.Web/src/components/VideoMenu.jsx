@@ -142,7 +142,7 @@ export const VideoMenu = ({
     setLoadingGenerateChapter(true)
     try {
       const video = await generateChapters(videoId)
-      setVideo(video)
+      setVideo({ chapters: video.chapters })
     } finally {
       setLoadingGenerateChapter(false)
       handleClose()
@@ -185,7 +185,7 @@ export const VideoMenu = ({
       handleClose()
     }
   }
-  
+
   return (
     <>
       <Menu
@@ -221,7 +221,7 @@ export const VideoMenu = ({
           </MenuItem>
         )}
         {!hideItems.includes(videoMenuItems.addToPlaylist) && (
-          <MenuItem component={Link} to={`/add-video-to-playlist/${videoId}`} state={{title}}>
+          <MenuItem component={Link} to={`/add-video-to-playlist/${videoId}`} state={{ title }}>
             <ListItemIcon>
               <PlaylistAddIcon fontSize="small" />
             </ListItemIcon>
@@ -237,7 +237,7 @@ export const VideoMenu = ({
           </MenuItem>
         )}
 
-        <Divider /> 
+        <Divider />
 
         {progress !== undefined && !hideItems.includes(videoMenuItems.chooseThumbnail) && (
           <MenuItem onClick={handleChooseThumbnail}>
