@@ -319,6 +319,7 @@ export const Media = () => {
                 <VideoCard
                   key={video.id}
                   video={video}
+                  remove={() => updateMedia({ relatedVideos: media.relatedVideos.filter(value => value.id !== video.id) })}
                   overrideLeftAction={<Tooltip title="Remove relationship"><IconButton onClick={handleRelationRemoval(media.id, video.id)}><CallSplitIcon /></IconButton></Tooltip>} />
               </Grid>
             )}
