@@ -4,7 +4,7 @@ using Ghost.Dtos;
 namespace Ghost.Repository;
 public interface IVideoRepository
 {
-  Task<Video> CreateVideo(string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath);
+  Task<Video> CreateVideo(string path, VideoMetaDataDto videoMetaData, LibraryPath libraryPath, string? title = null);
   PageResult<Video> SearchVideos(int userId, string watchState, string[]? genresFilter, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
   PageResult<Video> GetForActor(int userId, string watchState, string[]? genresFilter, int actorId, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);
   PageResult<Video> GetForGenre(int userId, string watchState, string[]? genresFilter, string name, int page = 0, int limit = 10, string search = "", string sortBy = "title", bool ascending = true);

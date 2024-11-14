@@ -10,8 +10,10 @@ import PropTypes from 'prop-types'
 import LoadingButton from '@mui/lab/LoadingButton'
 import SaveIcon from '@mui/icons-material/Save'
 import { EditIconButton } from './EditIconButton'
+import { CopyIconButton } from './CopyIconButton'
+import copy from 'copy-to-clipboard'
 
-export const TextEdit = ({ text, update, loseFocus }) => {
+export const TextEdit = ({ text, update, loseFocus, copyTextToClipboard = false }) => {
   const [editing, setEditing] = useState(false)
   const [localText, setText] = useState(text)
   const [submitting, setSubmitting] = useState(false)
@@ -64,6 +66,11 @@ export const TextEdit = ({ text, update, loseFocus }) => {
               setEditing(true)
             }}
           />
+          {copyTextToClipboard && <CopyIconButton
+            onClick={() => {
+              copy(text)
+            }}
+          />}
         </Box>
       )}
       {editing && (
@@ -100,4 +107,5 @@ TextEdit.propTypes = {
   text: PropTypes.string.isRequired,
   update: PropTypes.func.isRequired,
   loseFocus: PropTypes.func,
+  copyTextToClipboard: PropTypes.bool
 }

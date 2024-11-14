@@ -30,7 +30,7 @@ public class SyncLibraryJob : BaseJob
       var library = syncJob.Library;
       if (library == null) throw new NullReferenceException("Library not found");
 
-      var videoTypes = new List<string> { "mp4", "m4v", "mkv", "avi", "wmv", "flv", "webm", "f4v", "mpg" };
+      var videoTypes = new List<string> { "mp4", "m4v", "mkv", "avi", "wmv", "flv", "webm", "f4v", "mpg", "m2ts", "mov" };
 
       foreach (var path in library.Paths)
       {
@@ -80,17 +80,25 @@ public class SyncLibraryJob : BaseJob
         for (var i = 0; i < videoEntities.Count(); i++)
         {
           var video = videoEntities.ElementAt(i);
-          var metaData = VideoFns.GetVideoInformation(video.Path);
-          if (metaData != null)
+          try
           {
-            video.Created = metaData.Created;
-            video.Size = metaData.Size;
-            video.Height = metaData.Height;
-            video.Width = metaData.Width;
-            video.Runtime = metaData.Duration.TotalMilliseconds;
-            video.LastMetadataUpdate = DateTime.UtcNow;
+            var metaData = VideoFns.GetVideoInformation(video.Path);
+            if (metaData != null)
+            {
+              video.Created = metaData.Created;
+              video.Size = metaData.Size;
+              video.Height = metaData.Height;
+              video.Width = metaData.Width;
+              video.Runtime = metaData.Duration.TotalMilliseconds;
+              video.LastMetadataUpdate = DateTime.UtcNow;
+            }
+            videoBatch.Add(video);
           }
-          videoBatch.Add(video);
+          catch (Exception ex)
+          {
+            logger.LogWarning("Could not get video information for {} {}", video.Path, ex.Message);
+          }
+
 
           if (i % batchSize == 0)
           {
