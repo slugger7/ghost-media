@@ -30,14 +30,17 @@ public static class VideoFns
   public static async Task ConvertVideo(string inputPath, string outputPath, int width, int height, int? constantRateFactor = null, int? variableBitrate = null, string? forcePixelFormat = null)
   {
     await FFMpegArguments
-        .FromFileInput(inputPath)
+        .FromFileInput(inputPath, true, options =>
+        {
+          options.WithHardwareAcceleration(HardwareAccelerationDevice.Auto);
+        })
         .OutputToFile(outputPath, false, options =>
         {
           options
-                  .WithVideoCodec(VideoCodec.LibX264)
-                  .WithAudioCodec(AudioCodec.Aac)
-                  .WithVideoFilters(options => options.Scale(width: width, height: height))
-                  .WithFastStart();
+            .WithVideoCodec(VideoCodec.LibX264)
+            .WithAudioCodec(AudioCodec.Aac)
+            .WithVideoFilters(options => options.Scale(width: width, height: height))
+            .WithFastStart();
 
           if (constantRateFactor.HasValue)
           {
